@@ -1,11 +1,11 @@
 #include "WinMain.h"
 
 #ifndef _STRING_H
-#include "core\defines\string.h"
+#include "include\core\defines\string.h"
 #endif // !_STRING_H
 
 #ifndef _IOSTREAM_H
-#include "core\defines\string.h"
+#include "include\core\defines\string.h"
 #endif // !_IOSTREAM_H
 
 
