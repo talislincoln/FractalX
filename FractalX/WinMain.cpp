@@ -1,14 +1,5 @@
 #include "WinMain.h"
 
-#ifndef _STRING_H
-#include "include\core\defines\string.h"
-#endif // !_STRING_H
-
-#ifndef _IOSTREAM_H
-#include "include\core\defines\string.h"
-#endif // !_IOSTREAM_H
-
-
 #if defined (DEBUG) | defined (_DEBUG)
 int _tmain(int argc, char* argv[])
 {

@@ -18,13 +18,10 @@
     <ClInclude Include="WinMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\core\defines\iostream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\core\defines\string.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\core\Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FractalPCH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -33,6 +30,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FractalPCH.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
