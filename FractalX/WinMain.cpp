@@ -1,3 +1,4 @@
+#include <FractalPCH.h>
 #include "WinMain.h"
 
 #if defined (DEBUG) | defined (_DEBUG)
