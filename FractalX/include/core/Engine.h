@@ -10,7 +10,6 @@ namespace fractal
 		public:
 			Engine();
 			~Engine();
-
 		};
 	}
 }
