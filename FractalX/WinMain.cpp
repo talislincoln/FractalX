@@ -83,15 +83,7 @@ WORD g_Indicies[36] =
 // Forward declarations.
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-template< class ShaderClass >
-ShaderClass* LoadShader(const std::wstring& fileName, const std::string& entryPoint, const std::string& profile);
-
-bool LoadContent();
-void UnloadContent();
 int  Run();
-void Update(float deltaTime);
-void Render();
-void Cleanup();
 int InitApplication(HINSTANCE hInstance, int cmdShow);
 
 #if defined (DEBUG) | defined (_DEBUG)
@@ -106,13 +98,65 @@ int _tmain(int argc, char* argv[])
 }
 #endif
 
+
+
+
+#include "framework/DXApp.h"
+using namespace fractal;
+class TestApp : public DXApp
+{
+
+public:
+	TestApp(HINSTANCE hInstance) :
+		DXApp(hInstance)
+	{
+
+	}
+
+	~TestApp()
+	{
+
+	}
+
+	bool Init() override
+	{
+		return DXApp::Init();
+	}
+
+	virtual void Update(float dt) override
+	{
+		
+	}
+
+
+	virtual void Render(float dt) override
+	{
+		
+	}
+
+};
+
+
+
+
+
+
+
+
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
+	TestApp tapp(hInstance);
+
+	if (!tapp.Init()) return 1;
+	return tapp.Run();
+
 	// Check for DirectX Math library support.
-	if (!DirectX::XMVerifyCPUSupport())
+	/*if (!DirectX::XMVerifyCPUSupport())
 	{
 		MessageBox(nullptr, TEXT("Failed to verify DirectX Math library support."), TEXT("Error"), MB_OK);
 		return -1;
@@ -137,7 +181,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//Create the engine
 
-	return returnCode;
+	return returnCode;*/
 }
 
 /**
@@ -180,6 +224,115 @@ int InitApplication(HINSTANCE hInstance, int cmdShow)
 	return 0;
 }
 
+/**
+* Initialize the DirectX device and swap chain.
+*/
+/*int InitDirectX(HINSTANCE hInstance, BOOL vSync)
+{
+	// A window handle must have been created already.
+	assert(g_WindowHandle != 0);
+
+	RECT clientRect;
+	GetClientRect(g_WindowHandle, &clientRect);
+
+	// Compute the exact client dimensions. This will be used
+	// to initialize the render targets for our swap chain.
+	unsigned int clientWidth = clientRect.right - clientRect.left;
+	unsigned int clientHeight = clientRect.bottom - clientRect.top;
+
+	DXGI_SWAP_CHAIN_DESC swapChainDesc;
+	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+
+	swapChainDesc.BufferCount = 1;
+	swapChainDesc.BufferDesc.Width = clientWidth;
+	swapChainDesc.BufferDesc.Height = clientHeight;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.RefreshRate = QueryRefreshRate(clientWidth, clientHeight, vSync);
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.OutputWindow = g_WindowHandle;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Quality = 0;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.Windowed = TRUE;
+
+	UINT createDeviceFlags = 0;
+#if _DEBUG
+	createDeviceFlags = D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+	// These are the feature levels that we will accept.
+	D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+		D3D_FEATURE_LEVEL_9_2,
+		D3D_FEATURE_LEVEL_9_1
+	};
+
+	// This will be the feature level that 
+	// is used to create our device and swap chain.
+	D3D_FEATURE_LEVEL featureLevel;
+
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE,
+		nullptr, createDeviceFlags, featureLevels, _countof(featureLevels),
+		D3D11_SDK_VERSION, &swapChainDesc, &g_d3dSwapChain, &g_d3dDevice, &featureLevel,
+		&g_d3dDeviceContext);
+
+	if (hr == E_INVALIDARG)
+	{
+		hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE,
+			nullptr, createDeviceFlags, &featureLevels[1], _countof(featureLevels) - 1,
+			D3D11_SDK_VERSION, &swapChainDesc, &g_d3dSwapChain, &g_d3dDevice, &featureLevel,
+			&g_d3dDeviceContext);
+	}
+
+	if (FAILED(hr))
+	{
+		return -1;
+	}
+
+	// Next initialize the back buffer of the swap chain and associate it to a 
+	// render target view.
+	ID3D11Texture2D* backBuffer;
+	hr = g_d3dSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
+	if (FAILED(hr))
+	{
+		return -1;
+	}
+
+	hr = g_d3dDevice->CreateRenderTargetView(backBuffer, nullptr, &g_d3dRenderTargetView);
+	if (FAILED(hr))
+	{
+		return -1;
+	}
+
+	SafeRelease(backBuffer);
+
+	// Create the depth buffer for use with the depth/stencil view.
+	D3D11_TEXTURE2D_DESC depthStencilBufferDesc;
+	ZeroMemory(&depthStencilBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	depthStencilBufferDesc.ArraySize = 1;
+	depthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilBufferDesc.CPUAccessFlags = 0; // No CPU access required.
+	depthStencilBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilBufferDesc.Width = clientWidth; 
+	depthStencilBufferDesc.Height = clientHeight;
+	depthStencilBufferDesc.MipLevels = 1;
+	depthStencilBufferDesc.SampleDesc.Count = 1;
+	depthStencilBufferDesc.SampleDesc.Quality = 0;
+	depthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	hr = g_d3dDevice->CreateTexture2D(&depthStencilBufferDesc, nullptr, &g_d3dDepthStencilBuffer);
+	if (FAILED(hr))
+	{
+		return -1;
+	}
+}
+*/
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT paintStruct;
@@ -210,7 +363,7 @@ int Run()
 	MSG msg = { 0 };
 
 	static DWORD previousTime = timeGetTime();
-	static const float targetFramerate = 30.0f;
+	static const float targetFramerate = 60.0f;
 	static const float maxTimeStep = 1.0f / targetFramerate;
 
 	while (msg.message != WM_QUIT)
@@ -229,7 +382,7 @@ int Run()
 			// Cap the delta time to the max time step (useful if your 
 			// debugging and you don't want the deltaTime value to explode.
 			deltaTime = std::min<float>(deltaTime, maxTimeStep);
-
+			std::cout << "FPS: " << deltaTime << std::endl;
 			//            Update( deltaTime );
 			//            Render();
 		}

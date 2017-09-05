@@ -2,7 +2,11 @@
 #define _FRACTALPCH_H
 
 // System includes
+#ifndef _WINDOWS_
 #include <Windows.h>
+#endif
+
+#define WIN32_LEAN_AND_MEAN
 
 // DirectX includes
 #include <d3d11.h>
@@ -60,10 +64,9 @@ inline void SafeRelease(T& ptr)
 
 
 // =========== TEMPLATE METAPROGRAMMING
-
 namespace fractal 
 {
-#pragma region Print Function
+#pragma region FDebug
 	inline void FDebug()
 	{
 		std::cout << std::endl;
@@ -174,10 +177,4 @@ namespace fractal
 	}
 #pragma endregion
 }
-
-
-namespace fractal {
-	
-}
-
 #endif // !_FRACTALPCH_H
