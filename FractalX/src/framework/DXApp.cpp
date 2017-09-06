@@ -21,14 +21,25 @@ namespace fractal
 		m_clientWidth (800),
 		m_clientHeight (600),
 		m_AppTitle (L"Fractal Game Engine"),
-		m_windowStyle (WS_OVERLAPPEDWINDOW)
+		m_windowStyle (WS_OVERLAPPEDWINDOW),
+		m_pDevice(nullptr),
+		m_pImmediateContext(nullptr)
 	{
 		g_pApp = this;
 	}
 
 	DXApp::~DXApp()
 	{
-		// empty
+		if (m_pImmediateContext)
+		{
+			m_pImmediateContext->ClearState();
+		}
+
+		SafeRelease(m_pRenderTargetView);
+		SafeRelease(m_pSwapChain);
+		SafeRelease(m_pImmediateContext);
+		SafeRelease(m_pDevice);
+
 	}
 
 	int DXApp::Run()
@@ -54,7 +65,7 @@ namespace fractal
 
 	bool DXApp::Init()
 	{
-		return InitWindow();
+		return InitWindow() && InitDirect3D();
 	}
 
 	LRESULT DXApp::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -113,6 +124,89 @@ namespace fractal
 		ShowWindow(m_hAppWnd, SW_SHOW);
 
 		return TRUE;
+	}
+
+	bool DXApp::InitDirect3D()
+	{
+		UINT createDeviceFlags = 0;
+
+#ifdef _DEBUG
+		createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
+		D3D_DRIVER_TYPE driverTypes[] =
+		{
+			D3D_DRIVER_TYPE_HARDWARE,
+			D3D_DRIVER_TYPE_WARP,
+			D3D_DRIVER_TYPE_REFERENCE
+		};
+		UINT numDriverTypes = ARRAYSIZE(driverTypes);
+
+		D3D_FEATURE_LEVEL featureLevels[] =
+		{
+			D3D_FEATURE_LEVEL_11_0,
+			D3D_FEATURE_LEVEL_10_1,
+			D3D_FEATURE_LEVEL_10_0,
+			D3D_FEATURE_LEVEL_9_3
+		};
+		UINT numFeatureLevels = ARRAYSIZE(featureLevels);
+
+		DXGI_SWAP_CHAIN_DESC swapDesc;
+		ZeroMemory(&swapDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
+		swapDesc.BufferCount = 1; // double buffered
+		swapDesc.BufferDesc.Width = m_clientWidth;
+		swapDesc.BufferDesc.Height = m_clientHeight;
+		swapDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapDesc.BufferDesc.RefreshRate.Numerator = 60;
+		swapDesc.BufferDesc.RefreshRate.Denominator = 1;
+		swapDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapDesc.OutputWindow = m_hAppWnd;
+		swapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		swapDesc.Windowed = true;
+		swapDesc.SampleDesc.Count = 1;
+		swapDesc.SampleDesc.Quality = 0;
+		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // alt+enter to toggle fullscreen - we need to add a handle
+
+		HRESULT result;
+		for (int i = 0; i < numDriverTypes; ++i)
+		{
+			result = D3D11CreateDeviceAndSwapChain(NULL, driverTypes[i], NULL, createDeviceFlags,
+				featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &swapDesc, &m_pSwapChain, &m_pDevice,
+				&m_featureLevel, &m_pImmediateContext);
+
+			if (SUCCEEDED(result))
+			{
+				m_driverType = driverTypes[i];
+				break;
+			}
+		}
+
+		if (FAILED(result))
+		{
+			OutputDebugString(L"FAILED TO CREATE DEVICE AND SWAPCHAIN");
+			return false;
+		}
+
+		// CREATE RENDER TARGET VIEW
+		ID3D11Texture2D*	m_pBackBufferTexture = nullptr;
+		m_pSwapChain->GetBuffer(NULL, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pBackBufferTexture));
+		m_pDevice->CreateRenderTargetView(m_pBackBufferTexture, nullptr, &m_pRenderTargetView);
+
+		// BIND RENDER TARGET VIEW
+		m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
+
+		// VIEWPORT CREATION
+		m_viewPort.Width = static_cast<float>(m_clientWidth);
+		m_viewPort.Height = static_cast<float>(m_clientHeight);
+		m_viewPort.TopLeftX = 0;
+		m_viewPort.TopLeftY = 0;
+		m_viewPort.MinDepth = 0.0f;
+		m_viewPort.MaxDepth = 1.0f;
+
+		// BIND VIEWPORT
+		m_pImmediateContext->RSSetViewports(1, &m_viewPort);
+
+		return true;
 	}
 
 }

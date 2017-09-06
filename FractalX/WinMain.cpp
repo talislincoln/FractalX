@@ -102,6 +102,7 @@ int _tmain(int argc, char* argv[])
 
 
 #include "framework/DXApp.h"
+#include <DirectXColors.h>
 using namespace fractal;
 class TestApp : public DXApp
 {
@@ -131,7 +132,9 @@ public:
 
 	virtual void Render(float dt) override
 	{
-		
+		m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, DirectX::Colors::CornflowerBlue);
+
+		m_pSwapChain->Present(0, 0);
 	}
 
 };
