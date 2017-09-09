@@ -7,9 +7,29 @@ namespace fractal
 	{
 		class Engine
 		{
+			// private variables declaration first
+		private:
+			class AbstractGame* m_game;
+
+			//public methods
 		public:
-			Engine();
+			// for testing while there's no game
+			Engine() {};
+			Engine(class AbstractGame* game);
 			~Engine();
+
+			int Run();
+
+			//private methods
+		private:
+			bool Init();
+			bool CreateManagers();
+			bool DestroyManagers();
+
+			void Update();
+			void Draw();
+
+			bool ShutDown();
 		};
 	}
 }

@@ -103,6 +103,9 @@ int _tmain(int argc, char* argv[])
 
 #include "framework/DXApp.h"
 #include <DirectXColors.h>
+
+// for testing
+#include <core\Engine.h>
 using namespace fractal;
 class TestApp : public DXApp
 {
@@ -111,7 +114,7 @@ public:
 	TestApp(HINSTANCE hInstance) :
 		DXApp(hInstance)
 	{
-
+		fractal::fcore::Engine engine;
 	}
 
 	~TestApp()

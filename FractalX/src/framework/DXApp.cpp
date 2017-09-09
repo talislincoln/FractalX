@@ -76,7 +76,7 @@ namespace fractal
 			PostQuitMessage(0); // posts a quit message that will be handle by the main loop - ends the app
 			return 0;
 		default:
-			DefWindowProc(hWnd, msg, wParam, lParam);
+			return DefWindowProc(hWnd, msg, wParam, lParam);
 		}
 	}
 
@@ -168,7 +168,7 @@ namespace fractal
 		swapDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // alt+enter to toggle fullscreen - we need to add a handle
 
 		HRESULT result;
-		for (int i = 0; i < numDriverTypes; ++i)
+		for (unsigned int i = 0; i < numDriverTypes; ++i)
 		{
 			result = D3D11CreateDeviceAndSwapChain(NULL, driverTypes[i], NULL, createDeviceFlags,
 				featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &swapDesc, &m_pSwapChain, &m_pDevice,
@@ -191,6 +191,8 @@ namespace fractal
 		ID3D11Texture2D*	m_pBackBufferTexture = nullptr;
 		m_pSwapChain->GetBuffer(NULL, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&m_pBackBufferTexture));
 		m_pDevice->CreateRenderTargetView(m_pBackBufferTexture, nullptr, &m_pRenderTargetView);
+
+		SafeRelease(m_pBackBufferTexture);
 
 		// BIND RENDER TARGET VIEW
 		m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);

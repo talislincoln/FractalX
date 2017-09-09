@@ -27,6 +27,8 @@ inline void SafeRelease(T& ptr)
 	}
 }
 
+#define SafeDelete(x) { if(x) {delete x; x = nullptr;}}
+
 //C runtime Header Files
 #ifndef _TCHAR_INC_
 #include <tchar.h>
@@ -61,6 +63,24 @@ inline void SafeRelease(T& ptr)
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "winmm.lib")
+
+namespace fractal
+{
+	const int INITIALIZATION_FAILED = 0x0001;
+	const int SHUTDOWN_FAILED = 0x0010;
+
+	enum class SystemType
+	{
+		WINDOW_SYSTEM,
+		INPUT_SYSTEM,
+		GRAPHICS_SYSTEM,
+		TIMER_SYSTEM,
+		LOGIC_SYSTEM,
+		PHYSICS_SYSTEM,
+		HUD_SYSTEM,
+		RESOURCE_SYSTEM
+	};
+}
 
 
 // =========== TEMPLATE METAPROGRAMMING
