@@ -39,10 +39,10 @@ inline void SafeRelease(T& ptr)
 #endif // !_STRING_
 
 #ifdef UNICODE
-#define FString wstring
+#define FString std::wstring
 #define TOSTRING(value) std::to_wstring(value)
 #else
-#define FString string
+#define FString std::string
 #define TOSTRING(value) std::to_string(value)
 #endif // UNICODE
 
