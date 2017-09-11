@@ -16,23 +16,20 @@ namespace fractal
 					delete m_instance;
 			}
 
-			static T& Instance()
+			static T* Instance()
 			{
 				if (!Singleton::m_instance)
 					Singleton::m_instance = new T;
-				return *Singleton::m_instance;				
+				return Singleton::m_instance;				
 			}
 
-		protected:
-			Singleton() {}
-			virtual ~Singleton() {}
+			Singleton (Singleton const&) = delete;
+			Singleton& operator=(Singleton const&) = delete;
+			virtual ~Singleton () {};
 
+			Singleton () {}
 		private:
-
-			//Disable copy constructor & assignment operator
-			Singleton(Singleton const&) {}
-			Singleton& operator=(Singleton const&) {}
-
+			
 			static T* m_instance;
 		};
 

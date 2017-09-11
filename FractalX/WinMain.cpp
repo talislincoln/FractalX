@@ -114,7 +114,7 @@ public:
 	TestApp(HINSTANCE hInstance) :
 		DXApp(hInstance)
 	{
-		fractal::fcore::Engine engine;
+		
 	}
 
 	~TestApp()
@@ -124,7 +124,8 @@ public:
 
 	bool Init() override
 	{
-		return DXApp::Init();
+		fractal::fcore::Engine engine;
+		return engine.Run () || DXApp::Init ();
 	}
 
 	virtual void Update(float dt) override

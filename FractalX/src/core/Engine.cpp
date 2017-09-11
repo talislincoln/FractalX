@@ -1,6 +1,7 @@
 #include <FractalPCH.h>
 #include <core\Engine.h>
 #include <core\AbstractGame.h>
+#include <core\managers\SystemManager.h>
 
 namespace fractal
 {
@@ -22,6 +23,8 @@ namespace fractal
 				//Logger.Error("Failed to Init engine");
 				return fractal::INITIALIZATION_FAILED;
 			}
+
+			return 0; // remove this when done testing the initalization
 
 			// initialize the random seed with the get tick function
 			srand(GetTickCount());
@@ -50,11 +53,21 @@ namespace fractal
 
 		bool Engine::Init()
 		{
-			return true;
+			return this->CreateManagers();
 		}
 
 		bool Engine::CreateManagers()
 		{
+			if (!SystemManager::Instance ())
+			{
+				//Logger.Error("Failed to create System Manager");
+				fcout << "Failed to create system manager";
+				return false;
+			}
+			else
+			{
+				fcout << "succeeded";
+			}
 
 			return true;
 		}

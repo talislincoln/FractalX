@@ -51,11 +51,11 @@ inline void SafeRelease(T& ptr)
 #endif // !_IOSTREAM_
 
 #ifdef UNICODE
-#define FCout wcout
-#define FCin wcin
+#define fcout std::wcout
+#define fcin std::wcin
 #else
-#define FCout cout
-#define FCin  cin
+#define FCout std::cout
+#define FCin  std::cin
 #endif // UNICODE
 
 // Link library dependencies
