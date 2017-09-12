@@ -125,7 +125,7 @@ public:
 	bool Init() override
 	{
 		fractal::fcore::Engine engine;
-		return engine.Run () || DXApp::Init ();
+		return engine.Run ();//|| DXApp::Init ();
 	}
 
 	virtual void Update(float dt) override

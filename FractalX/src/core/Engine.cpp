@@ -2,6 +2,7 @@
 #include <core\Engine.h>
 #include <core\AbstractGame.h>
 #include <core\managers\SystemManager.h>
+#include <core\systems\Window.h>
 
 namespace fractal
 {
@@ -24,7 +25,7 @@ namespace fractal
 				return fractal::INITIALIZATION_FAILED;
 			}
 
-			return 0; // remove this when done testing the initalization
+			//return 0; // remove this when done testing the initalization
 
 			// initialize the random seed with the get tick function
 			srand(GetTickCount());
@@ -53,7 +54,20 @@ namespace fractal
 
 		bool Engine::Init()
 		{
-			return this->CreateManagers();
+			if (!this->CreateManagers ())
+				return false;
+
+			Window* window = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::WINDOW_SYSTEM));
+			if (!window)
+			{
+				// TODO ERROR MESSAGE
+				return false;
+			}
+			
+			if (!window->Init ())
+				return false;
+
+			return true;
 		}
 
 		bool Engine::CreateManagers()
@@ -63,10 +77,6 @@ namespace fractal
 				//Logger.Error("Failed to create System Manager");
 				fcout << "Failed to create system manager";
 				return false;
-			}
-			else
-			{
-				fcout << "succeeded";
 			}
 
 			return true;
