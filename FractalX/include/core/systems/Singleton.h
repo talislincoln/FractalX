@@ -13,7 +13,10 @@ namespace fractal
 			static void DestroyInstance()
 			{
 				if (Singleton::m_instance)
+				{
 					delete m_instance;
+					m_instance = nullptr;
+				}
 			}
 
 			static T* Instance()

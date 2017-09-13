@@ -247,6 +247,7 @@ namespace fractal
 				return false;
 
 			ShowWindow (this->m_hWindow, SW_SHOW);
+			UpdateWindow (this->m_hWindow);
 			SetForegroundWindow (this->m_hWindow);
 			SetFocus (this->m_hWindow);
 

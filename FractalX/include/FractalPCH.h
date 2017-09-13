@@ -64,6 +64,23 @@ inline void SafeRelease(T& ptr)
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "winmm.lib")
 
+#if defined(DEBUG) | defined(_DEBUG)
+#ifndef HR
+#define HR(x)                                              \
+	{                                                          \
+		HRESULT hr = (x);                                      \
+		if(FAILED(hr))                                         \
+		{                                                      \
+			/*DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); */\
+		}                                                      \
+	}
+#endif
+#else
+#ifndef HR
+#define HR(x) (x)
+#endif
+#endif 
+
 namespace fractal
 {
 	const int INITIALIZATION_FAILED = 0x0001;

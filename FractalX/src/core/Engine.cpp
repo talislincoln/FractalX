@@ -3,6 +3,8 @@
 #include <core\AbstractGame.h>
 #include <core\managers\SystemManager.h>
 #include <core\systems\Window.h>
+#include <core\systems\Clock.h>
+#include <core\managers\Logger.h>
 
 namespace fractal
 {
@@ -19,9 +21,17 @@ namespace fractal
 
 		int Engine::Run()
 		{
+			//Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_WARNING);
+			Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_INFO);
+		/*#if (DEBUG) || (_DEBUG)
+			Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_INFO);
+		#endif*/
+
+			Logger::Instance ()->LogInfo (L"Initializing the engine...");
+
 			if (!this->Init())
 			{
-				//Logger.Error("Failed to Init engine");
+				Logger::Instance()->LogError(L"Failed to Init engine");
 				return fractal::INITIALIZATION_FAILED;
 			}
 
@@ -60,12 +70,19 @@ namespace fractal
 			Window* window = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::WINDOW_SYSTEM));
 			if (!window)
 			{
-				// TODO ERROR MESSAGE
+				Logger::Instance ()->LogError (L"Failed to get the Window instance.");
 				return false;
 			}
+
+			Clock* clock = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
 			
 			if (!window->Init ())
 				return false;
+
+			if (!clock->Init ())
+			{
+				Logger::Instance ()->LogError (L"Failed to init Clock system");
+			}
 
 			return true;
 		}
@@ -84,13 +101,23 @@ namespace fractal
 
 		bool Engine::DestroyManagers()
 		{
+			if (SystemManager::Instance ())
+			{
+				SystemManager::Instance ();
+			}
+			else
+			{
+				Logger::Instance ()->LogWarning (L"System manager was already destroyed.");
+			}
 
 			return true;
 		}
 
 		void Engine::Update()
 		{
-
+			Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
+			c->Update ();
+			fcout << c->TotalTime () << std::endl;
 		}
 
 		void Engine::Draw()

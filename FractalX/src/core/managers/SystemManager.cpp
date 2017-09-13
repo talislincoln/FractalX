@@ -2,6 +2,7 @@
 #include <core\managers\SystemManager.h>
 #include <core\systems\System.h>
 #include <core\systems\Window.h>
+#include <core\systems\Clock.h>
 #include <algorithm>
 
 namespace fractal
@@ -34,7 +35,18 @@ namespace fractal
 			//if there isn't a system of that type, then create one
 			// TODO: create a factory for the systems
 			//System* system = this->m_factory->createSystem (type);
-			System* system = new Window ();
+			System* system;
+			switch (type)
+			{
+			case SystemType::WINDOW_SYSTEM:
+				system = new Window ();
+				break;
+			case SystemType::TIMER_SYSTEM:
+				system = new Clock ();
+				break;
+			default:
+				break;
+			}
 
 			//cast the new created system to check if it is a drawable system
 			//if (dynamic_cast<IDrawable*>(system) != nullptr)

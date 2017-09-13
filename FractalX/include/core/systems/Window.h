@@ -29,6 +29,13 @@ namespace fractal
 			unsigned int 	m_windowWidth;
 			unsigned int	m_windowHeight;
 
+			HINSTANCE mhAppInst;
+			HWND      mhMainWnd;
+			bool      mAppPaused;
+			bool      mMinimized;
+			bool      mMaximized;
+			bool      mResizing;
+
 		public:
 			Window ();
 			~Window ();
