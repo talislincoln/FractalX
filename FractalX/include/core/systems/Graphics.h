@@ -32,6 +32,8 @@ namespace fractal
 			void Update () override;
 			bool Shutdown () override;
 
+			void OnResize ();
+
 		private:
 		};
 	}

@@ -1,6 +1,6 @@
 #include <FractalPCH.h>
 #include <core\systems\Clock.h>
-#include <core\managers\Logger.h>
+#include <core\managers\LogManager.h>
 
 namespace fractal
 {
@@ -25,7 +25,7 @@ namespace fractal
 
 		bool Clock::Init ()
 		{
-			Logger::Instance ()->LogInfo (L"Initializing Clock sytem.");
+			LogManager::Instance ()->LogInfo (L"Initializing Clock sytem.");
 			Start ();
 
 			return true;
@@ -78,7 +78,6 @@ namespace fractal
 		{
 			__int64 startTime;
 			QueryPerformanceCounter ((LARGE_INTEGER*)&startTime);
-
 
 			// Accumulate the time elapsed between stop and start pairs.
 			//

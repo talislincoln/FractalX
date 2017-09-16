@@ -150,7 +150,7 @@
   <ItemGroup>
     <ClInclude Include="include\core\AbstractGame.h" />
     <ClInclude Include="include\core\managers\IManager.h" />
-    <ClInclude Include="include\core\managers\Logger.h" />
+    <ClInclude Include="include\core\managers\LogManager.h" />
     <ClInclude Include="include\core\managers\SystemManager.h" />
     <ClInclude Include="include\core\systems\Graphics.h" />
     <ClInclude Include="include\core\systems\Singleton.h" />
@@ -165,7 +165,7 @@
     <ClInclude Include="WinMain.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\managers\Logger.cpp" />
+    <ClCompile Include="src\core\managers\LogManager.cpp" />
     <ClCompile Include="src\core\systems\Graphics.cpp" />
     <ClCompile Include="src\core\systems\Clock.cpp" />
     <ClCompile Include="src\core\systems\Window.cpp" />

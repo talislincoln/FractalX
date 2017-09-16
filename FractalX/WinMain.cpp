@@ -1,6 +1,7 @@
 #include <FractalPCH.h>
 #include "WinMain.h"
 #include <algorithm>
+#include "include\core\Engine.h"
 
 const LONG g_WindowWidth = 1280;
 const LONG g_WindowHeight = 720;
@@ -80,9 +81,6 @@ WORD g_Indicies[36] =
 	4, 0, 3, 4, 3, 7
 };
 
-// Forward declarations.
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
-
 int  Run();
 int InitApplication(HINSTANCE hInstance, int cmdShow);
 
@@ -99,96 +97,29 @@ int _tmain(int argc, char* argv[])
 #endif
 
 
-
-
-#include "framework/DXApp.h"
-#include <DirectXColors.h>
-
-// for testing
-#include <core\Engine.h>
-using namespace fractal;
-class TestApp : public DXApp
-{
-
-public:
-	TestApp(HINSTANCE hInstance) :
-		DXApp(hInstance)
-	{
-		
-	}
-
-	~TestApp()
-	{
-
-	}
-
-	bool Init() override
-	{
-		fractal::fcore::Engine engine;
-		return engine.Run ();//|| DXApp::Init ();
-	}
-
-	virtual void Update(float dt) override
-	{
-		
-	}
-
-
-	virtual void Render(float dt) override
-	{
-		m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView, DirectX::Colors::CornflowerBlue);
-
-		m_pSwapChain->Present(0, 0);
-	}
-
-};
-
-
-
-
-
-
-
-
-
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	TestApp tapp(hInstance);
-
-	if (!tapp.Init()) return 1;
-	return tapp.Run();
-
-	// Check for DirectX Math library support.
-	/*if (!DirectX::XMVerifyCPUSupport())
+	if (!DirectX::XMVerifyCPUSupport ())
 	{
-		MessageBox(nullptr, TEXT("Failed to verify DirectX Math library support."), TEXT("Error"), MB_OK);
+		MessageBox (nullptr, TEXT ("Failed to verify DirectX Math library support."), TEXT ("Error"), MB_OK);
 		return -1;
 	}
-
-	if (InitApplication(hInstance, nCmdShow) != 0)
-	{
-		MessageBox(nullptr, TEXT("Failed to create applicaiton window."), TEXT("Error"), MB_OK);
-		return -1;
-	}
-
-	int returnCode = Run();
-
 
 #if defined (DEBUG) | defined (_DEBUG)
-	HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
+	HeapSetInformation (NULL, HeapEnableTerminationOnCorruption, NULL, 0);
 
 	// Enable run-time memory leak check for debug build
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(0); // the 0 should be changed to the id of the memory leak that will be shown in the debug log
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetBreakAlloc(0); // the 0 should be changed to the id of the memory leak that will be shown in the debug log
 #endif
 
-	//Create the engine
-
-	return returnCode;*/
+	fractal::fcore::Engine *e = new fractal::fcore::Engine ();
+	int result = e->Run ();
+	delete e;
+	return result;
 }
 
 /**
@@ -199,7 +130,7 @@ int InitApplication(HINSTANCE hInstance, int cmdShow)
 	WNDCLASSEX wndClass = { 0 };
 	wndClass.cbSize = sizeof(WNDCLASSEX);
 	wndClass.style = CS_HREDRAW | CS_VREDRAW;
-	wndClass.lpfnWndProc = &WndProc;
+	//wndClass.lpfnWndProc = &WndProc;
 	wndClass.hInstance = hInstance;
 	wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wndClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
@@ -340,30 +271,6 @@ int InitApplication(HINSTANCE hInstance, int cmdShow)
 	}
 }
 */
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	PAINTSTRUCT paintStruct;
-	HDC hDC;
-
-	switch (message)
-	{
-	case WM_PAINT:
-	{
-		hDC = BeginPaint(hwnd, &paintStruct);
-		EndPaint(hwnd, &paintStruct);
-	}
-	break;
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-	}
-	break;
-	default:
-		return DefWindowProc(hwnd, message, wParam, lParam);
-	}
-
-	return 0;
-}
 
 int Run()
 {

@@ -65,7 +65,8 @@ namespace fractal
 
 	bool DXApp::Init()
 	{
-		return InitWindow() && InitDirect3D();
+		return true;
+		//return InitWindow() && InitDirect3D();
 	}
 
 	LRESULT DXApp::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

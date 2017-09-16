@@ -4,7 +4,8 @@
 #include <core\managers\SystemManager.h>
 #include <core\systems\Window.h>
 #include <core\systems\Clock.h>
-#include <core\managers\Logger.h>
+#include <core\managers\LogManager.h>
+#include <core\systems\Graphics.h>
 
 namespace fractal
 {
@@ -22,20 +23,14 @@ namespace fractal
 		int Engine::Run()
 		{
 			//Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_WARNING);
-			Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_INFO);
-		/*#if (DEBUG) || (_DEBUG)
-			Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_INFO);
-		#endif*/
-
-			Logger::Instance ()->LogInfo (L"Initializing the engine...");
+			LogManager::Instance ()->SetLogLevel (LOG_TYPES::LOG_INFO);
 
 			if (!this->Init())
 			{
-				Logger::Instance()->LogError(L"Failed to Init engine");
+				LogManager::Instance()->LogError(L"Failed to Init engine");
 				return fractal::INITIALIZATION_FAILED;
 			}
-
-			//return 0; // remove this when done testing the initalization
+			LogManager::Instance ()->LogInfo (L"Engine Initialized");
 
 			// initialize the random seed with the get tick function
 			srand(GetTickCount());
@@ -43,14 +38,16 @@ namespace fractal
 			MSG msg = {};
 			while (msg.message != WM_QUIT)
 			{
-				if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+				if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
 				{
 					TranslateMessage(&msg);
 					DispatchMessage(&msg);
 				}
-
-				this->Update();
-				this->Draw();
+				else
+				{
+					this->Update ();
+					this->Draw ();
+				}
 			}
 
 			if (!this->ShutDown())
@@ -67,21 +64,10 @@ namespace fractal
 			if (!this->CreateManagers ())
 				return false;
 
-			Window* window = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::WINDOW_SYSTEM));
-			if (!window)
+			if (!SystemManager::Instance ()->Init ())
 			{
-				Logger::Instance ()->LogError (L"Failed to get the Window instance.");
+				LogManager::Instance ()->LogError (L"Failed to Init system manager.");
 				return false;
-			}
-
-			Clock* clock = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
-			
-			if (!window->Init ())
-				return false;
-
-			if (!clock->Init ())
-			{
-				Logger::Instance ()->LogError (L"Failed to init Clock system");
 			}
 
 			return true;
@@ -91,8 +77,7 @@ namespace fractal
 		{
 			if (!SystemManager::Instance ())
 			{
-				//Logger.Error("Failed to create System Manager");
-				fcout << "Failed to create system manager";
+				LogManager::Instance ()->LogError (L"Failed to create system Manager");
 				return false;
 			}
 
@@ -103,11 +88,28 @@ namespace fractal
 		{
 			if (SystemManager::Instance ())
 			{
-				SystemManager::Instance ();
+				if (!SystemManager::Instance ()->Shutdown ())
+				{
+					return false;
+				}
+				SystemManager::DestroyInstance ();
 			}
 			else
 			{
-				Logger::Instance ()->LogWarning (L"System manager was already destroyed.");
+				LogManager::Instance ()->LogWarning (L"System manager was already destroyed.");
+			}
+
+			if (LogManager::Instance ())
+			{
+				if (!LogManager::Instance ()->Shutdown ())
+				{
+					return false;
+				}
+				LogManager::DestroyInstance ();
+			}
+			else
+			{
+				LogManager::Instance ()->LogWarning (L"System manager was already destroyed.");
 			}
 
 			return true;
@@ -115,9 +117,7 @@ namespace fractal
 
 		void Engine::Update()
 		{
-			Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
-			c->Update ();
-			fcout << c->TotalTime () << std::endl;
+			SystemManager::Instance ()->Update ();
 		}
 
 		void Engine::Draw()
@@ -127,7 +127,7 @@ namespace fractal
 
 		bool Engine::ShutDown()
 		{
-
+			DestroyManagers ();
 			return true;
 		}
 	}

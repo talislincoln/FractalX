@@ -1,7 +1,7 @@
 #include <FractalPCH.h>
 #include <core\systems\Graphics.h>
-
 #include <core\systems\Window.h>
+#include <core\managers\SystemManager.h>
 
 namespace fractal
 {
@@ -19,7 +19,7 @@ namespace fractal
 			m_renderTargetView (0),
 			m_depthStencilView (0)
 		{
-
+			ZeroMemory (&m_screenViewport, sizeof (D3D11_VIEWPORT));
 		}
 
 		Graphics::~Graphics ()
@@ -29,6 +29,9 @@ namespace fractal
 
 		bool Graphics::Init ()
 		{
+			// Get the reference for the main window
+			m_window = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::WINDOW_SYSTEM));
+
 			UINT createDeviceFlags = 0;
 		#if defined(DEBUG) || defined(_DEBUG)  
 			createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
@@ -121,14 +124,20 @@ namespace fractal
 			// also need to be executed every time the window is resized.  So
 			// just call the OnResize method here to avoid code duplication.
 
-			//OnResize ();
+			OnResize ();
 
 			return true;
 		}
 
 		void Graphics::Update ()
 		{
+			assert (m_d3dImmediateContext);
+			assert (m_swapChain);
 
+			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
+			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+			HR(m_swapChain->Present (0, 0));
 		}
 
 		bool Graphics::Shutdown ()
@@ -138,7 +147,84 @@ namespace fractal
 			SafeRelease (m_swapChain);
 			SafeRelease (m_depthStencilView);
 
+			// Restore all default settings.
+			if (m_d3dImmediateContext)
+				m_d3dImmediateContext->ClearState ();
+
+			SafeRelease (m_d3dImmediateContext);
+			SafeRelease (m_d3dDevice);
+
 			return true;
+		}
+
+		void Graphics::OnResize ()
+		{
+			if (m_window)
+			{
+				assert (m_d3dImmediateContext);
+				assert (m_d3dDevice);
+				assert (m_swapChain);
+
+				// Release the old views, as they hold references to the buffers we
+				// will be destroying.  Also release the old depth/stencil buffer.
+
+				SafeRelease (m_renderTargetView);
+				SafeRelease (m_depthStencilView);
+				SafeRelease (m_depthStencilBuffer);
+
+				// Resize the swap chain and recreate the render target view.
+				Window *window = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::WINDOW_SYSTEM));
+
+				HR (m_swapChain->ResizeBuffers (1, window->GetWindowWidth (), window->GetWindowHeight (), DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+				ID3D11Texture2D* backBuffer;
+				HR (m_swapChain->GetBuffer (0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
+				HR (m_d3dDevice->CreateRenderTargetView (backBuffer, 0, &m_renderTargetView));
+				SafeRelease (backBuffer);
+
+				// Create the depth/stencil buffer and view
+				D3D11_TEXTURE2D_DESC depthStencilDesc;
+
+				depthStencilDesc.Width = window->GetWindowWidth ();
+				depthStencilDesc.Height = window->GetWindowHeight ();
+				depthStencilDesc.MipLevels = 1;
+				depthStencilDesc.ArraySize = 1;
+				depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+				// Use 4X MSAA? --must match swap chain MSAA values.
+				if (m_enable4xMsaa)
+				{
+					depthStencilDesc.SampleDesc.Count = 4;
+					depthStencilDesc.SampleDesc.Quality = m_4xMsaaQuality - 1;
+				}
+				// No MSAA
+				else
+				{
+					depthStencilDesc.SampleDesc.Count = 1;
+					depthStencilDesc.SampleDesc.Quality = 0;
+				}
+
+				depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+				depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+				depthStencilDesc.CPUAccessFlags = 0;
+				depthStencilDesc.MiscFlags = 0;
+
+				HR (m_d3dDevice->CreateTexture2D (&depthStencilDesc, 0, &m_depthStencilBuffer));
+				HR (m_d3dDevice->CreateDepthStencilView (m_depthStencilBuffer, 0, &m_depthStencilView));
+
+				// Bind the render target view and depth/stencil view to the pipeline.
+				m_d3dImmediateContext->OMSetRenderTargets (1, &m_renderTargetView, m_depthStencilView);
+
+				// Set the viewport transform.
+				m_screenViewport.TopLeftX = 0;
+				m_screenViewport.TopLeftY = 0;
+				m_screenViewport.Width = static_cast<float>(window->GetWindowWidth ());
+				m_screenViewport.Height = static_cast<float>(window->GetWindowHeight ());
+				m_screenViewport.MinDepth = 0.0f;
+				m_screenViewport.MaxDepth = 1.0f;
+
+				m_d3dImmediateContext->RSSetViewports (1, &m_screenViewport);
+			}
+			
 		}
 	}
 }

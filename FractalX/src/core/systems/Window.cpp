@@ -1,5 +1,8 @@
 #include <FractalPCH.h>
 #include <core/systems/Window.h>
+#include <core\managers\LogManager.h>
+#include <core\systems\Graphics.h>
+#include <core\managers\SystemManager.h>
 
 namespace fractal
 {
@@ -17,7 +20,8 @@ namespace fractal
 			m_windowClassname(L"Fractal"),
 			m_windowTitle(L"Fractal"),
 			m_windowWidth(800 /* TODO: change to Singleton<WorldSettings>::getInstance().getApplicationSettings().getWindowWidth();*/),
-			m_windowHeight(600 /* TODO: change to Singleton<WorldSettings>::getInstance().getApplicationSettings().getWindowHeight(); */)
+			m_windowHeight(600 /* TODO: change to Singleton<WorldSettings>::getInstance().getApplicationSettings().getWindowHeight(); */),
+			m_windowCaption(L"Fractal Game Engine")
 		{
 			//empty
 		}
@@ -29,13 +33,50 @@ namespace fractal
 
 		bool Window::Init ()
 		{
-			if (!SpawnWindow ())
+			WNDCLASS wc;
+			wc.style = CS_HREDRAW | CS_VREDRAW;
+			wc.lpfnWndProc = WndProc;
+			wc.cbClsExtra = 0;
+			wc.cbWndExtra = 0;
+			wc.hInstance = m_hAppInst;
+			wc.hIcon = LoadIcon (0, IDI_APPLICATION);
+			wc.hCursor = LoadCursor (0, IDC_ARROW);
+			wc.hbrBackground = (HBRUSH)GetStockObject (NULL_BRUSH);
+			wc.lpszMenuName = 0;
+			wc.lpszClassName = m_windowClassname.c_str();
+
+			if (!RegisterClass (&wc))
+			{
+				MessageBox (0, L"RegisterClass Failed.", 0, 0);
+				return false;
+			}
+
+			// Compute window rectangle dimensions based on requested client area dimensions.
+			RECT R = { 0, 0, m_windowWidth, m_windowHeight };
+			AdjustWindowRect (&R, WS_OVERLAPPEDWINDOW, false);
+			int width = R.right - R.left;
+			int height = R.bottom - R.top;
+
+			m_hWindow = CreateWindow (m_windowClassname.c_str(), m_windowCaption.c_str (),
+				WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height, NULL, NULL, m_hAppInst, this);
+			if (!m_hWindow)
+			{
+				MessageBox (0, L"CreateWindow Failed.", 0, 0);
+				return false;
+			}
+
+			ShowWindow (m_hWindow, SW_SHOW);
+			UpdateWindow (m_hWindow);
+
+			return true;
+
+			/*if (!SpawnWindow ())
 			{
 				Shutdown ();
 				return false;
 			}
 
-			return true;
+			return true;*/
 		}
 
 		void Window::Update ()
@@ -51,11 +92,17 @@ namespace fractal
 
 			DestroyWindow ();
 
-			return false;
+			return true;
+		}
+
+		void Window::OnResize ()
+		{
+			
 		}
 
 		LRESULT CALLBACK Window::WndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
+			
 			if (uMsg == WM_CREATE)
 			{
 				// if the message is WM_CREATE, the lParam contains a pointer to a CREATESTRUCT
@@ -68,15 +115,151 @@ namespace fractal
 			{
 				//retrieve the stored "this" pointer
 				Window* window = (Window*)(GetWindowLongPtr (hWnd, GWLP_USERDATA));
-				if (window != nullptr)
+				if (window)
+				{
 					return window->HandleEvent (hWnd, uMsg, wParam, lParam);
+				}
+					
 			}
 			return DefWindowProc (hWnd, uMsg, wParam, lParam);
 		}
 
 		LRESULT Window::HandleEvent (HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		{
+			// TODO: Send MESSAGES BASED ON THE EVENTS
+			// Send messages: OnResize(), OnButtonDown, OnButtonUp, OnPaused, and so on...
+
+
 			switch (msg)
+			{
+				// WM_ACTIVATE is sent when the window is activated or deactivated.  
+				// We pause the game when the window is deactivated and unpause it 
+				// when it becomes active.  
+			case WM_ACTIVATE:
+				if (LOWORD (wparam) == WA_INACTIVE)
+				{
+					m_appPaused = true;
+					//mTimer.Stop ();
+				}
+				else
+				{
+					m_appPaused = false;
+					//mTimer.Start ();
+				}
+				return 0;
+
+				// WM_SIZE is sent when the user resizes the window.  
+			case WM_SIZE:
+			{
+				// Save the new client area dimensions.
+				m_windowWidth = LOWORD (lparam);
+				m_windowHeight = HIWORD (lparam);
+
+				Graphics* graphics = dynamic_cast<Graphics*>(SystemManager::Instance ()->GetSystem (SystemType::GRAPHICS_SYSTEM));
+				// graphics->onResize (LOWORD (lParam), HIWORD (lParam));
+				if (graphics)
+				{
+					if (wparam == SIZE_MINIMIZED)
+					{
+						m_appPaused = true;
+						m_minimized = true;
+						m_maximized = false;
+					}
+					else if (wparam == SIZE_MAXIMIZED)
+					{
+						m_appPaused = false;
+						m_minimized = false;
+						m_maximized = true;
+						graphics->OnResize ();
+					}
+					else if (wparam == SIZE_RESTORED)
+					{
+
+						// Restoring from minimized state?
+						if (m_minimized)
+						{
+							m_appPaused = false;
+							m_minimized = false;
+							graphics->OnResize ();
+						}
+
+						// Restoring from maximized state?
+						else if (m_maximized)
+						{
+							m_appPaused = false;
+							m_maximized = false;
+							graphics->OnResize ();
+						}
+						else if (m_resizing)
+						{
+							// If user is dragging the resize bars, we do not resize 
+							// the buffers here because as the user continuously 
+							// drags the resize bars, a stream of WM_SIZE messages are
+							// sent to the window, and it would be pointless (and slow)
+							// to resize for each WM_SIZE message received from dragging
+							// the resize bars.  So instead, we reset after the user is 
+							// done resizing the window and releases the resize bars, which 
+							// sends a WM_EXITSIZEMOVE message.
+						}
+						else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
+						{
+							graphics->OnResize ();
+						}
+					}
+				}
+				return 0;
+			}
+				// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
+			case WM_ENTERSIZEMOVE:
+				m_appPaused = true;
+				m_resizing = true;
+				//mTimer.Stop ();
+				return 0;
+
+				// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
+				// Here we reset everything based on the new window dimensions.
+			case WM_EXITSIZEMOVE:
+				m_appPaused = false;
+				m_resizing = false;
+				//mTimer.Start ();
+				OnResize ();
+				return 0;
+
+				// WM_DESTROY is sent when the window is being destroyed.
+			case WM_DESTROY:
+				PostQuitMessage (0);
+				return 0;
+
+				// The WM_MENUCHAR message is sent when a menu is active and the user presses 
+				// a key that does not correspond to any mnemonic or accelerator key. 
+			case WM_MENUCHAR:
+				// Don't beep when we alt-enter.
+				return MAKELRESULT (0, MNC_CLOSE);
+
+				// Catch this message so to prevent the window from becoming too small.
+			case WM_GETMINMAXINFO:
+				((MINMAXINFO*)lparam)->ptMinTrackSize.x = 200;
+				((MINMAXINFO*)lparam)->ptMinTrackSize.y = 200;
+				return 0;
+
+			/*case WM_LBUTTONDOWN:
+			case WM_MBUTTONDOWN:
+			case WM_RBUTTONDOWN:
+				//OnMouseDown (wparam, GET_X_LPARAM (lparam), GET_Y_LPARAM (lparam));
+				return 0;
+			case WM_LBUTTONUP:
+			case WM_MBUTTONUP:
+			case WM_RBUTTONUP:
+				//OnMouseUp (wparam, GET_X_LPARAM (lparam), GET_Y_LPARAM (lparam));
+				return 0;
+			case WM_MOUSEMOVE:
+				//OnMouseMove (wparam, GET_X_LPARAM (lparam), GET_Y_LPARAM (lparam));
+				return 0;*/
+			}
+
+			return DefWindowProc (hwnd, msg, wparam, lparam);
+
+			/*switch (msg)
 			{
 			case WM_ACTIVATE:
 			{
@@ -114,7 +297,7 @@ namespace fractal
 			}
 			}
 
-			return DefWindowProc (hwnd, msg, wparam, lparam);
+			return DefWindowProc (hwnd, msg, wparam, lparam);*/
 		}
 
 		/*BYTE GetWindowBitsPerPixel () const
@@ -160,6 +343,12 @@ namespace fractal
 		unsigned int Window::GetWindowHeight () const
 		{
 			return m_windowHeight;
+		}
+
+		float Window::AspectRation () const
+		{
+			// convert to float before doing the calculation
+			return static_cast<float>(m_windowWidth) / m_windowHeight;
 		}
 
 		const POINT Window::GetCenterPosition () const
@@ -262,17 +451,16 @@ namespace fractal
 			memset (&wc, NULL, sizeof (WNDCLASS));
 
 			wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-			wc.lpfnWndProc = (WNDPROC)WndProc;
+			wc.lpfnWndProc = (WNDPROC)Window::WndProc;
 			wc.cbClsExtra = 0;
 			wc.cbWndExtra = 0;
 			wc.hInstance = this->m_hInstance;
 
-			//TODO: load the cursor and application icon!
-			wc.hIcon = LoadIcon (NULL, IDI_WINLOGO);
-			wc.hCursor = LoadCursor (NULL, IDC_ARROW);
+			wc.hIcon = LoadIcon (0, IDI_APPLICATION);
+			wc.hCursor = LoadCursor (0, IDC_ARROW);
 
-			wc.hbrBackground = NULL;
-			wc.lpszMenuName = NULL;
+			wc.hbrBackground = (HBRUSH)GetStockObject (NULL_BRUSH);;
+			wc.lpszMenuName = 0;
 
 			wc.lpszClassName = this->m_windowClassname.c_str ();
 

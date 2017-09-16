@@ -9,6 +9,17 @@ namespace fractal
 {
 	namespace fcore
 	{
+		class SystemFactory
+		{
+		public:
+
+			SystemFactory () = delete;
+			SystemFactory (SystemFactory&) = delete;
+			SystemFactory (SystemFactory&&) = delete;
+
+			static class System* CreateSystem (SystemType type);
+		};
+
 		class SystemManager : public IManager<SystemManager>
 		{
 		private:
@@ -20,6 +31,7 @@ namespace fractal
 
 			bool Init () override;
 			bool Shutdown () override;
+			void Update () override;
 
 			class System* GetSystem (SystemType type);
 			std::vector<class System*> GetSystems () const;

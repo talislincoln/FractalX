@@ -29,12 +29,14 @@ namespace fractal
 			unsigned int 	m_windowWidth;
 			unsigned int	m_windowHeight;
 
-			HINSTANCE mhAppInst;
-			HWND      mhMainWnd;
-			bool      mAppPaused;
-			bool      mMinimized;
-			bool      mMaximized;
-			bool      mResizing;
+			HINSTANCE		m_hAppInst;
+			HWND			m_hMainWnd;
+			bool			m_appPaused;
+			bool			m_minimized;
+			bool			m_maximized;
+			bool			m_resizing;
+
+			FString			m_windowCaption;
 
 		public:
 			Window ();
@@ -43,6 +45,8 @@ namespace fractal
 			bool Init () override;
 			void Update () override;
 			bool Shutdown () override;
+
+			void OnResize ();
 
 			static LRESULT CALLBACK WndProc (HWND, UINT, WPARAM, LPARAM);
 
@@ -61,6 +65,8 @@ namespace fractal
 
 			unsigned int GetWindowWidth () const;
 			unsigned int GetWindowHeight () const;
+
+			float AspectRation () const;
 
 		private:
 			const POINT GetCenterPosition () const;

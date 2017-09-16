@@ -3,58 +3,81 @@
 #include <core\systems\System.h>
 #include <core\systems\Window.h>
 #include <core\systems\Clock.h>
+#include <core\systems\Graphics.h>
+#include <core\managers\LogManager.h>
 #include <algorithm>
 
 namespace fractal
 {
 	namespace fcore
 	{
+		System* SystemFactory::CreateSystem (SystemType type)
+		{
+			switch (type)
+			{
+			case SystemType::WINDOW_SYSTEM: return new Window ();
+			case SystemType::TIMER_SYSTEM: return new Clock ();
+			case SystemType::GRAPHICS_SYSTEM: return new Graphics ();
+			default: return nullptr;
+			}
+		}
+
 		bool SystemManager::Init ()
 		{
+			for (unsigned __int8 i = 0; (SystemType)i < SystemType::NUM_OF_SYSTEMS; i++)
+			{
+				System* s = SystemFactory::CreateSystem ((SystemType)i);
+
+				if (s && s->Init ())
+				{
+					this->m_systems.push_back (s);
+				}
+				else
+				{
+					LogManager::Instance ()->LogError (L"Failed to init system");
+					return false;
+				}
+			}
+
 			return true;
 		}
 
 		bool SystemManager::Shutdown ()
 		{
+			for (System* s : m_systems)
+			{
+				if (!s->Shutdown ())
+					return false;
+
+				SafeDelete (s);
+			}
+
 			return true;
+		}
+
+		void SystemManager::Update ()
+		{
+			for (System* s : m_systems)
+			{
+				s->Update ();
+			}
 		}
 
 		System* SystemManager::GetSystem (SystemType type)
 		{
-			//look for a position in the vector that satisfies the lambda function
-			std::vector<System*>::const_iterator it = std::find_if (this->m_systems.begin (), this->m_systems.end (),
-				[type](System* s) -> bool
-				{
-					return s->GetType () == type;
-				});
-
-			//if the system was found, then just return the system
-			if (it != this->m_systems.end ())
-				return (*it);
-
-			//if there isn't a system of that type, then create one
-			// TODO: create a factory for the systems
-			//System* system = this->m_factory->createSystem (type);
-			System* system;
-			switch (type)
+			if (m_systems.size ())
 			{
-			case SystemType::WINDOW_SYSTEM:
-				system = new Window ();
-				break;
-			case SystemType::TIMER_SYSTEM:
-				system = new Clock ();
-				break;
-			default:
-				break;
+				//look for a position in the vector that satisfies the lambda function
+				std::vector<System*>::const_iterator it = std::find_if (this->m_systems.begin (), this->m_systems.end (),
+					[type](System* s) -> bool
+					{
+						return s->GetType () == type;
+					});
+
+				return *it;
 			}
-
-			//cast the new created system to check if it is a drawable system
-			//if (dynamic_cast<IDrawable*>(system) != nullptr)
-			//	this->m_drawableSystems.push_back (dynamic_cast<IDrawable*>(system));
-
-			this->m_systems.push_back (system);
-
-			return system;
+			
+			return nullptr;
 		}
 
 		std::vector<System*> SystemManager::GetSystems () const
