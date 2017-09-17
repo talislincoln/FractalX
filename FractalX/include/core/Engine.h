@@ -29,6 +29,7 @@ namespace fractal
 
 			void Update();
 			void Draw();
+			void CalculateFrameStats ();
 
 			bool ShutDown();
 		};

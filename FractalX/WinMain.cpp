@@ -113,7 +113,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	// Enable run-time memory leak check for debug build
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	_CrtSetBreakAlloc(0); // the 0 should be changed to the id of the memory leak that will be shown in the debug log
+	//_CrtSetBreakAlloc(0); // the 0 should be changed to the id of the memory leak that will be shown in the debug log
 #endif
 
 	fractal::fcore::Engine *e = new fractal::fcore::Engine ();

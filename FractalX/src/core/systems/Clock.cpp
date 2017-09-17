@@ -9,12 +9,13 @@ namespace fractal
 		Clock::Clock () : System (SystemType::TIMER_SYSTEM),
 			m_baseTime (0),
 			m_pausedTime(0),
+			m_prevTime(0),
 			m_secondsPerCount (0),
 			m_deltaTime(-1.0),
 			m_stopped(false)
 		{
 			__int64 countsPerSec;
-			QueryPerformanceCounter ((LARGE_INTEGER*)&countsPerSec);
+			QueryPerformanceFrequency ((LARGE_INTEGER*)&countsPerSec);
 			m_secondsPerCount = 1.0 / (double)countsPerSec;
 		}
 
@@ -26,7 +27,7 @@ namespace fractal
 		bool Clock::Init ()
 		{
 			LogManager::Instance ()->LogInfo (L"Initializing Clock sytem.");
-			Start ();
+			Reset ();
 
 			return true;
 		}

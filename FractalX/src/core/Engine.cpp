@@ -7,6 +7,8 @@
 #include <core\managers\LogManager.h>
 #include <core\systems\Graphics.h>
 
+#include <sstream>
+
 namespace fractal
 {
 	namespace fcore
@@ -47,6 +49,7 @@ namespace fractal
 				{
 					this->Update ();
 					this->Draw ();
+					CalculateFrameStats ();
 				}
 			}
 
@@ -123,6 +126,47 @@ namespace fractal
 		void Engine::Draw()
 		{
 
+		}
+
+		void Engine::CalculateFrameStats ()
+		{
+			// Code computes the average frames per second, and also the 
+			// average time it takes to render one frame.  These stats 
+			// are appended to the window caption bar.
+
+			static int frameCnt = 0;
+			static float timeElapsed = 0.0f;
+
+			Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
+			Window* w = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
+
+			if (c && w)
+			{
+				frameCnt++;
+
+				//LogManager::Instance ()->LogInfo (L"T " + std::to_wstring (c->TotalTime ()));
+
+				// Compute averages over one second period.
+				if ((c->TotalTime () - timeElapsed) >= 1.0f)
+				{
+					float fps = (float)frameCnt; // fps = frameCnt / 1
+					float mspf = 1000.0f / fps;
+
+					std::wostringstream outs;
+					outs.precision (6);
+					outs << L"Fractal" << L"    "
+						<< L"FPS: " << fps << L"    "
+						<< L"Frame Time: " << mspf << L" (ms)";
+
+
+					LogManager::Instance ()->LogInfo (outs.str());
+					//SetWindowText (w->GetWindowHandle (), (text).c_str());
+
+					// Reset for next average.
+					frameCnt = 0;
+					timeElapsed += 1.0f;
+				}
+			}
 		}
 
 		bool Engine::ShutDown()
