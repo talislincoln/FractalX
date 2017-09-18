@@ -125,7 +125,7 @@ namespace fractal
 
 		void Engine::Draw()
 		{
-
+			SystemManager::Instance ()->Draw ();
 		}
 
 		void Engine::CalculateFrameStats ()

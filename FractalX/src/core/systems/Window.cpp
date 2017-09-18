@@ -2,6 +2,7 @@
 #include <core/systems/Window.h>
 #include <core\managers\LogManager.h>
 #include <core\systems\Graphics.h>
+#include <core\systems\Clock.h>
 #include <core\managers\SystemManager.h>
 
 namespace fractal
@@ -136,18 +137,23 @@ namespace fractal
 				// We pause the game when the window is deactivated and unpause it 
 				// when it becomes active.  
 			case WM_ACTIVATE:
-				if (LOWORD (wparam) == WA_INACTIVE)
+			{
+				Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
+				if (c)
 				{
-					m_appPaused = true;
-					//mTimer.Stop ();
-				}
-				else
-				{
-					m_appPaused = false;
-					//mTimer.Start ();
+					if (LOWORD (wparam) == WA_INACTIVE)
+					{
+						m_appPaused = true;
+						c->Stop ();
+					}
+					else
+					{
+						m_appPaused = false;
+						c->Start ();
+					}
 				}
 				return 0;
-
+			}
 				// WM_SIZE is sent when the user resizes the window.  
 			case WM_SIZE:
 			{
@@ -209,40 +215,43 @@ namespace fractal
 				}
 				return 0;
 			}
-				// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
+
+			// WM_EXITSIZEMOVE is sent when the user grabs the resize bars.
 			case WM_ENTERSIZEMOVE:
+			{
 				m_appPaused = true;
 				m_resizing = true;
-				//mTimer.Stop ();
+				if(Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM)))
+					c->Stop ();
 				return 0;
-
-				// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
-				// Here we reset everything based on the new window dimensions.
+			}
+			// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
+			// Here we reset everything based on the new window dimensions.
 			case WM_EXITSIZEMOVE:
+			{
 				m_appPaused = false;
 				m_resizing = false;
-				//mTimer.Start ();
+				if(Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM)))
+					c->Start ();
 				OnResize ();
 				return 0;
-
-				// WM_DESTROY is sent when the window is being destroyed.
+			}
+			// WM_DESTROY is sent when the window is being destroyed.
 			case WM_DESTROY:
 				PostQuitMessage (0);
 				return 0;
-
-				// The WM_MENUCHAR message is sent when a menu is active and the user presses 
-				// a key that does not correspond to any mnemonic or accelerator key. 
+			
+			// The WM_MENUCHAR message is sent when a menu is active and the user presses 
+			// a key that does not correspond to any mnemonic or accelerator key. 
 			case WM_MENUCHAR:
 				// Don't beep when we alt-enter.
 				return MAKELRESULT (0, MNC_CLOSE);
-
 				// Catch this message so to prevent the window from becoming too small.
 			case WM_GETMINMAXINFO:
 				((MINMAXINFO*)lparam)->ptMinTrackSize.x = 200;
 				((MINMAXINFO*)lparam)->ptMinTrackSize.y = 200;
 				return 0;
-
-			/*case WM_LBUTTONDOWN:
+			case WM_LBUTTONDOWN:
 			case WM_MBUTTONDOWN:
 			case WM_RBUTTONDOWN:
 				//OnMouseDown (wparam, GET_X_LPARAM (lparam), GET_Y_LPARAM (lparam));
@@ -254,56 +263,11 @@ namespace fractal
 				return 0;
 			case WM_MOUSEMOVE:
 				//OnMouseMove (wparam, GET_X_LPARAM (lparam), GET_Y_LPARAM (lparam));
-				return 0;*/
+				return 0;
 			}
 
 			return DefWindowProc (hwnd, msg, wparam, lparam);
-
-			/*switch (msg)
-			{
-			case WM_ACTIVATE:
-			{
-				if (!HIWORD (wparam))
-					this->SetActive (true);
-				else
-					this->SetActive (false);
-
-				return 0;
-			}
-
-			case WM_SYSCOMMAND:
-			{
-				switch (wparam)
-				{
-				case SC_SCREENSAVE:
-				case SC_MONITORPOWER:
-					return 0;
-				}
-				break;
-			}
-
-			case WM_SIZE:
-			{
-				// TODO: FIX THE RESIZE IN THE GRAPHICS
-				// Graphics* graphics = dynamic_cast<Graphics*>(Singleton<SystemManager>::getInstance ().getSystem (SystemType::GRAPHICS_SYSTEM));
-				// graphics->onResize (LOWORD (lParam), HIWORD (lParam));
-				return 0;
-			}
-
-			case WM_CLOSE:
-			{
-				PostQuitMessage (0);
-				return 0;
-			}
-			}
-
-			return DefWindowProc (hwnd, msg, wparam, lparam);*/
 		}
-
-		/*BYTE GetWindowBitsPerPixel () const
-		{
-
-		}*/
 
 		const FString Window::GetWindowTitle () const
 		{

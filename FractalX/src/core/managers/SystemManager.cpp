@@ -31,6 +31,11 @@ namespace fractal
 				if (s && s->Init ())
 				{
 					this->m_systems.push_back (s);
+
+					// check if the system is drawable, then save in a different array
+					IDrawable* drawable = dynamic_cast<IDrawable*>(s);
+					if (drawable)
+						m_drawableSystems.push_back (drawable);
 				}
 				else
 				{
@@ -40,6 +45,15 @@ namespace fractal
 			}
 
 			return true;
+		}
+
+		void SystemManager::Draw () const
+		{
+			for (IDrawable* d : m_drawableSystems)
+			{
+				if(d->GetCanDraw())
+					d->Draw ();
+			}
 		}
 
 		bool SystemManager::Shutdown ()
@@ -83,6 +97,11 @@ namespace fractal
 		std::vector<System*> SystemManager::GetSystems () const
 		{
 			return m_systems;
+		}
+
+		std::vector<IDrawable*> SystemManager::GetDrawableSystems () const
+		{
+			return m_drawableSystems;
 		}
 	}
 }

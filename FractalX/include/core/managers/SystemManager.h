@@ -3,6 +3,7 @@
 #define _SYSTEMMANAGER_H
 
 #include "IManager.h"
+#include <core\interfaces\IDrawable.h>
 #include <vector>
 
 namespace fractal
@@ -20,10 +21,11 @@ namespace fractal
 			static class System* CreateSystem (SystemType type);
 		};
 
-		class SystemManager : public IManager<SystemManager>
+		class SystemManager : public IManager<SystemManager>, public IDrawable
 		{
 		private:
 			std::vector<class System*> m_systems;
+			std::vector<class IDrawable*> m_drawableSystems;
 
 		public:
 			SystemManager () : IManager<SystemManager> () {}
@@ -32,9 +34,11 @@ namespace fractal
 			bool Init () override;
 			bool Shutdown () override;
 			void Update () override;
+			void Draw () const override;
 
 			class System* GetSystem (SystemType type);
 			std::vector<class System*> GetSystems () const;
+			std::vector<class IDrawable*> GetDrawableSystems () const;
 		};
 	}
 }

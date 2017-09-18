@@ -2,12 +2,13 @@
 #ifndef _GRAPHICS_H
 #define _GRAPHICS_H
 #include "System.h"
+#include <core\interfaces\IDrawable.h>
 
 namespace fractal
 {
 	namespace fcore
 	{
-		class Graphics : public System
+		class Graphics : public System, public IDrawable
 		{
 		private:
 			ID3D11Device*			m_d3dDevice;
@@ -30,6 +31,7 @@ namespace fractal
 
 			bool Init () override;
 			void Update () override;
+			void Draw () const override;
 			bool Shutdown () override;
 
 			void OnResize ();

@@ -131,13 +131,18 @@ namespace fractal
 
 		void Graphics::Update ()
 		{
+			
+		}
+
+		void Graphics::Draw () const
+		{
 			assert (m_d3dImmediateContext);
 			assert (m_swapChain);
 
 			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
 			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-			HR(m_swapChain->Present (0, 0));
+			HR (m_swapChain->Present (0, 0));
 		}
 
 		bool Graphics::Shutdown ()
