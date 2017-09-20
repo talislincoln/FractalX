@@ -12,8 +12,8 @@ namespace fractal
 			AbstractGame();
 			virtual ~AbstractGame();
 
-			virtual bool initialize() = 0;
-			virtual bool shutdown() = 0;
+			virtual bool Init() = 0;
+			virtual bool Shutdown() = 0;
 		};
 	}
 }

@@ -26,13 +26,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -155,6 +155,7 @@
     <ClInclude Include="include\core\managers\SceneManager.h" />
     <ClInclude Include="include\core\managers\SystemManager.h" />
     <ClInclude Include="include\core\systems\Graphics.h" />
+    <ClInclude Include="include\core\systems\Logic.h" />
     <ClInclude Include="include\core\systems\Singleton.h" />
     <ClInclude Include="include\core\systems\System.h" />
     <ClInclude Include="include\core\systems\Clock.h" />
@@ -172,6 +173,7 @@
     <ClCompile Include="src\core\managers\SceneManager.cpp" />
     <ClCompile Include="src\core\systems\Graphics.cpp" />
     <ClCompile Include="src\core\systems\Clock.cpp" />
+    <ClCompile Include="src\core\systems\Logic.cpp" />
     <ClCompile Include="src\core\systems\Window.cpp" />
     <ClCompile Include="src\core\AbstractGame.cpp" />
     <ClCompile Include="src\core\managers\IManager.cpp" />

@@ -5,6 +5,7 @@
 #include <core\systems\Clock.h>
 #include <core\systems\Graphics.h>
 #include <core\managers\LogManager.h>
+#include <core\systems\Logic.h>
 #include <algorithm>
 
 namespace fractal
@@ -18,13 +19,14 @@ namespace fractal
 			case SystemType::WINDOW_SYSTEM: return new Window ();
 			case SystemType::TIMER_SYSTEM: return new Clock ();
 			case SystemType::GRAPHICS_SYSTEM: return new Graphics ();
+			case SystemType::LOGIC_SYSTEM: return new Logic ();
 			default: return nullptr;
 			}
 		}
 
 		bool SystemManager::Init ()
 		{
-			for (unsigned __int8 i = 0; (SystemType)i < SystemType::NUM_OF_SYSTEMS; i++)
+			for (unsigned __int8 i = 0; (SystemType)i < SystemType::TOTAL_SYSTEMS; i++)
 			{
 				System* s = SystemFactory::CreateSystem ((SystemType)i);
 

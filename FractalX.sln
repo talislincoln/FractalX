@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FractalX", "FractalX\FractalX.vcxproj", "{0CB09A65-B818-4171-A74B-26E40D1DA42A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryManager", "..\MemoryManager\MemoryManager.vcxproj", "{2A7231E9-076E-4CD4-BEAF-0A0DADBE5459}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EngineTest", "EngineTest\EngineTest.vcxproj", "{74FDF733-253C-4630-BDF5-63B8839C1A6B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0CB09A65-B818-4171-A74B-26E40D1DA42A} = {0CB09A65-B818-4171-A74B-26E40D1DA42A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,5 +47,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {15092720-16F9-4232-B8CA-D182FB064B73}
 	EndGlobalSection
 EndGlobal
