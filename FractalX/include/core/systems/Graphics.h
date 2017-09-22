@@ -37,6 +37,19 @@ namespace fractal
 			void OnResize ();
 
 		private:
+
+			ID3D11Buffer* mBoxVB;
+			ID3D11Buffer* mBoxIB;
+
+			ID3D11InputLayout* mInputLayout;
+
+			DirectX::XMFLOAT4X4 mWorld;
+			DirectX::XMFLOAT4X4 mView;
+			DirectX::XMFLOAT4X4 mProj;
+
+			float mTheta;
+			float mPhi;
+			float mRadius;
 		};
 	}
 }

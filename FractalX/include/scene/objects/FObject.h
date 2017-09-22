@@ -25,6 +25,8 @@ namespace fractal
 			virtual ~FObject();
 
 			virtual bool Init() = 0;
+			virtual void Update () = 0;
+			virtual void Draw () const = 0;
 			virtual bool Shutdown() = 0;
 
 			void SetInitialized(bool newState);

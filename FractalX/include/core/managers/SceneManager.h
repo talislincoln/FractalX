@@ -4,13 +4,23 @@
 
 #include "IManager.h"
 #include <core\interfaces\IDrawable.h>
+#include <vector>
 
 namespace fractal
 {
+	// foward declaration
+	namespace fscene
+	{
+		class Scene;
+	}
+
 	namespace fcore
 	{
 		class SceneManager : public IManager<SceneManager>, public IDrawable
 		{
+		private:
+			std::vector<fscene::Scene*> m_scenes;
+			fscene::Scene* m_activeScene;
 		public:
 			SceneManager() : IManager<SceneManager>() {}
 			~SceneManager () {};
@@ -20,9 +30,9 @@ namespace fractal
 			void Update () override;
 			void Draw () const override;
 
-			void AddScene (class Scene* scene);
+			void AddScene (fscene::Scene* scene);
 			void SetActiveScene (const FString& name);
-			class Scene* GetActiveScene () const;;
+			class fscene::Scene* GetActiveScene () const;
 		};
 	}
 }

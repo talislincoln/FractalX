@@ -10,10 +10,13 @@ namespace fractal
 	{
 		class GameObject : public FObject
 		{
+		public:
 			GameObject(FString name);
 			~GameObject();
 
 			virtual bool Init() override;
+			virtual void Update () override;
+			virtual void Draw () const override;
 			virtual bool Shutdown() override;
 		};
 	}
