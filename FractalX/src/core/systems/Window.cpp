@@ -133,6 +133,12 @@ namespace fractal
 
 			switch (msg)
 			{
+			case WM_PAINT:
+			{
+				PAINTSTRUCT paintStruct;
+				HDC hDC = BeginPaint (hwnd, &paintStruct);
+				EndPaint (hwnd, &paintStruct);
+			}
 				// WM_ACTIVATE is sent when the window is activated or deactivated.  
 				// We pause the game when the window is deactivated and unpause it 
 				// when it becomes active.  

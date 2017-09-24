@@ -17,7 +17,8 @@ namespace fractal
 			m_swapChain (0),
 			m_depthStencilBuffer (0),
 			m_renderTargetView (0),
-			m_depthStencilView (0)
+			m_depthStencilView (0),
+			m_d3dRasterizerState (nullptr)
 		{
 			ZeroMemory (&m_screenViewport, sizeof (D3D11_VIEWPORT));
 		}
@@ -72,6 +73,8 @@ namespace fractal
 			// Fill out a DXGI_SWAP_CHAIN_DESC to describe our swap chain.
 
 			DXGI_SWAP_CHAIN_DESC sd;
+			ZeroMemory (&sd, sizeof (DXGI_SWAP_CHAIN_DESC));
+
 			sd.BufferDesc.Width = m_window->GetWindowWidth();
 			sd.BufferDesc.Height = m_window->GetWindowHeight ();
 			sd.BufferDesc.RefreshRate.Numerator = 60;
@@ -123,7 +126,8 @@ namespace fractal
 			// The remaining steps that need to be carried out for d3d creation
 			// also need to be executed every time the window is resized.  So
 			// just call the OnResize method here to avoid code duplication.
-
+			if (!LoadContent ())
+				return false;
 			OnResize ();
 
 			return true;
@@ -131,7 +135,25 @@ namespace fractal
 
 		void Graphics::Update ()
 		{
-			
+			using namespace DirectX;
+
+			DirectX::XMVECTOR eyePosition = XMVectorSet (0, 0, -10, 1);
+			DirectX::XMVECTOR focusPoint = XMVectorSet (0, 0, 0, 1);
+			DirectX::XMVECTOR upDirection = XMVectorSet (0, 1, 0, 0);
+			g_ViewMatrix = XMMatrixLookAtLH (eyePosition, focusPoint, upDirection);
+			m_d3dImmediateContext->UpdateSubresource (g_d3dConstantBuffers[CB_Frame], 0, nullptr, &g_ViewMatrix, 0, 0);
+
+
+			static float angle = 0.0f;
+			angle += 90.0f * 0.001;
+			XMVECTOR rotationAxis = XMVectorSet (0, 1, 1, 0);
+
+			g_WorldMatrix = XMMatrixRotationAxis (rotationAxis, XMConvertToRadians (0));
+			m_d3dImmediateContext->UpdateSubresource (g_d3dConstantBuffers[CB_Object], 0, nullptr, &g_WorldMatrix, 0, 0);
+
+			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
+			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
 		}
 
 		void Graphics::Draw () const
@@ -139,8 +161,27 @@ namespace fractal
 			assert (m_d3dImmediateContext);
 			assert (m_swapChain);
 
-			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
-			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+			
+			const UINT vertexStride = sizeof (VertexPosColor);
+			const UINT offset = 0;
+
+			m_d3dImmediateContext->IASetVertexBuffers (0, 1, &g_d3dVertexBuffer, &vertexStride, &offset);
+			m_d3dImmediateContext->IASetInputLayout (g_d3dInputLayout);
+			m_d3dImmediateContext->IASetIndexBuffer (g_d3dIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+			m_d3dImmediateContext->IASetPrimitiveTopology (D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+			m_d3dImmediateContext->VSSetShader (g_d3dVertexShader, nullptr, 0);
+			m_d3dImmediateContext->VSSetConstantBuffers (0, 3, g_d3dConstantBuffers);
+
+			m_d3dImmediateContext->RSSetState (m_d3dRasterizerState);
+			m_d3dImmediateContext->RSSetViewports (1, &m_screenViewport);
+
+			m_d3dImmediateContext->PSSetShader (g_d3dPixelShader, nullptr, 0);
+
+			m_d3dImmediateContext->OMSetRenderTargets (1, &m_renderTargetView, m_depthStencilView);
+			m_d3dImmediateContext->OMSetDepthStencilState (g_d3dDepthStencilState, 1);
+			
+			m_d3dImmediateContext->DrawIndexed (_countof (g_Indicies), 0, 0);
 
 			HR (m_swapChain->Present (0, 0));
 		}
@@ -216,6 +257,15 @@ namespace fractal
 				HR (m_d3dDevice->CreateTexture2D (&depthStencilDesc, 0, &m_depthStencilBuffer));
 				HR (m_d3dDevice->CreateDepthStencilView (m_depthStencilBuffer, 0, &m_depthStencilView));
 
+				D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
+				ZeroMemory (&depthStencilStateDesc, sizeof (D3D11_DEPTH_STENCIL_DESC));
+
+				depthStencilStateDesc.DepthEnable = TRUE;
+				depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+				depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS;
+				depthStencilStateDesc.StencilEnable = FALSE;
+				m_d3dDevice->CreateDepthStencilState (&depthStencilStateDesc, &g_d3dDepthStencilState);
+
 				// Bind the render target view and depth/stencil view to the pipeline.
 				m_d3dImmediateContext->OMSetRenderTargets (1, &m_renderTargetView, m_depthStencilView);
 
@@ -226,6 +276,28 @@ namespace fractal
 				m_screenViewport.Height = static_cast<float>(window->GetWindowHeight ());
 				m_screenViewport.MinDepth = 0.0f;
 				m_screenViewport.MaxDepth = 1.0f;
+
+				// Setup rasterizer state.
+				D3D11_RASTERIZER_DESC rasterizerDesc;
+				ZeroMemory (&rasterizerDesc, sizeof (D3D11_RASTERIZER_DESC));
+
+				rasterizerDesc.AntialiasedLineEnable = FALSE;
+				rasterizerDesc.CullMode = D3D11_CULL_BACK;
+				rasterizerDesc.DepthBias = 0;
+				rasterizerDesc.DepthBiasClamp = 0.0f;
+				rasterizerDesc.DepthClipEnable = TRUE;
+				rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+				rasterizerDesc.FrontCounterClockwise = FALSE;
+				rasterizerDesc.MultisampleEnable = FALSE;
+				rasterizerDesc.ScissorEnable = FALSE;
+				rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+
+				// Create the rasterizer state object.
+				HRESULT hr = m_d3dDevice->CreateRasterizerState (&rasterizerDesc, &m_d3dRasterizerState);
+				if (FAILED (hr))
+				{
+					//return -1;
+				}
 
 				m_d3dImmediateContext->RSSetViewports (1, &m_screenViewport);
 			}
