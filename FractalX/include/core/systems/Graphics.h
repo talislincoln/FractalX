@@ -64,6 +64,7 @@ namespace fractal
 			{
 				DirectX::XMFLOAT3 Position;
 				DirectX::XMFLOAT3 Color;
+				
 			};
 
 
