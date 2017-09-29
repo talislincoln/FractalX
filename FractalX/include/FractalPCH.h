@@ -113,6 +113,13 @@ namespace fractal
 		//RESOURCE_SYSTEM,
 		TOTAL_SYSTEMS
 	};
+
+	enum class ResourceType : unsigned __int8
+	{
+		RESOURCE_MESH,
+		RESOURCE_TEXTURE,
+		RESOURCE_SHADER
+	};
 }
 
 

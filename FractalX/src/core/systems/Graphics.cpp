@@ -145,7 +145,7 @@ namespace fractal
 
 
 			static float angle = 0.0f;
-			angle += 90.0f * 0.001;
+			angle += 90.0f * 0.001f;
 			XMVECTOR rotationAxis = XMVectorSet (0, 1, 1, 0);
 
 			g_WorldMatrix = XMMatrixRotationAxis (rotationAxis, XMConvertToRadians (0));

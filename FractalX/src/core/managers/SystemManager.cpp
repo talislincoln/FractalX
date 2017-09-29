@@ -8,6 +8,8 @@
 #include <core\systems\Logic.h>
 #include <algorithm>
 
+// TODO: look into here for implementation in open and directx http://gameprogrammingpatterns.com/singleton.html
+
 namespace fractal
 {
 	namespace fcore

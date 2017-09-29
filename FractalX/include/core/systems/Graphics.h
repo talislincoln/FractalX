@@ -4,6 +4,8 @@
 #include "System.h"
 #include <core\interfaces\IDrawable.h>
 #include <core\systems\Window.h>
+
+#include <vector>
 namespace fractal
 {
 	namespace fcore
@@ -76,6 +78,17 @@ namespace fractal
 				0, 1, 2
 			};
 
+			struct mesh
+			{
+				std::vector<DirectX::XMFLOAT3> pos;
+				std::vector<DirectX::XMFLOAT3> cols;
+
+				//std::vector<WORD> indices;
+
+				mesh () {}
+				mesh (const std::vector<WORD>& idx, const std::vector<DirectX::XMFLOAT3>& positions, const std::vector<DirectX::XMFLOAT3>& colours) : /*indices(idx), */pos (positions), cols (colours) {}
+			};
+			
 			template< class ShaderClass >
 			ShaderClass* LoadShader (const std::wstring& fileName, const std::string& entryPoint, const std::string& profile) { 
 				
@@ -122,19 +135,50 @@ namespace fractal
 			{
 				assert (m_d3dDevice);
 
+				mesh a;
+				a.pos.emplace_back (-1.0f, -1.0f, 0.0f);
+				a.pos.emplace_back (0.0f, 1.0f, 0.0f);
+				a.pos.emplace_back (1.0f, -1.0f, 0.0f);
+				a.pos.emplace_back (0.0f, -1.0f, 0.0f);
+
+				a.cols.emplace_back (0.0f, 1.0f, 1.0f);
+				a.cols.emplace_back (1.0f, 1.0f, 1.0f);
+				a.cols.emplace_back (1.0f, 1.0f, 0.0f);
+				a.cols.emplace_back (1.0f, 1.0f, 1.0f);
+
+				std::vector<WORD> indices;
+				indices.push_back (0);
+				indices.push_back (1);
+				indices.push_back (2);
+				indices.push_back (3);
+
+
+				std::vector<void*> test;
+				
+				for (int i = 0; i < indices.size (); ++i)
+				{
+					test.push_back (&a.pos[i]);
+				}
+
 				// Create an initialize the vertex buffer.
 				D3D11_BUFFER_DESC vertexBufferDesc;
 				ZeroMemory (&vertexBufferDesc, sizeof (D3D11_BUFFER_DESC));
 
 				vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-				vertexBufferDesc.ByteWidth = sizeof (VertexPosColor) * _countof (g_Vertices);
+				//vertexBufferDesc.ByteWidth = sizeof (VertexPosColor) * _countof (g_Vertices);
+				vertexBufferDesc.ByteWidth = sizeof (a.pos.front()) * a.pos.size() + sizeof(a.cols.front()) * a.cols.size();
 				vertexBufferDesc.CPUAccessFlags = 0;
 				vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
 				D3D11_SUBRESOURCE_DATA resourceData;
 				ZeroMemory (&resourceData, sizeof (D3D11_SUBRESOURCE_DATA));
+				
 
 				resourceData.pSysMem = g_Vertices;
+				//resourceData.pSysMem = &a.pos[0];
+
+
+
 
 				HRESULT hr = m_d3dDevice->CreateBuffer (&vertexBufferDesc, &resourceData, &g_d3dVertexBuffer);
 				if (FAILED (hr))
@@ -147,10 +191,10 @@ namespace fractal
 				ZeroMemory (&indexBufferDesc, sizeof (D3D11_BUFFER_DESC));
 
 				indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-				indexBufferDesc.ByteWidth = sizeof (WORD) * _countof (g_Indicies);
+				indexBufferDesc.ByteWidth = sizeof (indices.front()) * indices.size();
 				indexBufferDesc.CPUAccessFlags = 0;
 				indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-				resourceData.pSysMem = g_Indicies;
+				resourceData.pSysMem = indices.data();
 
 				hr = m_d3dDevice->CreateBuffer (&indexBufferDesc, &resourceData, &g_d3dIndexBuffer);
 				if (FAILED (hr))
@@ -210,8 +254,8 @@ namespace fractal
 				// Create the input layout for the vertex shader.
 				D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
 				{
-					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof (VertexPosColor,Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof (VertexPosColor,Color), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(a.pos.front()) * a.pos.size(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 				};
 
 				hr = m_d3dDevice->CreateInputLayout (vertexLayoutDesc, _countof (vertexLayoutDesc), vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), &g_d3dInputLayout);
@@ -401,3 +445,40 @@ namespace fractal
 	}
 }
 #endif // !_GRAPHICS_H
+
+
+/*
+
+template <typename... Ttypes>
+struct MetaVertex
+{
+fmath::FTuple<Ttypes...> elements;
+
+MetaVertex (Ttypes... elms)
+{
+elements = fmath::makeVertex (elms...);
+}
+};
+
+MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> meta2f[3]
+{
+{ MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f)) },
+{ MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (0.0f,  1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f)) },
+{ MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (1.0f,  -1.0f, 0.0f),  DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f))}
+};
+
+MetaVertex<DirectX::XMFLOAT3> meta1f[3]
+{
+{ MetaVertex<DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f)) },
+{ MetaVertex<DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (0.0f,  1.0f, 0.0f)) },
+{ MetaVertex<DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (1.0f,  -1.0f, 0.0f)) }
+};
+
+auto tt = fmath::makeTuple (DirectX::XMFLOAT3 (1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
+tt.TupleType_t b;
+
+//metaVertices[0] = fmath::makeVertex (DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f));
+//metaVertices[1] = fmath::makeVertex (DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f));
+//metaVertices[2] = fmath::makeVertex (DirectX::XMFLOAT3 (1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
+
+*/
