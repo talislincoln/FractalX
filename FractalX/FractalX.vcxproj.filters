@@ -66,6 +66,15 @@
     <ClInclude Include="include\scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\core\managers\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\resources\Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\resources\MeshDataResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp">
@@ -117,6 +126,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\scene\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\managers\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\resources\Resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\resources\MeshDataResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

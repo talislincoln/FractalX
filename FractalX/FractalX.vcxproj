@@ -155,8 +155,11 @@
     <ClInclude Include="include\core\interfaces\IDrawable.h" />
     <ClInclude Include="include\core\managers\IManager.h" />
     <ClInclude Include="include\core\managers\LogManager.h" />
+    <ClInclude Include="include\core\managers\ResourceManager.h" />
     <ClInclude Include="include\core\managers\SceneManager.h" />
     <ClInclude Include="include\core\managers\SystemManager.h" />
+    <ClInclude Include="include\core\resources\MeshDataResource.h" />
+    <ClInclude Include="include\core\resources\Resource.h" />
     <ClInclude Include="include\core\systems\Graphics.h" />
     <ClInclude Include="include\core\systems\Logic.h" />
     <ClInclude Include="include\core\systems\Singleton.h" />
@@ -172,7 +175,10 @@
   <ItemGroup>
     <ClCompile Include="src\core\interfaces\IDrawable.cpp" />
     <ClCompile Include="src\core\managers\LogManager.cpp" />
+    <ClCompile Include="src\core\managers\ResourceManager.cpp" />
     <ClCompile Include="src\core\managers\SceneManager.cpp" />
+    <ClCompile Include="src\core\resources\MeshDataResource.cpp" />
+    <ClCompile Include="src\core\resources\Resource.cpp" />
     <ClCompile Include="src\core\systems\Graphics.cpp" />
     <ClCompile Include="src\core\systems\Clock.cpp" />
     <ClCompile Include="src\core\systems\Logic.cpp" />
