@@ -70,14 +70,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>$(OutDir)int\</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(OutDir)$(ProjectName)\int\</IntDir>
+    <TargetName>$(ProjectName)_d</TargetName>
     <IncludePath>$(SolutionDir)$(ProjectName)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>bin\</OutDir>
-    <IntDir>$(OutDir)int\</IntDir>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(OutDir)$(ProjectName)\int\</IntDir>
     <IncludePath>$(SolutionDir)$(ProjectName)\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,6 +104,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
+    <FxCompile>
+      <ObjectFileOutput>$(OutDir)%(Filename)_d.cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -162,7 +165,6 @@
     <ClInclude Include="include\core\systems\Window.h" />
     <ClInclude Include="include\FractalPCH.h" />
     <ClInclude Include="include\core\Engine.h" />
-    <ClInclude Include="include\framework\DXApp.h" />
     <ClInclude Include="include\scene\objects\FObject.h" />
     <ClInclude Include="include\scene\objects\GameObject.h" />
     <ClInclude Include="include\scene\Scene.h" />
@@ -194,7 +196,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FractalPCH.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\framework\DXApp.cpp" />
     <ClCompile Include="src\scene\objects\FObject.cpp" />
     <ClCompile Include="src\scene\objects\GameObject.cpp" />
     <ClCompile Include="src\scene\Scene.cpp" />

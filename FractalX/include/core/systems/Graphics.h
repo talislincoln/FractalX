@@ -4,6 +4,7 @@
 #include "System.h"
 #include <core\interfaces\IDrawable.h>
 #include <core\systems\Window.h>
+
 namespace fractal
 {
 	namespace fcore
@@ -64,6 +65,8 @@ namespace fractal
 				DirectX::XMFLOAT3 Color;
 			};
 
+
+			// look for flexible vertex format (google)
 			VertexPosColor g_Vertices[3] =
 			{
 				{ DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f) }, // 0
@@ -184,8 +187,8 @@ namespace fractal
 				}
 
 				// Load the shaders
-				//g_d3dVertexShader = LoadShader<ID3D11VertexShader>( L"../data/shaders/SimpleVertexShader.hlsl", "SimpleVertexShader", "latest" );
-				//g_d3dPixelShader = LoadShader<ID3D11PixelShader>( L"../data/shaders/SimplePixelShader.hlsl", "SimplePixelShader", "latest" );
+				//g_d3dVertexShader = LoadShader<ID3D11VertexShader>( L"SimpleVertexShader.hlsl", "SimpleVertexShader", "latest" );
+				//g_d3dPixelShader = LoadShader<ID3D11PixelShader>( L"SimplePixelShader.hlsl", "SimplePixelShader", "latest" );
 
 				// Load the compiled vertex shader.
 				ID3DBlob* vertexShaderBlob;

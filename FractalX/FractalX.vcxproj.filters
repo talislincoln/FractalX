@@ -21,9 +21,6 @@
     <ClInclude Include="include\FractalPCH.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\framework\DXApp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\core\AbstractGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -75,9 +72,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\FractalPCH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\framework\DXApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\AbstractGame.cpp">

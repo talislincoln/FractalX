@@ -71,11 +71,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)FractalX\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)FractalX\bin;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)bin;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(OutDir)$(ProjectName)\int\</IntDir>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)FractalX\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)FractalX\bin;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)bin;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(OutDir)$(ProjectName)\int\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -85,7 +90,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>FractalXd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>FractalX_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
