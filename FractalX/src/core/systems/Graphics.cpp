@@ -82,6 +82,7 @@ namespace fractal
 			sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 			sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+			
 
 			// Use 4X MSAA? 
 			if (m_enable4xMsaa)
@@ -101,7 +102,7 @@ namespace fractal
 			sd.OutputWindow = m_window->GetWindowHandle();
 			sd.Windowed = true;
 			sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-			sd.Flags = 0;
+			sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 			// To correctly create the swap chain, we must use the IDXGIFactory that was
 			// used to create the device.  If we tried to use a different IDXGIFactory instance

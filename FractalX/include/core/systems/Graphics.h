@@ -93,7 +93,7 @@ namespace fractal
 			};
 			
 			template< class ShaderClass >
-			ShaderClass* LoadShader (const std::wstring& fileName, const std::string& entryPoint, const std::string& profile) { 
+			ShaderClass* LoadShader (const std::wstring& fileName, const std::string& entryPoint, const std::string& _profile) { 
 				
 				ID3DBlob* pShaderBlob = nullptr;
 				ID3DBlob* pErrorBlob = nullptr;
@@ -105,8 +105,10 @@ namespace fractal
 					profile = GetLatestProfile<ShaderClass> ();
 				}
 				UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-			#if _DEBUG
+			#if defined( DEBUG ) || defined( _DEBUG )
 				flags |= D3DCOMPILE_DEBUG;
+				flags |= D3D10_SHADER_DEBUG;
+				flags |= D3D10_SHADER_SKIP_OPTIMIZATION;
 			#endif
 
 				HRESULT hr = D3DCompileFromFile (fileName.c_str (), nullptr,
@@ -176,12 +178,8 @@ namespace fractal
 				D3D11_SUBRESOURCE_DATA resourceData;
 				ZeroMemory (&resourceData, sizeof (D3D11_SUBRESOURCE_DATA));
 				
-
 				resourceData.pSysMem = g_Vertices;
 				//resourceData.pSysMem = &a.pos[0];
-
-
-
 
 				HRESULT hr = m_d3dDevice->CreateBuffer (&vertexBufferDesc, &resourceData, &g_d3dVertexBuffer);
 				if (FAILED (hr))
@@ -231,13 +229,13 @@ namespace fractal
 				}
 
 				// Load the shaders
-				//g_d3dVertexShader = LoadShader<ID3D11VertexShader>( L"SimpleVertexShader.hlsl", "SimpleVertexShader", "latest" );
-				//g_d3dPixelShader = LoadShader<ID3D11PixelShader>( L"SimplePixelShader.hlsl", "SimplePixelShader", "latest" );
+				g_d3dVertexShader = LoadShader<ID3D11VertexShader>( L"SimpleVertexShader.hlsl", "SimpleVertexShader", "latest" );
+				g_d3dPixelShader = LoadShader<ID3D11PixelShader>( L"SimplePixelShader.hlsl", "SimplePixelShader", "latest" );
 
 				// Load the compiled vertex shader.
 				ID3DBlob* vertexShaderBlob;
-			#if _DEBUG
-				LPCWSTR compiledVertexShaderObject = L"SimpleVertexShader_d.cso";
+			#if defined(DEBUG) || defined(_DEBUG)  
+				LPCWSTR compiledVertexShaderObject = L"../bin/SimpleVertexShader_d.cso";
 			#else
 				LPCWSTR compiledVertexShaderObject = L"SimpleVertexShader.cso";
 			#endif
@@ -271,8 +269,8 @@ namespace fractal
 
 				// Load the compiled pixel shader.
 				ID3DBlob* pixelShaderBlob;
-			#if _DEBUG
-				LPCWSTR compiledPixelShaderObject = L"SimplePixelShader_d.cso";
+			#if defined(DEBUG) || defined(_DEBUG)  
+				LPCWSTR compiledPixelShaderObject = L"../bin/SimplePixelShader_d.cso";
 			#else
 				LPCWSTR compiledPixelShaderObject = L"SimplePixelShader.cso";
 			#endif

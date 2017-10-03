@@ -9,8 +9,8 @@ namespace fractal
 	{
 		class ResourceManager : public IManager<ResourceManager>
 		{
-			ResourceManager () : IManager<ResourceManager> () {}
-			~ResourceManager () {};
+			ResourceManager ();
+			~ResourceManager ();
 
 			bool Init () override;
 			bool Shutdown () override;

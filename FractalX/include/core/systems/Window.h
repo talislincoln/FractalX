@@ -26,8 +26,8 @@ namespace fractal
 			FString			m_windowClassname;
 			FString			m_windowTitle;
 							
-			unsigned int 	m_windowWidth;
-			unsigned int	m_windowHeight;
+			LONG 			m_windowWidth;
+			LONG			m_windowHeight;
 
 			HINSTANCE		m_hAppInst;
 			HWND			m_hMainWnd;

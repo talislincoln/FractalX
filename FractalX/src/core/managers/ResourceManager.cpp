@@ -4,7 +4,7 @@ namespace fractal
 {
 	namespace fcore
 	{
-		ResourceManager::ResourceManager ()
+		ResourceManager::ResourceManager () : IManager<ResourceManager> ()
 		{
 
 		}
