@@ -24,8 +24,11 @@ namespace fractal
 
 		int Engine::Run()
 		{
-			//Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_WARNING);
+		#if defined(DEBUG) || defined(_DEBUG)  
 			LogManager::Instance ()->SetLogLevel (LOG_TYPES::LOG_INFO);
+		#else
+			Logger::Instance ()->SetLogLevel (LOG_TYPES::LOG_WARNING);
+		#endif
 
 			if (!this->Init())
 			{
@@ -67,6 +70,12 @@ namespace fractal
 			if (!this->CreateManagers ())
 				return false;
 
+			if (!ResourceManager::Instance ()->Init ())
+			{
+				LogManager::Instance ()->LogError (L"Failed to Init resource manager.");
+				return false;
+			}
+
 			if (!SystemManager::Instance ()->Init ())
 			{
 				LogManager::Instance ()->LogError (L"Failed to Init system manager.");
@@ -78,7 +87,14 @@ namespace fractal
 
 		bool Engine::CreateManagers()
 		{
+			
+
 			if (!SystemManager::Instance ())
+			{
+				LogManager::Instance ()->LogError (L"Failed to create system Manager");
+				return false;
+			}
+			if (!ResourceManager::Instance ())
 			{
 				LogManager::Instance ()->LogError (L"Failed to create system Manager");
 				return false;
@@ -100,6 +116,19 @@ namespace fractal
 			else
 			{
 				LogManager::Instance ()->LogWarning (L"System manager was already destroyed.");
+			}
+
+			if (ResourceManager::Instance ())
+			{
+				if (!ResourceManager::Instance ()->Shutdown ())
+				{
+					return false;
+				}
+				ResourceManager::DestroyInstance ();
+			}
+			else
+			{
+				LogManager::Instance ()->LogWarning (L"Resource manager was already destroyed.");
 			}
 
 			if (LogManager::Instance ())
@@ -138,7 +167,7 @@ namespace fractal
 			static float timeElapsed = 0.0f;
 
 			Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
-			Window* w = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
+			Window* w = static_cast<Window*>(SystemManager::Instance ()->GetSystem (SystemType::WINDOW_SYSTEM));
 
 			if (c && w)
 			{
@@ -160,7 +189,7 @@ namespace fractal
 
 
 					LogManager::Instance ()->LogInfo (outs.str());
-					//SetWindowText (w->GetWindowHandle (), (text).c_str());
+					SetWindowText (w->GetWindowHandle (), L"aaaa");
 
 					// Reset for next average.
 					frameCnt = 0;

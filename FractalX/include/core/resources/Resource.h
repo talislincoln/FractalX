@@ -12,8 +12,8 @@ namespace fractal
 			Resource (const FString& resourcePath, ResourceType type);
 			virtual ~Resource ();
 
-			virtual bool Init () = 0;
-			virtual bool Shutdown () = 0;
+			virtual bool Init ();
+			virtual bool Shutdown ();
 
 			const FString& GetResourcePath () const;
 			const FString& GetResourceName () const;
@@ -22,12 +22,20 @@ namespace fractal
 
 			const unsigned __int32 GetId () const;
 
+			inline bool HasInit () const
+			{
+				return m_hasInit;
+			}
+
 		protected:
 			FString m_resourcePath;
 			FString m_resourceName;
+			unsigned __int32 m_id;
+			bool m_hasInit;
+			bool m_hasShutdown;
 			ResourceType m_resourceType;
 
-			static unsigned __int32 m_id;
+			static unsigned __int32 m_idCounter;
 		};
 	}
 }

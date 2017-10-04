@@ -6,6 +6,11 @@
 #include <core\systems\Window.h>
 
 #include <vector>
+
+
+#include <core\resources\MeshDataResource.h>
+#include <core\managers\ResourceManager.h>
+
 namespace fractal
 {
 	namespace fcore
@@ -47,8 +52,6 @@ namespace fractal
 
 			//vertex buffer data
 			ID3D11InputLayout*	g_d3dInputLayout = nullptr;
-			ID3D11Buffer* g_d3dVertexBuffer = nullptr;
-			ID3D11Buffer* g_d3dIndexBuffer = nullptr;
 
 			//shader data
 			ID3D11VertexShader* g_d3dVertexShader = nullptr;
@@ -58,15 +61,6 @@ namespace fractal
 			DirectX::XMMATRIX g_WorldMatrix;
 			DirectX::XMMATRIX g_ViewMatrix;
 			DirectX::XMMATRIX g_ProjectionMatrix;
-
-			// Vertex data for a colored cube.
-			struct VertexPosColor
-			{
-				DirectX::XMFLOAT3 Position;
-				DirectX::XMFLOAT3 Color;
-				
-			};
-
 
 			// look for flexible vertex format (google)
 			VertexPosColor g_Vertices[3] =
@@ -91,6 +85,11 @@ namespace fractal
 				mesh () {}
 				mesh (const std::vector<WORD>& idx, const std::vector<DirectX::XMFLOAT3>& positions, const std::vector<DirectX::XMFLOAT3>& colours) : /*indices(idx), */pos (positions), cols (colours) {}
 			};
+
+			ID3D11Buffer* vertices;
+			ID3D11Buffer* indices;
+
+			bool init = false;
 			
 			template< class ShaderClass >
 			ShaderClass* LoadShader (const std::wstring& fileName, const std::string& entryPoint, const std::string& _profile) { 
@@ -140,68 +139,9 @@ namespace fractal
 			{
 				assert (m_d3dDevice);
 
-				mesh a;
-				a.pos.emplace_back (-1.0f, -1.0f, 0.0f);
-				a.pos.emplace_back (0.0f, 1.0f, 0.0f);
-				a.pos.emplace_back (1.0f, -1.0f, 0.0f);
-				a.pos.emplace_back (0.0f, -1.0f, 0.0f);
-
-				a.cols.emplace_back (0.0f, 1.0f, 1.0f);
-				a.cols.emplace_back (1.0f, 1.0f, 1.0f);
-				a.cols.emplace_back (1.0f, 1.0f, 0.0f);
-				a.cols.emplace_back (1.0f, 1.0f, 1.0f);
-
-				std::vector<WORD> indices;
-				indices.push_back (0);
-				indices.push_back (1);
-				indices.push_back (2);
-				indices.push_back (3);
-
-
-				std::vector<void*> test;
-				
-				for (int i = 0; i < indices.size (); ++i)
-				{
-					test.push_back (&a.pos[i]);
-				}
-
-				// Create an initialize the vertex buffer.
-				D3D11_BUFFER_DESC vertexBufferDesc;
-				ZeroMemory (&vertexBufferDesc, sizeof (D3D11_BUFFER_DESC));
-
-				vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-				//vertexBufferDesc.ByteWidth = sizeof (VertexPosColor) * _countof (g_Vertices);
-				vertexBufferDesc.ByteWidth = sizeof (a.pos.front()) * a.pos.size() + sizeof(a.cols.front()) * a.cols.size();
-				vertexBufferDesc.CPUAccessFlags = 0;
-				vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-
-				D3D11_SUBRESOURCE_DATA resourceData;
-				ZeroMemory (&resourceData, sizeof (D3D11_SUBRESOURCE_DATA));
-				
-				resourceData.pSysMem = g_Vertices;
-				//resourceData.pSysMem = &a.pos[0];
-
-				HRESULT hr = m_d3dDevice->CreateBuffer (&vertexBufferDesc, &resourceData, &g_d3dVertexBuffer);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-
-				// Create and initialize the index buffer.
-				D3D11_BUFFER_DESC indexBufferDesc;
-				ZeroMemory (&indexBufferDesc, sizeof (D3D11_BUFFER_DESC));
-
-				indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-				indexBufferDesc.ByteWidth = sizeof (indices.front()) * indices.size();
-				indexBufferDesc.CPUAccessFlags = 0;
-				indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-				resourceData.pSysMem = indices.data();
-
-				hr = m_d3dDevice->CreateBuffer (&indexBufferDesc, &resourceData, &g_d3dIndexBuffer);
-				if (FAILED (hr))
-				{
-					return false;
-				}
+				MeshDataResource* md = ResourceManager::Instance ()->GetResource<MeshDataResource> (L"triangle");
+				vertices = md->GetVertexBuffer ();
+				indices = md->GetIndexBuffer ();
 
 				// Create the constant buffers for the variables defined in the vertex shader.
 				D3D11_BUFFER_DESC constantBufferDesc;
@@ -212,7 +152,7 @@ namespace fractal
 				constantBufferDesc.CPUAccessFlags = 0;
 				constantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
-				hr = m_d3dDevice->CreateBuffer (&constantBufferDesc, nullptr, &g_d3dConstantBuffers[CB_Appliation]);
+				HRESULT hr = m_d3dDevice->CreateBuffer (&constantBufferDesc, nullptr, &g_d3dConstantBuffers[CB_Appliation]);
 				if (FAILED (hr))
 				{
 					return false;
@@ -256,7 +196,7 @@ namespace fractal
 				D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
 				{
 					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(a.pos.front()) * a.pos.size(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 				};
 
 				hr = m_d3dDevice->CreateInputLayout (vertexLayoutDesc, _countof (vertexLayoutDesc), vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), &g_d3dInputLayout);
@@ -427,6 +367,8 @@ namespace fractal
 			bool Shutdown () override;
 
 			void OnResize ();
+
+			inline ID3D11Device* GetDevice () const { return m_d3dDevice; }
 
 		private:
 
