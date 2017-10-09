@@ -173,7 +173,6 @@ namespace fractal
 
 			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
 			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
 		}
 
 		void Graphics::Draw () const
@@ -181,7 +180,6 @@ namespace fractal
 			assert (m_d3dImmediateContext);
 			assert (m_swapChain);
 
-			
 			const UINT vertexStride = sizeof (VertexPosColor);
 			const UINT offset = 0;
 
@@ -221,6 +219,16 @@ namespace fractal
 			SafeRelease (m_d3dDevice);
 
 			return true;
+		}
+
+		void Graphics::BeginDraw () const
+		{
+
+		}
+
+		void Graphics::EndDraw () const
+		{
+
 		}
 
 		void Graphics::OnResize ()

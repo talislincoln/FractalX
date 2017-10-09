@@ -24,6 +24,8 @@ namespace fractal
 			bool Shutdown () override;
 
 			void Draw () const override;
+
+			void SetGame (class AbstractGame* game);
 		};
 	}
 }

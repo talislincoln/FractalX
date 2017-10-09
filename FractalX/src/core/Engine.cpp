@@ -1,11 +1,6 @@
 #include <FractalPCH.h>
-#include <core\Engine.h>
-#include <core\AbstractGame.h>
-#include <core\managers\SystemManager.h>
-#include <core\systems\Window.h>
-#include <core\systems\Clock.h>
-#include <core\managers\LogManager.h>
-#include <core\systems\Graphics.h>
+
+#include <core\EngineCore.h>
 
 #include <sstream>
 
@@ -20,6 +15,7 @@ namespace fractal
 
 		Engine::~Engine()
 		{
+			SafeDelete (m_game);
 		}
 
 		int Engine::Run()
@@ -70,15 +66,28 @@ namespace fractal
 			if (!this->CreateManagers ())
 				return false;
 
+			// create all the inner systems
+			SystemManager::Instance ()->CreateSystems ();
+			
+			// setting the game before the logic system has initialized
+			dynamic_cast<fractal::fcore::Logic*>(SystemManager::Instance ()->GetSystem (SystemType::LOGIC_SYSTEM))->SetGame(m_game);
+
 			if (!ResourceManager::Instance ()->Init ())
 			{
-				LogManager::Instance ()->LogError (L"Failed to Init resource manager.");
+				LogManager::Instance ()->LogError (L"Failed to Init Resource Manager.");
 				return false;
 			}
 
+			// Init all the systems inside the system manager
 			if (!SystemManager::Instance ()->Init ())
 			{
-				LogManager::Instance ()->LogError (L"Failed to Init system manager.");
+				LogManager::Instance ()->LogError (L"Failed to Init System Manager.");
+				return false;
+			}
+
+			if (!SceneManager::Instance ()->Init ())
+			{
+				LogManager::Instance ()->LogError (L"Failed to Init Scene Manager.");
 				return false;
 			}
 
@@ -87,17 +96,21 @@ namespace fractal
 
 		bool Engine::CreateManagers()
 		{
-			
-
 			if (!SystemManager::Instance ())
 			{
 				LogManager::Instance ()->LogError (L"Failed to create system Manager");
 				return false;
 			}
+
 			if (!ResourceManager::Instance ())
 			{
 				LogManager::Instance ()->LogError (L"Failed to create system Manager");
 				return false;
+			}
+
+			if (!SceneManager::Instance ())
+			{
+				LogManager::Instance ()->LogError (L"Failed to create Scene Manager");
 			}
 
 			return true;
@@ -131,6 +144,19 @@ namespace fractal
 				LogManager::Instance ()->LogWarning (L"Resource manager was already destroyed.");
 			}
 
+			if (SceneManager::Instance ())
+			{
+				if (!SceneManager::Instance ()->Shutdown ())
+				{
+					return false;
+				}
+				SceneManager::DestroyInstance ();
+			}
+			else
+			{
+				LogManager::Instance ()->LogWarning (L"Scene Manager was already destroyed.");
+			}
+
 			if (LogManager::Instance ())
 			{
 				if (!LogManager::Instance ()->Shutdown ())
@@ -154,7 +180,11 @@ namespace fractal
 
 		void Engine::Draw()
 		{
+			Graphics* g = SystemManager::Instance ()->GetGraphicsSystem ();
+
+			g->BeginDraw ();
 			SystemManager::Instance ()->Draw ();
+			g->EndDraw ();
 		}
 
 		void Engine::CalculateFrameStats ()

@@ -1,6 +1,8 @@
 #include <FractalPCH.h>
 #include <core\Engine.h>
 
+#include "TestGame.h"
+
 #if defined (DEBUG) | defined (_DEBUG)
 int _tmain (int argc, char* argv[])
 {
@@ -28,10 +30,11 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	// Enable run-time memory leak check for debug build
 	_CrtSetDbgFlag (_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(0); // the 0 should be changed to the id of the memory leak that will be shown in the debug log
+	_CrtSetBreakAlloc(0); // the 0 should be changed to the id of the memory leak that will be shown in the debug log
 #endif
-
-	fractal::fcore::Engine *e = new fractal::fcore::Engine ();
+	
+	// the engine takes care of deleting the game
+	fractal::fcore::Engine *e = new fractal::fcore::Engine (new TestGame ());
 	int result = e->Run ();
 	delete e;
 	return result;

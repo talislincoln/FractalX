@@ -9,6 +9,25 @@ namespace fractal
 	{
 		bool SceneManager::Init ()
 		{
+			/*
+			setupManager<Renderer>();
+			setupManager<CameraManager>();
+			setupManager<ResourceManager>();
+
+			if (!this->active_scene->getInitialized())
+			{
+				this->active_scene->setRenderer(&Singleton<Renderer>::getInstance());
+				this->active_scene->setCameraManager(&Singleton<CameraManager>::getInstance());
+				this->active_scene->setResourceManager(&Singleton<ResourceManager>::getInstance());
+
+				if (!this->active_scene->initialize())
+					return false;
+				this->active_scene->setInitialized();
+			}*/
+
+			if (!this->m_activeScene->Init ())
+				return false;
+
 
 			return true;
 		}
@@ -32,12 +51,18 @@ namespace fractal
 
 		void SceneManager::Update ()
 		{
+			assert (this->m_activeScene->IsInitialized ());
 
+			if (this->m_activeScene->IsActive ())
+				m_activeScene->Update ();
 		}
 
 		void SceneManager::Draw () const
 		{
+			assert (this->m_activeScene->IsInitialized ());
 
+			if (this->m_activeScene->IsActive ())
+				m_activeScene->Draw ();
 		}
 
 		void SceneManager::AddScene (fscene::Scene* scene)
@@ -45,6 +70,12 @@ namespace fractal
 			std::vector<fscene::Scene*>::iterator it = std::find (m_scenes.begin (), m_scenes.end (), scene);
 			if (it == m_scenes.end())
 				m_scenes.push_back (scene);
+
+			if (!m_activeScene)
+			{
+				m_activeScene = scene;
+				m_activeScene->SetActive (true);
+			}
 		}
 
 		void SceneManager::SetActiveScene (const FString& name)

@@ -139,7 +139,7 @@ namespace fractal
 			{
 				assert (m_d3dDevice);
 
-				MeshDataResource* md = ResourceManager::Instance ()->GetResource<MeshDataResource> (L"triangle");
+				MeshDataResource* md = ResourceManager::Instance ()->GetResource<MeshDataResource> (_T("triangle"));
 				vertices = md->GetVertexBuffer ();
 				indices = md->GetIndexBuffer ();
 
@@ -365,6 +365,9 @@ namespace fractal
 			void Update () override;
 			void Draw () const override;
 			bool Shutdown () override;
+
+			void BeginDraw () const;
+			void EndDraw () const;
 
 			void OnResize ();
 

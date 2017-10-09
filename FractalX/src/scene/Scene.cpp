@@ -9,17 +9,16 @@ namespace fractal
 		Scene::Scene (const FString& name) :
 			FObject(name)
 		{
-
+			// empty
 		}
 
 		Scene::~Scene ()
 		{
-
+			// empty
 		}
 
 		bool Scene::Init ()
 		{
-
 			for (GameObject* obj : this->m_objects)
 			{
 				if (obj->IsInitialized ())
@@ -29,22 +28,40 @@ namespace fractal
 					return false;
 			}
 
+			SetInitialized (true);
+
 			return true;
 		}
 
 		void Scene::Update ()
 		{
-
+			for (GameObject* obj : this->m_objects)
+			{
+				if (obj->IsActive ())
+					obj->Update ();
+			}
 		}
 
 		void Scene::Draw () const
 		{
-
+			for (GameObject* obj : this->m_objects)
+			{
+				if(obj->IsActive() && obj->CanDraw())
+					obj->Draw ();
+			}
 		}
 
 		bool Scene::Shutdown ()
 		{
+			for (GameObject* obj : this->m_objects)
+			{
+				if (!obj->Shutdown ())
+					return false;
 
+				SafeDelete (obj);
+			}
+
+			m_objects.clear ();
 			return true;
 		}
 
@@ -63,6 +80,7 @@ namespace fractal
 			std::vector<GameObject*>::iterator it = std::find (this->m_objects.begin (), this->m_objects.end (), obj);
 			if (it != this->m_objects.end ())
 			{
+				(*it)->Shutdown ();
 				this->m_objects.erase (it);
 				SafeDelete ((*it));
 			}

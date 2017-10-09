@@ -31,12 +31,18 @@ namespace fractal
 			SystemManager () : IManager<SystemManager> () {}
 			~SystemManager () {}
 
+			void CreateSystems ();
+
 			bool Init () override;
-			bool Shutdown () override;
 			void Update () override;
 			void Draw () const override;
+			bool Shutdown () override;
 
-			class System* GetSystem (SystemType type);
+			class Graphics* GetGraphicsSystem () const;
+			class Window*	GetWindowSystem () const;
+			class Clock*	GetClockSystem () const;
+
+			class System* GetSystem (SystemType type) const;
 			std::vector<class System*> GetSystems () const;
 			std::vector<class IDrawable*> GetDrawableSystems () const;
 		};

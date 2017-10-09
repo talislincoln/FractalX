@@ -1,5 +1,6 @@
 #include <FractalPCH.h>
-#include <core\AbstractGame.h>
+#include <core\EngineCore.h>
+#include <scene\EngineScene.h>
 
 namespace fractal
 {
@@ -8,5 +9,10 @@ namespace fractal
 		AbstractGame::AbstractGame() {}
 
 		AbstractGame::~AbstractGame() {}
+
+		void AbstractGame::AddScene (fscene::Scene* scene)
+		{
+			SceneManager::Instance ()->AddScene (scene);
+ 		}
 	}
 }

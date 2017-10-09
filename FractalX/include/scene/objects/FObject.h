@@ -11,17 +11,18 @@ namespace fractal
 			static unsigned __int32 counter;
 
 		private:
+			FString m_name;
+
 			unsigned __int32 m_id;
 			
 			bool m_isActive;
 
 			bool m_isInitialized;
+			bool m_canDraw;
 			bool m_isDestroyed;
-
-			FString m_name;
-
+			
 		public:
-			FObject(const FString& name = L"");
+			FObject(const FString& name = _T(""));
 			virtual ~FObject();
 
 			virtual bool Init() = 0;
@@ -32,10 +33,13 @@ namespace fractal
 			void SetInitialized(bool newState);
 			const bool IsInitialized() const;
 
-			virtual void SetActive(bool newState);
+			void SetActive(bool newState);
 			const bool IsActive() const;
 
-			virtual void Destroy();
+			void SetCanDraw (bool newState);
+			bool CanDraw () const;
+
+			void Destroy();
 			bool IsDestroyed() const;
 
 			void SetName(const FString& name);

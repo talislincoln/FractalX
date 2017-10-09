@@ -1,6 +1,7 @@
 #include <FractalPCH.h>
 #include <core\systems\Logic.h>
 #include <core\AbstractGame.h>
+#include <core\managers\SceneManager.h>
 
 namespace fractal
 {
@@ -20,17 +21,17 @@ namespace fractal
 
 		bool Logic::Init ()
 		{
-			//assert (m_game);
+			assert (m_game);
 
-			//if (!m_game->Init ())
-			//	return false;
+			if (!m_game->Init ())
+				return false;
 
 			return true;
 		}
 
 		void Logic::Update ()
 		{
-
+			SceneManager::Instance ()->Update ();
 		}
 
 		bool Logic::Shutdown ()
@@ -40,7 +41,12 @@ namespace fractal
 
 		void Logic::Draw () const
 		{
+			SceneManager::Instance ()->Draw ();
+		}
 
+		void Logic::SetGame (AbstractGame* game)
+		{
+			m_game = game;
 		}
 	}
 }

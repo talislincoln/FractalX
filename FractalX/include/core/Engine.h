@@ -11,11 +11,11 @@ namespace fractal
 			// private variables declaration first
 		private:
 			class AbstractGame* m_game;
+			class Graphics* m_graphicsSystem;
 
 			//public methods
 		public:
-			// for testing while there's no game
-			Engine() {};
+
 			Engine(class AbstractGame* game);
 			~Engine();
 

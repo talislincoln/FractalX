@@ -3,7 +3,7 @@
 #define _SCENE_H
 
 #include <vector>
-#include "objects\FObject.h"
+#include <scene\objects\FObject.h>
 
 namespace fractal
 {

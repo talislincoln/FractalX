@@ -26,13 +26,16 @@ namespace fractal
 			}
 		}
 
-		bool SystemManager::Init ()
+		void SystemManager::CreateSystems ()
 		{
 			for (unsigned __int8 i = 0; (SystemType)i < SystemType::TOTAL_SYSTEMS; i++)
 			{
 				System* s = SystemFactory::CreateSystem ((SystemType)i);
+				
+				// TODO: change the if checking to assert when all the systems has been created
+				//assert (s);
 
-				if (s && s->Init ())
+				if (s)
 				{
 					this->m_systems.push_back (s);
 
@@ -43,12 +46,28 @@ namespace fractal
 				}
 				else
 				{
-					LogManager::Instance ()->LogError (L"Failed to init system");
-					return false;
+					LogManager::Instance ()->LogError (L"Failed to init system " + i);
 				}
+			}
+		}
+
+		bool SystemManager::Init ()
+		{
+			for (System* s : m_systems)
+			{
+				if (!s->Init ())
+					return false;
 			}
 
 			return true;
+		}
+
+		void SystemManager::Update ()
+		{
+			for (System* s : m_systems)
+			{
+				s->Update ();
+			}
 		}
 
 		void SystemManager::Draw () const
@@ -73,15 +92,22 @@ namespace fractal
 			return true;
 		}
 
-		void SystemManager::Update ()
+		Graphics*  SystemManager::GetGraphicsSystem () const
 		{
-			for (System* s : m_systems)
-			{
-				s->Update ();
-			}
+			return dynamic_cast<Graphics*>(GetSystem (SystemType::GRAPHICS_SYSTEM));
 		}
 
-		System* SystemManager::GetSystem (SystemType type)
+		Window*	SystemManager::GetWindowSystem () const
+		{
+			return dynamic_cast<Window*>(GetSystem (SystemType::WINDOW_SYSTEM));
+		}
+
+		Clock*	SystemManager::GetClockSystem () const
+		{
+			return dynamic_cast<Clock*>(GetSystem (SystemType::TIMER_SYSTEM));
+		}
+
+		System* SystemManager::GetSystem (SystemType type) const
 		{
 			if (m_systems.size ())
 			{
