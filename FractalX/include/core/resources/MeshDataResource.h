@@ -9,20 +9,13 @@ namespace fractal
 {
 	namespace fcore
 	{
-
-		struct VertexPosColor
-		{
-			DirectX::XMFLOAT3 Position;
-			DirectX::XMFLOAT3 Color;
-
-			VertexPosColor (DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color) : Position (position), Color (color) {}
-		};
-
 		class MeshDataResource : public Resource
 		{
 		private:
 			ID3D11Buffer* m_d3dVertexBuffer;
 			ID3D11Buffer* m_d3dIndexBuffer;
+
+			unsigned __int32 m_indicesCount;
 
 		public:
 			MeshDataResource (const FString& path);
@@ -32,12 +25,13 @@ namespace fractal
 			MeshDataResource (MeshDataResource&) = delete;
 			MeshDataResource (MeshDataResource&&) = delete;
 
-
 			bool Init () override;
 			bool Shutdown () override;
 
 			ID3D11Buffer* GetVertexBuffer () const;
 			ID3D11Buffer* GetIndexBuffer () const;
+
+			unsigned __int32 GetIndicesCount () const;
 		};
 	}
 }

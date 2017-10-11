@@ -42,7 +42,7 @@ namespace fractal
 			return true;
 		}
 
-		void ResourceManager::AddResource (const FString& name, Resource* r)
+		void ResourceManager::AddResource (Resource* r)
 		{
 			if (!r)
 				return;
@@ -50,7 +50,7 @@ namespace fractal
 			if (!r->HasInit ())
 				r->Init ();
 
-			m_resources.insert ({ name, r });
+			m_resources.insert ({ r->GetResourceName(), r });
 		}
 	}
 }

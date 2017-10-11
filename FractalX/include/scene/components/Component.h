@@ -16,11 +16,6 @@ namespace fractal
 			Component (const FString& name = _T(""));
 			virtual ~Component ();
 
-			virtual bool Init () = 0;
-			virtual void Update () = 0;
-			virtual void Draw () = 0;
-			virtual bool Shutdown () = 0;
-
 			void SetParent (class GameObject* parent);
 			class GameObject* GetParent () const;
 		};

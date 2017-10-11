@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _FRACTALPCH_H
 #define _FRACTALPCH_H
 
@@ -37,6 +38,8 @@ inline void SafeRelease(T& ptr)
 #ifndef _STRING_
 #include <string>
 #endif // !_STRING_
+
+#include <sstream>
 
 #ifdef UNICODE
 #define FString std::wstring
@@ -101,6 +104,14 @@ namespace fractal
 		XMGLOBALCONST DirectX::XMVECTORF32 LightSteelBlue = { 0.69f, 0.77f, 0.87f, 1.0f };
 	}
 
+	struct VertexPosColor
+	{
+		DirectX::XMFLOAT3 Position;
+		DirectX::XMFLOAT3 Color;
+
+		VertexPosColor (DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color) : Position (position), Color (color) {}
+	};
+
 	enum class SystemType : unsigned __int8
 	{
 		WINDOW_SYSTEM,
@@ -120,6 +131,36 @@ namespace fractal
 		RESOURCE_TEXTURE,
 		RESOURCE_SHADER
 	};
+
+	/*FString GetNameFromPath (const FString& path)
+	{
+		int start_index = path.find_last_of ('\\');
+		if (start_index == FString::npos)
+			start_index = path.find_last_of ('/');
+		++start_index;
+		int end_index = path.find_last_of ('.');
+
+		return path.substr (start_index, end_index - start_index);
+	}
+	
+	std::wstring widen (const std::string& str)
+	{
+		std::wostringstream wstm;
+		const std::ctype<wchar_t>& ctfacet =
+			std::use_facet< std::ctype<wchar_t> > (wstm.getloc ());
+		for (size_t i = 0; i<str.size (); ++i)
+			wstm << ctfacet.widen (str[i]);
+		return wstm.str ();
+	}
+	std::string narrow (const std::wstring& str)
+	{
+		std::ostringstream stm;
+		const std::ctype<char>& ctfacet =
+			std::use_facet< std::ctype<char> > (stm.getloc ());
+		for (size_t i = 0; i<str.size (); ++i)
+			stm << ctfacet.narrow (str[i], 0);
+		return stm.str ();
+	}*/
 }
 
 

@@ -203,8 +203,6 @@ namespace fractal
 			{
 				frameCnt++;
 
-				//LogManager::Instance ()->LogInfo (L"T " + std::to_wstring (c->TotalTime ()));
-
 				// Compute averages over one second period.
 				if ((c->TotalTime () - timeElapsed) >= 1.0f)
 				{
@@ -217,9 +215,7 @@ namespace fractal
 						<< L"FPS: " << fps << L"    "
 						<< L"Frame Time: " << mspf << L" (ms)";
 
-
-					LogManager::Instance ()->LogInfo (outs.str());
-					SetWindowText (w->GetWindowHandle (), L"aaaa");
+					SetWindowText (w->GetWindowHandle (), outs.str().c_str());
 
 					// Reset for next average.
 					frameCnt = 0;

@@ -160,6 +160,7 @@
     <ClInclude Include="include\core\managers\ResourceManager.h" />
     <ClInclude Include="include\core\managers\SceneManager.h" />
     <ClInclude Include="include\core\managers\SystemManager.h" />
+    <ClInclude Include="include\core\resources\ShaderResource.h" />
     <ClInclude Include="include\core\resources\MeshDataResource.h" />
     <ClInclude Include="include\core\resources\Resource.h" />
     <ClInclude Include="include\core\systems\Graphics.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="include\FractalPCH.h" />
     <ClInclude Include="include\core\Engine.h" />
     <ClInclude Include="include\scene\components\Component.h" />
+    <ClInclude Include="include\scene\components\MeshComponent.h" />
     <ClInclude Include="include\scene\EngineScene.h" />
     <ClInclude Include="include\scene\objects\FObject.h" />
     <ClInclude Include="include\scene\objects\GameObject.h" />
@@ -183,6 +185,7 @@
     <ClCompile Include="src\core\managers\SceneManager.cpp" />
     <ClCompile Include="src\core\resources\MeshDataResource.cpp" />
     <ClCompile Include="src\core\resources\Resource.cpp" />
+    <ClCompile Include="src\core\resources\ShaderResource.cpp" />
     <ClCompile Include="src\core\systems\Graphics.cpp" />
     <ClCompile Include="src\core\systems\Clock.cpp" />
     <ClCompile Include="src\core\systems\Logic.cpp" />
@@ -207,6 +210,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FractalPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\scene\components\Component.cpp" />
+    <ClCompile Include="src\scene\components\MeshComponent.cpp" />
     <ClCompile Include="src\scene\objects\FObject.cpp" />
     <ClCompile Include="src\scene\objects\GameObject.cpp" />
     <ClCompile Include="src\scene\Scene.cpp" />

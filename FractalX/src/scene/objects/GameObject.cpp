@@ -8,7 +8,8 @@ namespace fractal
 	{
 		GameObject::GameObject(FString name) :
 			FObject(name),
-			m_parent(nullptr)
+			m_parent(nullptr),
+			m_position(DirectX::XMVectorSet (0.0f, 0.0f, 0.0f, 1.0f))
 		{
 
 		}
@@ -47,7 +48,6 @@ namespace fractal
 
 		void GameObject::Update ()
 		{
-			FDebug ("Updating game object");
 			// update components
 			for (Component* c : m_components)
 			{
@@ -65,7 +65,6 @@ namespace fractal
 
 		void GameObject::Draw () const
 		{
-			FDebug ("Drawing game object");
 			// update components
 			for (Component* c : m_components)
 			{

@@ -15,6 +15,8 @@ namespace fractal
 			std::vector<class Component*> m_components;
 			std::vector<class GameObject*> m_children;
 
+			DirectX::XMVECTOR m_position;
+
 			class GameObject* m_parent;
 
 		public:

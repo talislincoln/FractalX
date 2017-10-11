@@ -141,16 +141,20 @@ namespace fractal
 			if (!init)
 			{
 				std::vector<VertexPosColor> vertices;
-				vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f));
-				vertices.emplace_back (DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f));
-				vertices.emplace_back (DirectX::XMFLOAT3 (1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
+				vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f));
+				vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f));
+				vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
+				vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f));
 
 				std::vector<WORD> indices;
 				indices.push_back (0);
 				indices.push_back (1);
 				indices.push_back (2);
+				indices.push_back (0);
+				indices.push_back (2);
+				indices.push_back (3);
 
-				ResourceManager::Instance ()->AddResource (L"triangle", new MeshDataResource (L"triangle", vertices, indices));
+				ResourceManager::Instance ()->AddResource (new MeshDataResource (L"triangle", vertices, indices));
 
 				LoadContent ();
 
@@ -170,14 +174,11 @@ namespace fractal
 
 			g_WorldMatrix = XMMatrixRotationAxis (rotationAxis, XMConvertToRadians (0));
 			m_d3dImmediateContext->UpdateSubresource (g_d3dConstantBuffers[CB_Object], 0, nullptr, &g_WorldMatrix, 0, 0);
-
-			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
-			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
 
 		void Graphics::Draw () const
 		{
-			assert (m_d3dImmediateContext);
+			/*assert (m_d3dImmediateContext);
 			assert (m_swapChain);
 
 			const UINT vertexStride = sizeof (VertexPosColor);
@@ -186,22 +187,19 @@ namespace fractal
 			m_d3dImmediateContext->IASetVertexBuffers (0, 1, &vertices, &vertexStride, &offset);
 			m_d3dImmediateContext->IASetInputLayout (g_d3dInputLayout);
 			m_d3dImmediateContext->IASetIndexBuffer (indices, DXGI_FORMAT_R16_UINT, 0);
-			m_d3dImmediateContext->IASetPrimitiveTopology (D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-			m_d3dImmediateContext->VSSetShader (g_d3dVertexShader, nullptr, 0);
+			m_d3dImmediateContext->VSSetShader (g_d3dVertexShader, nullptr, 0);*/
 			m_d3dImmediateContext->VSSetConstantBuffers (0, 3, g_d3dConstantBuffers);
 
 			m_d3dImmediateContext->RSSetState (m_d3dRasterizerState);
 			m_d3dImmediateContext->RSSetViewports (1, &m_screenViewport);
 
-			m_d3dImmediateContext->PSSetShader (g_d3dPixelShader, nullptr, 0);
+			//m_d3dImmediateContext->PSSetShader (g_d3dPixelShader, nullptr, 0);
 
 			m_d3dImmediateContext->OMSetRenderTargets (1, &m_renderTargetView, m_depthStencilView);
 			m_d3dImmediateContext->OMSetDepthStencilState (g_d3dDepthStencilState, 1);
 			
-			m_d3dImmediateContext->DrawIndexed (_countof (g_Indicies), 0, 0);
-
-			HR (m_swapChain->Present (0, 0));
+			//m_d3dImmediateContext->DrawIndexed ((6), 0, 0);
 		}
 
 		bool Graphics::Shutdown ()
@@ -223,12 +221,15 @@ namespace fractal
 
 		void Graphics::BeginDraw () const
 		{
+			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
+			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+			m_d3dImmediateContext->IASetPrimitiveTopology (D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		}
 
 		void Graphics::EndDraw () const
 		{
-
+			m_swapChain->Present (0, 0);
 		}
 
 		void Graphics::OnResize ()

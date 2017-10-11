@@ -128,6 +128,18 @@ namespace fractal
 					return false;
 				}
 				pShader = CreateShader<ShaderClass> (pShaderBlob, nullptr);
+				
+				D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
+				{
+					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				};
+
+				hr = m_d3dDevice->CreateInputLayout (vertexLayoutDesc, _countof (vertexLayoutDesc), pShaderBlob->GetBufferPointer (), pShaderBlob->GetBufferSize (), &g_d3dInputLayout);
+				if (FAILED (hr))
+				{
+					return false;
+				}
 
 				SafeRelease (pShaderBlob);
 				SafeRelease (pErrorBlob);
@@ -169,17 +181,17 @@ namespace fractal
 				}
 
 				// Load the shaders
-				g_d3dVertexShader = LoadShader<ID3D11VertexShader>( L"SimpleVertexShader.hlsl", "SimpleVertexShader", "latest" );
-				g_d3dPixelShader = LoadShader<ID3D11PixelShader>( L"SimplePixelShader.hlsl", "SimplePixelShader", "latest" );
+				g_d3dVertexShader = LoadShader<ID3D11VertexShader>( L"../bin/SimpleVertexShader.hlsl", "SimpleVertexShader", "latest" );
+				g_d3dPixelShader = LoadShader<ID3D11PixelShader>( L"../bin/SimplePixelShader.hlsl", "SimplePixelShader", "latest" );
 
 				// Load the compiled vertex shader.
-				ID3DBlob* vertexShaderBlob;
+				/*ID3DBlob* vertexShaderBlob;
 			#if defined(DEBUG) || defined(_DEBUG)  
 				LPCWSTR compiledVertexShaderObject = L"../bin/SimpleVertexShader_d.cso";
 			#else
-				LPCWSTR compiledVertexShaderObject = L"SimpleVertexShader.cso";
+				LPCWSTR compiledVertexShaderObject = L"../bin/SimpleVertexShader.cso";
 			#endif
-
+			
 				hr = D3DReadFileToBlob (compiledVertexShaderObject, &vertexShaderBlob);
 				if (FAILED (hr))
 				{
@@ -190,10 +202,10 @@ namespace fractal
 				if (FAILED (hr))
 				{
 					return false;
-				}
+				}*/
 
 				// Create the input layout for the vertex shader.
-				D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
+				/*D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
 				{
 					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
@@ -205,7 +217,7 @@ namespace fractal
 					return false;
 				}
 
-				SafeRelease (vertexShaderBlob);
+				SafeRelease (vertexShaderBlob);*/
 
 				// Load the compiled pixel shader.
 				ID3DBlob* pixelShaderBlob;
@@ -221,11 +233,11 @@ namespace fractal
 					return false;
 				}
 
-				hr = m_d3dDevice->CreatePixelShader (pixelShaderBlob->GetBufferPointer (), pixelShaderBlob->GetBufferSize (), nullptr, &g_d3dPixelShader);
+				/*hr = m_d3dDevice->CreatePixelShader (pixelShaderBlob->GetBufferPointer (), pixelShaderBlob->GetBufferSize (), nullptr, &g_d3dPixelShader);
 				if (FAILED (hr))
 				{
 					return false;
-				}
+				}*/
 
 				SafeRelease (pixelShaderBlob);
 
@@ -372,6 +384,7 @@ namespace fractal
 			void OnResize ();
 
 			inline ID3D11Device* GetDevice () const { return m_d3dDevice; }
+			inline ID3D11DeviceContext* GetContext () const { return m_d3dImmediateContext; }
 
 		private:
 

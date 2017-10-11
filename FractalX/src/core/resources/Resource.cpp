@@ -11,15 +11,11 @@ namespace fractal
 			m_resourcePath (resourcePath),
 			m_id (++m_idCounter),
 			m_hasInit (false),
-			m_hasShutdown(false)
+			m_hasShutdown (false),
+			m_resourceName (resourcePath)
 		{
-			int start_index = this->m_resourcePath.find_last_of ('\\');
-			if (start_index == FString::npos)
-				start_index = this->m_resourcePath.find_last_of ('/');
-			++start_index;
-			int end_index = this->m_resourcePath.find_last_of ('.');
-
-			this->m_resourceName = this->m_resourcePath.substr (start_index, end_index - start_index);
+			// TODO: Check if this function is working properly lol
+			//this->m_resourceName = GetNameFromPath (resourcePath);
 		}
 
 		Resource::~Resource ()
@@ -41,22 +37,22 @@ namespace fractal
 			return true;
 		}
 
-		inline const FString& Resource::GetResourcePath () const
+		const FString& Resource::GetResourcePath () const
 		{
 			return this->m_resourcePath;
 		}
 
-		inline const FString& Resource::GetResourceName () const
+		const FString& Resource::GetResourceName () const
 		{
 			return this->m_resourceName;
 		}
 
-		inline ResourceType Resource::GetResourceType () const
+		ResourceType Resource::GetResourceType () const
 		{
 			return this->m_resourceType;
 		}
 
-		inline const unsigned __int32 Resource::GetId () const
+		const unsigned __int32 Resource::GetId () const
 		{
 			return m_id;
 		}

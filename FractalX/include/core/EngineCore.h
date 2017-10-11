@@ -16,7 +16,8 @@
 #include "systems\Logic.h"
 #include "systems\Window.h"
 
-#include "resources\MeshDataResource.h"
+#include <core\resources\MeshDataResource.h>
+#include <core\resources\ShaderResource.h>
 
 #include "AbstractGame.h"
 
