@@ -15,8 +15,6 @@ namespace fractal
 {
 	namespace fcore
 	{
-		
-
 		class Graphics : public System, public IDrawable
 		{
 		private:
@@ -50,9 +48,6 @@ namespace fractal
 			ID3D11Buffer* g_d3dConstantBuffers[NumConstantBuffers];
 			D3D11_VIEWPORT g_Viewport = { 0 };
 
-			//vertex buffer data
-			ID3D11InputLayout*	g_d3dInputLayout = nullptr;
-
 			//shader data
 			ID3D11VertexShader* g_d3dVertexShader = nullptr;
 			ID3D11PixelShader* g_d3dPixelShader = nullptr;
@@ -62,98 +57,9 @@ namespace fractal
 			DirectX::XMMATRIX g_ViewMatrix;
 			DirectX::XMMATRIX g_ProjectionMatrix;
 
-			// look for flexible vertex format (google)
-			VertexPosColor g_Vertices[3] =
-			{
-				{ DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f) }, // 0
-				{ DirectX::XMFLOAT3 (0.0f,  1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f) }, // 1
-				{ DirectX::XMFLOAT3 (1.0f,  -1.0f, 0.0f),  DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f) } // 2
-			};
-
-			WORD g_Indicies[3] =
-			{
-				0, 1, 2
-			};
-
-			struct mesh
-			{
-				std::vector<DirectX::XMFLOAT3> pos;
-				std::vector<DirectX::XMFLOAT3> cols;
-
-				//std::vector<WORD> indices;
-
-				mesh () {}
-				mesh (const std::vector<WORD>& idx, const std::vector<DirectX::XMFLOAT3>& positions, const std::vector<DirectX::XMFLOAT3>& colours) : /*indices(idx), */pos (positions), cols (colours) {}
-			};
-
-			ID3D11Buffer* vertices;
-			ID3D11Buffer* indices;
-
-			bool init = false;
-			
-			template< class ShaderClass >
-			ShaderClass* LoadShader (const std::wstring& fileName, const std::string& entryPoint, const std::string& _profile) { 
-				
-				ID3DBlob* pShaderBlob = nullptr;
-				ID3DBlob* pErrorBlob = nullptr;
-				ShaderClass* pShader = nullptr;
-
-				std::string profile = _profile;
-				if (profile == "latest")
-				{
-					profile = GetLatestProfile<ShaderClass> ();
-				}
-				UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-			#if defined( DEBUG ) || defined( _DEBUG )
-				flags |= D3DCOMPILE_DEBUG;
-				flags |= D3D10_SHADER_DEBUG;
-				flags |= D3D10_SHADER_SKIP_OPTIMIZATION;
-			#endif
-
-				HRESULT hr = D3DCompileFromFile (fileName.c_str (), nullptr,
-					D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint.c_str (), profile.c_str (),
-					flags, 0, &pShaderBlob, &pErrorBlob);
-
-				if (FAILED (hr))
-				{
-					if (pErrorBlob)
-					{
-						std::string errorMessage = (char*)pErrorBlob->GetBufferPointer ();
-						OutputDebugStringA (errorMessage.c_str ());
-
-						SafeRelease (pShaderBlob);
-						SafeRelease (pErrorBlob);
-					}
-
-					return false;
-				}
-				pShader = CreateShader<ShaderClass> (pShaderBlob, nullptr);
-				
-				D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
-				{
-					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-				};
-
-				hr = m_d3dDevice->CreateInputLayout (vertexLayoutDesc, _countof (vertexLayoutDesc), pShaderBlob->GetBufferPointer (), pShaderBlob->GetBufferSize (), &g_d3dInputLayout);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-
-				SafeRelease (pShaderBlob);
-				SafeRelease (pErrorBlob);
-
-				return pShader;
-			}
-
 			bool LoadContent ()
 			{
 				assert (m_d3dDevice);
-
-				MeshDataResource* md = ResourceManager::Instance ()->GetResource<MeshDataResource> (_T("triangle"));
-				vertices = md->GetVertexBuffer ();
-				indices = md->GetIndexBuffer ();
 
 				// Create the constant buffers for the variables defined in the vertex shader.
 				D3D11_BUFFER_DESC constantBufferDesc;
@@ -180,67 +86,6 @@ namespace fractal
 					return false;
 				}
 
-				// Load the shaders
-				g_d3dVertexShader = LoadShader<ID3D11VertexShader>( L"../bin/SimpleVertexShader.hlsl", "SimpleVertexShader", "latest" );
-				g_d3dPixelShader = LoadShader<ID3D11PixelShader>( L"../bin/SimplePixelShader.hlsl", "SimplePixelShader", "latest" );
-
-				// Load the compiled vertex shader.
-				/*ID3DBlob* vertexShaderBlob;
-			#if defined(DEBUG) || defined(_DEBUG)  
-				LPCWSTR compiledVertexShaderObject = L"../bin/SimpleVertexShader_d.cso";
-			#else
-				LPCWSTR compiledVertexShaderObject = L"../bin/SimpleVertexShader.cso";
-			#endif
-			
-				hr = D3DReadFileToBlob (compiledVertexShaderObject, &vertexShaderBlob);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-
-				hr = m_d3dDevice->CreateVertexShader (vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), nullptr, &g_d3dVertexShader);
-				if (FAILED (hr))
-				{
-					return false;
-				}*/
-
-				// Create the input layout for the vertex shader.
-				/*D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
-				{
-					{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-					{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-				};
-
-				hr = m_d3dDevice->CreateInputLayout (vertexLayoutDesc, _countof (vertexLayoutDesc), vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), &g_d3dInputLayout);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-
-				SafeRelease (vertexShaderBlob);*/
-
-				// Load the compiled pixel shader.
-				ID3DBlob* pixelShaderBlob;
-			#if defined(DEBUG) || defined(_DEBUG)  
-				LPCWSTR compiledPixelShaderObject = L"../bin/SimplePixelShader_d.cso";
-			#else
-				LPCWSTR compiledPixelShaderObject = L"SimplePixelShader.cso";
-			#endif
-
-				hr = D3DReadFileToBlob (compiledPixelShaderObject, &pixelShaderBlob);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-
-				/*hr = m_d3dDevice->CreatePixelShader (pixelShaderBlob->GetBufferPointer (), pixelShaderBlob->GetBufferSize (), nullptr, &g_d3dPixelShader);
-				if (FAILED (hr))
-				{
-					return false;
-				}*/
-
-				SafeRelease (pixelShaderBlob);
-
 				// Setup the projection matrix.
 				RECT clientRect;
 				GetClientRect (m_window->GetWindowHandle(), &clientRect);
@@ -257,118 +102,6 @@ namespace fractal
 				return true;
 			}
 
-			// Get the latest profile for the specified shader type.
-			template< class ShaderClass >
-			std::string GetLatestProfile ();
-
-			template<>
-			std::string GetLatestProfile<ID3D11VertexShader> ()
-			{
-				assert (m_d3dDevice);
-
-				// Query the current feature level:
-				D3D_FEATURE_LEVEL featureLevel = m_d3dDevice->GetFeatureLevel ();
-
-				switch (featureLevel)
-				{
-				case D3D_FEATURE_LEVEL_11_1:
-				case D3D_FEATURE_LEVEL_11_0:
-				{
-					return "vs_5_0";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_10_1:
-				{
-					return "vs_4_1";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_10_0:
-				{
-					return "vs_4_0";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_9_3:
-				{
-					return "vs_4_0_level_9_3";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_9_2:
-				case D3D_FEATURE_LEVEL_9_1:
-				{
-					return "vs_4_0_level_9_1";
-				}
-				break;
-				} // switch( featureLevel )
-
-				return "";
-			}
-
-			template<>
-			std::string GetLatestProfile<ID3D11PixelShader> ()
-			{
-				assert (m_d3dDevice);
-
-				// Query the current feature level:
-				D3D_FEATURE_LEVEL featureLevel = m_d3dDevice->GetFeatureLevel ();
-				switch (featureLevel)
-				{
-				case D3D_FEATURE_LEVEL_11_1:
-				case D3D_FEATURE_LEVEL_11_0:
-				{
-					return "ps_5_0";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_10_1:
-				{
-					return "ps_4_1";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_10_0:
-				{
-					return "ps_4_0";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_9_3:
-				{
-					return "ps_4_0_level_9_3";
-				}
-				break;
-				case D3D_FEATURE_LEVEL_9_2:
-				case D3D_FEATURE_LEVEL_9_1:
-				{
-					return "ps_4_0_level_9_1";
-				}
-				break;
-				}
-				return "";
-			}
-
-			template< class ShaderClass >
-			ShaderClass* CreateShader (ID3DBlob* pShaderBlob, ID3D11ClassLinkage* pClassLinkage);
-
-			template<>
-			ID3D11VertexShader* CreateShader<ID3D11VertexShader> (ID3DBlob* pShaderBlob, ID3D11ClassLinkage* pClassLinkage)
-			{
-				assert (m_d3dDevice);
-				assert (pShaderBlob);
-
-				ID3D11VertexShader* pVertexShader = nullptr;
-				m_d3dDevice->CreateVertexShader (pShaderBlob->GetBufferPointer (), pShaderBlob->GetBufferSize (), pClassLinkage, &pVertexShader);
-
-				return pVertexShader;
-			}
-
-			template<>
-			ID3D11PixelShader* CreateShader<ID3D11PixelShader> (ID3DBlob* pShaderBlob, ID3D11ClassLinkage* pClassLinkage)
-			{
-				assert (m_d3dDevice);
-				assert (pShaderBlob);
-
-				ID3D11PixelShader* pPixelShader = nullptr;
-				m_d3dDevice->CreatePixelShader (pShaderBlob->GetBufferPointer (), pShaderBlob->GetBufferSize (), pClassLinkage, &pPixelShader);
-
-				return pPixelShader;
-			}
 		public:
 			Graphics ();
 			~Graphics ();
@@ -404,40 +137,3 @@ namespace fractal
 	}
 }
 #endif // !_GRAPHICS_H
-
-
-/*
-
-template <typename... Ttypes>
-struct MetaVertex
-{
-fmath::FTuple<Ttypes...> elements;
-
-MetaVertex (Ttypes... elms)
-{
-elements = fmath::makeVertex (elms...);
-}
-};
-
-MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> meta2f[3]
-{
-{ MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f)) },
-{ MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (0.0f,  1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f)) },
-{ MetaVertex<DirectX::XMFLOAT3, DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (1.0f,  -1.0f, 0.0f),  DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f))}
-};
-
-MetaVertex<DirectX::XMFLOAT3> meta1f[3]
-{
-{ MetaVertex<DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f)) },
-{ MetaVertex<DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (0.0f,  1.0f, 0.0f)) },
-{ MetaVertex<DirectX::XMFLOAT3> (DirectX::XMFLOAT3 (1.0f,  -1.0f, 0.0f)) }
-};
-
-auto tt = fmath::makeTuple (DirectX::XMFLOAT3 (1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
-tt.TupleType_t b;
-
-//metaVertices[0] = fmath::makeVertex (DirectX::XMFLOAT3 (-1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f));
-//metaVertices[1] = fmath::makeVertex (DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f));
-//metaVertices[2] = fmath::makeVertex (DirectX::XMFLOAT3 (1.0f, -1.0f, 0.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
-
-*/

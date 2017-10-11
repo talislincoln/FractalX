@@ -34,8 +34,6 @@ namespace fractal
 
 		void MeshComponent::Draw () const
 		{
-			fcout << L"Drawing mesh component" << std::endl;
-
 			ID3D11DeviceContext* context = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetContext ();
 
 			const UINT vertexStride = sizeof (VertexPosColor);

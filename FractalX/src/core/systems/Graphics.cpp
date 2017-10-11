@@ -127,8 +127,8 @@ namespace fractal
 			// The remaining steps that need to be carried out for d3d creation
 			// also need to be executed every time the window is resized.  So
 			// just call the OnResize method here to avoid code duplication.
-			/*if (!LoadContent ())
-				return false;*/
+			if (!LoadContent ())
+				return false;
 			OnResize ();
 
 			return true;
@@ -137,29 +137,6 @@ namespace fractal
 		void Graphics::Update ()
 		{
 			using namespace DirectX;
-
-			if (!init)
-			{
-				std::vector<VertexPosColor> vertices;
-				vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f));
-				vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f));
-				vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
-				vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f));
-
-				std::vector<WORD> indices;
-				indices.push_back (0);
-				indices.push_back (1);
-				indices.push_back (2);
-				indices.push_back (0);
-				indices.push_back (2);
-				indices.push_back (3);
-
-				ResourceManager::Instance ()->AddResource (new MeshDataResource (L"triangle", vertices, indices));
-
-				LoadContent ();
-
-				init = true;
-			}
 
 			DirectX::XMVECTOR eyePosition = XMVectorSet (0, 0, -10, 1);
 			DirectX::XMVECTOR focusPoint = XMVectorSet (0, 0, 0, 1);
