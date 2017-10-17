@@ -15,6 +15,8 @@
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 
+#include "utils\DDSTextureLoader.h"
+
 // STL includes
 
 // Safely release a COM object.
@@ -104,12 +106,14 @@ namespace fractal
 		XMGLOBALCONST DirectX::XMVECTORF32 LightSteelBlue = { 0.69f, 0.77f, 0.87f, 1.0f };
 	}
 
-	struct VertexPosColor
+	struct VertexPosColorTexture
 	{
 		DirectX::XMFLOAT3 Position;
 		DirectX::XMFLOAT3 Color;
+		DirectX::XMFLOAT2 UV;
 
-		VertexPosColor (DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color) : Position (position), Color (color) {}
+		VertexPosColorTexture (DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT2 uvs) :
+			Position (position), Color (color), UV(uvs) {}
 	};
 
 	enum class SystemType : unsigned __int8
@@ -128,22 +132,11 @@ namespace fractal
 	enum class ResourceType : unsigned __int8
 	{
 		RESOURCE_MESH,
-		RESOURCE_TEXTURE,
+		RESOURCE_IMAGE,
 		RESOURCE_SHADER
 	};
-
-	/*FString GetNameFromPath (const FString& path)
-	{
-		int start_index = path.find_last_of ('\\');
-		if (start_index == FString::npos)
-			start_index = path.find_last_of ('/');
-		++start_index;
-		int end_index = path.find_last_of ('.');
-
-		return path.substr (start_index, end_index - start_index);
-	}
 	
-	std::wstring widen (const std::string& str)
+	/*std::wstring widen (const std::string& str)
 	{
 		std::wostringstream wstm;
 		const std::ctype<wchar_t>& ctfacet =

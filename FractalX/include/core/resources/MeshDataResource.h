@@ -19,7 +19,7 @@ namespace fractal
 
 		public:
 			MeshDataResource (const FString& path);
-			MeshDataResource (const FString& name, std::vector<VertexPosColor> vertices, std::vector<WORD> indices);
+			MeshDataResource (const FString& name, std::vector<VertexPosColorTexture> vertices, std::vector<WORD> indices);
 
 			MeshDataResource () = delete;
 			MeshDataResource (MeshDataResource&) = delete;

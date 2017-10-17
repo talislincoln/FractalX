@@ -18,6 +18,7 @@
 
 #include <core\resources\MeshDataResource.h>
 #include <core\resources\ShaderResource.h>
+#include <core\resources\ImageResource.h>
 
 #include "AbstractGame.h"
 

@@ -179,6 +179,7 @@
     <ClInclude Include="include\scene\objects\FObject.h" />
     <ClInclude Include="include\scene\objects\GameObject.h" />
     <ClInclude Include="include\scene\Scene.h" />
+    <ClInclude Include="include\utils\DDSTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\interfaces\IDrawable.cpp" />
@@ -218,6 +219,7 @@
     <ClCompile Include="src\scene\objects\FObject.cpp" />
     <ClCompile Include="src\scene\objects\GameObject.cpp" />
     <ClCompile Include="src\scene\Scene.cpp" />
+    <ClCompile Include="src\utils\DDSTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\SimplePixelShader.hlsl">

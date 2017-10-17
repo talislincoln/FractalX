@@ -19,11 +19,11 @@ bool MyScene::Init ()
 	using namespace fscene;
 	using namespace fcore;
 	
-	std::vector<VertexPosColor> vertices;
-	vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f));
-	vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f));
-	vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f));
-	vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 1.0f));
+	std::vector<VertexPosColorTexture> vertices;
+	vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 0.0f));
+	vertices.emplace_back (DirectX::XMFLOAT3 (-1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (0.0f, 1.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 0.0f));
+	vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, +1.0f, -1.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
+	vertices.emplace_back (DirectX::XMFLOAT3 (+1.0f, -1.0f, -1.0f), DirectX::XMFLOAT3 (1.0f, 1.0f, 1.0f), DirectX::XMFLOAT2(0.0f, 1.0f));
 
 	std::vector<WORD> indices;
 	indices.push_back (0);
@@ -50,17 +50,21 @@ bool MyScene::Init ()
 	D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
 	// create a new shader resource and add it to the resource manager
-	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel, vertexLayoutDesc, 2);
+	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel, vertexLayoutDesc, 3);
 	resourceManager->AddResource (s);
+
+	ImageResource* image = new fcore::ImageResource (L"seafloor", L"../bin/textures/seafloor.dds");
+	resourceManager->AddResource (image);
 
 	// create game object
 	GameObject *go = new GameObject (__T ("First GO"));
 	// add the mesh component to the game object
-	go->AddComponent (new MeshComponent (resourceManager->GetResource<fcore::MeshDataResource> (L"quad"), resourceManager->GetResource<fcore::ShaderResource> (L"SimpleShader")));
+	go->AddComponent (new MeshComponent (L"quad", L"SimpleShader", L"seafloor"));
 	// add GO to the scene
 	AddGameObject (go);
 

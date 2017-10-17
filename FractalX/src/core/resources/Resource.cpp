@@ -11,11 +11,17 @@ namespace fractal
 			m_resourcePath (resourcePath),
 			m_id (++m_idCounter),
 			m_hasInit (false),
-			m_hasShutdown (false),
-			m_resourceName (resourcePath)
+			m_hasShutdown (false)
+			//m_resourceName (GetNameFromPath (resourcePath))
 		{
 			// TODO: Check if this function is working properly lol
-			//this->m_resourceName = GetNameFromPath (resourcePath);
+			int start_index = m_resourcePath.find_last_of ('\\');
+			if (start_index == FString::npos)
+				start_index = m_resourcePath.find_last_of ('/');
+			++start_index;
+			int end_index = m_resourcePath.find_last_of ('.');
+
+			m_resourceName = m_resourcePath.substr (start_index, end_index - start_index);
 		}
 
 		Resource::~Resource ()

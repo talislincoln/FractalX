@@ -6,10 +6,12 @@
 
 namespace fractal
 {
+	// forward declarations
 	namespace fcore
 	{
 		class MeshDataResource;
 		class ShaderResource;
+		class ImageResource;
 	}
 
 	namespace fscene
@@ -17,11 +19,13 @@ namespace fractal
 		class MeshComponent : public Component
 		{
 		private:
-			fcore::MeshDataResource* m_meshData;
-			fcore::ShaderResource* m_shaderData;
+			fcore::MeshDataResource*	m_meshData;
+			fcore::ShaderResource*		m_shaderData;
+			fcore::ImageResource*		m_imageData;
 
 		public:
-			MeshComponent (fcore::MeshDataResource* meshData, fcore::ShaderResource* shaderData);
+			MeshComponent (fcore::MeshDataResource* meshData, fcore::ShaderResource* shaderData, fcore::ImageResource* imageData);
+			MeshComponent (const FString& meshResourceName, const FString& shaderResourceName, const FString& imageResourceName);
 			~MeshComponent ();
 
 			bool Init () override;

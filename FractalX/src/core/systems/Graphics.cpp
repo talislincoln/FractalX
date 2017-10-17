@@ -15,9 +15,9 @@ namespace fractal
 			m_d3dDevice (0),
 			m_d3dImmediateContext (0),
 			m_swapChain (0),
-			m_depthStencilBuffer (0),
-			m_renderTargetView (0),
-			m_depthStencilView (0),
+			m_depthStencilBuffer (nullptr),
+			m_renderTargetView (nullptr),
+			m_depthStencilView (nullptr),
 			m_d3dRasterizerState (nullptr)
 		{
 			ZeroMemory (&m_screenViewport, sizeof (D3D11_VIEWPORT));
@@ -25,7 +25,7 @@ namespace fractal
 
 		Graphics::~Graphics ()
 		{
-
+			// empty
 		}
 
 		bool Graphics::Init ()
@@ -124,6 +124,35 @@ namespace fractal
 			SafeRelease (dxgiAdapter);
 			SafeRelease (dxgiFactory);
 
+			// Create a render target view
+			ID3D11Texture2D* pBackBuffer = nullptr;
+			hr = m_swapChain->GetBuffer (0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
+			if (FAILED (hr))
+				return hr;
+
+			hr = m_d3dDevice->CreateRenderTargetView (pBackBuffer, nullptr, &m_renderTargetView);
+			pBackBuffer->Release ();
+			if (FAILED (hr))
+				return hr;
+
+			// Create depth stencil texture
+			D3D11_TEXTURE2D_DESC descDepth;
+			ZeroMemory (&descDepth, sizeof (descDepth));
+			descDepth.Width = m_window->GetWindowWidth ();
+			descDepth.Height = m_window->GetWindowHeight ();
+			descDepth.MipLevels = 1;
+			descDepth.ArraySize = 1;
+			descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+			descDepth.SampleDesc.Count = 1;
+			descDepth.SampleDesc.Quality = 0;
+			descDepth.Usage = D3D11_USAGE_DEFAULT;
+			descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+			descDepth.CPUAccessFlags = 0;
+			descDepth.MiscFlags = 0;
+			hr = m_d3dDevice->CreateTexture2D (&descDepth, nullptr, &m_depthStencilBuffer);
+			if (FAILED (hr))
+				return hr;
+
 			// The remaining steps that need to be carried out for d3d creation
 			// also need to be executed every time the window is resized.  So
 			// just call the OnResize method here to avoid code duplication.
@@ -174,7 +203,7 @@ namespace fractal
 			//m_d3dImmediateContext->PSSetShader (g_d3dPixelShader, nullptr, 0);
 
 			m_d3dImmediateContext->OMSetRenderTargets (1, &m_renderTargetView, m_depthStencilView);
-			m_d3dImmediateContext->OMSetDepthStencilState (g_d3dDepthStencilState, 1);
+			m_d3dImmediateContext->OMSetDepthStencilState (m_d3dDepthStencilState, 1);
 			
 			//m_d3dImmediateContext->DrawIndexed ((6), 0, 0);
 		}
@@ -184,7 +213,9 @@ namespace fractal
 			SafeRelease (m_renderTargetView);
 			SafeRelease (m_depthStencilView);
 			SafeRelease (m_swapChain);
-			SafeRelease (m_depthStencilView);
+			SafeRelease (m_depthStencilBuffer);
+			SafeRelease (m_d3dRasterizerState);
+			SafeRelease (m_d3dDepthStencilState);
 
 			// Restore all default settings.
 			if (m_d3dImmediateContext)
@@ -261,7 +292,14 @@ namespace fractal
 				depthStencilDesc.MiscFlags = 0;
 
 				HR (m_d3dDevice->CreateTexture2D (&depthStencilDesc, 0, &m_depthStencilBuffer));
-				HR (m_d3dDevice->CreateDepthStencilView (m_depthStencilBuffer, 0, &m_depthStencilView));
+
+				D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+				ZeroMemory (&descDSV, sizeof (descDSV));
+				descDSV.Format = depthStencilDesc.Format;
+				descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+				descDSV.Texture2D.MipSlice = 0;
+
+				 (m_d3dDevice->CreateDepthStencilView (m_depthStencilBuffer, &descDSV, &m_depthStencilView));
 
 				D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc;
 				ZeroMemory (&depthStencilStateDesc, sizeof (D3D11_DEPTH_STENCIL_DESC));
@@ -270,7 +308,7 @@ namespace fractal
 				depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 				depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS;
 				depthStencilStateDesc.StencilEnable = FALSE;
-				m_d3dDevice->CreateDepthStencilState (&depthStencilStateDesc, &g_d3dDepthStencilState);
+				m_d3dDevice->CreateDepthStencilState (&depthStencilStateDesc, &m_d3dDepthStencilState);
 
 				// Bind the render target view and depth/stencil view to the pipeline.
 				m_d3dImmediateContext->OMSetRenderTargets (1, &m_renderTargetView, m_depthStencilView);

@@ -13,7 +13,7 @@ namespace fractal
 			// TODO: Load mesh from file
 		}
 
-		MeshDataResource::MeshDataResource (const FString& name, std::vector<VertexPosColor> vertices, std::vector<WORD> indices) :
+		MeshDataResource::MeshDataResource (const FString& name, std::vector<VertexPosColorTexture> vertices, std::vector<WORD> indices) :
 			Resource (name, ResourceType::RESOURCE_MESH)
 		{
 			ID3D11Device* device = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetDevice();
@@ -25,7 +25,7 @@ namespace fractal
 			// TODO: change the next line usage when the thing is static or dynamic
 			vertexBufferDesc.Usage					= D3D11_USAGE_DEFAULT; // D3D11_USAGE_DYNAMIC | D3D11_USAGE_IMMUTABLE
 			vertexBufferDesc.BindFlags				= D3D11_BIND_VERTEX_BUFFER; 
-			vertexBufferDesc.ByteWidth				= sizeof (VertexPosColor) * vertices.size();
+			vertexBufferDesc.ByteWidth				= sizeof (VertexPosColorTexture) * vertices.size();
 			vertexBufferDesc.CPUAccessFlags			= 0;
 			vertexBufferDesc.MiscFlags				= 0;
 			vertexBufferDesc.StructureByteStride	= 0;

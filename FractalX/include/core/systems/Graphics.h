@@ -24,8 +24,9 @@ namespace fractal
 			ID3D11Texture2D*		m_depthStencilBuffer;
 			ID3D11RenderTargetView* m_renderTargetView;
 			ID3D11DepthStencilView* m_depthStencilView;
-			ID3D11DepthStencilState* g_d3dDepthStencilState = nullptr;
+			ID3D11DepthStencilState* m_d3dDepthStencilState;
 			ID3D11RasterizerState*  m_d3dRasterizerState;
+
 			D3D11_VIEWPORT			m_screenViewport;
 									 
 			D3D_DRIVER_TYPE			m_d3dDriverType;
@@ -47,10 +48,6 @@ namespace fractal
 
 			ID3D11Buffer* g_d3dConstantBuffers[NumConstantBuffers];
 			D3D11_VIEWPORT g_Viewport = { 0 };
-
-			//shader data
-			ID3D11VertexShader* g_d3dVertexShader = nullptr;
-			ID3D11PixelShader* g_d3dPixelShader = nullptr;
 
 			// Demo parameters
 			DirectX::XMMATRIX g_WorldMatrix;
@@ -120,11 +117,6 @@ namespace fractal
 			inline ID3D11DeviceContext* GetContext () const { return m_d3dImmediateContext; }
 
 		private:
-
-			ID3D11Buffer* mBoxVB;
-			ID3D11Buffer* mBoxIB;
-
-			ID3D11InputLayout* mInputLayout;
 
 			DirectX::XMFLOAT4X4 mWorld;
 			DirectX::XMFLOAT4X4 mView;
