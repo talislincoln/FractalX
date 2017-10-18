@@ -1,6 +1,8 @@
 #include <FractalPCH.h>
 #include <core\resources\Resource.h>
 
+#include <core\EngineCore.h>
+
 namespace fractal
 {
 	namespace fcore
@@ -22,6 +24,9 @@ namespace fractal
 			int end_index = m_resourcePath.find_last_of ('.');
 
 			m_resourceName = m_resourcePath.substr (start_index, end_index - start_index);
+
+			ResourceManager* resourceManager = ResourceManager::Instance ();
+			resourceManager->AddResource (this);
 		}
 
 		Resource::~Resource ()

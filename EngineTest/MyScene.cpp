@@ -38,7 +38,6 @@ bool MyScene::Init ()
 
 	// create a new mesh data resource and add it to the manager
 	MeshDataResource* r = new fcore::MeshDataResource (FString(L"quad"), vertices, indices);
-	resourceManager->AddResource (r);
 	
 #if defined(DEBUG) || defined(_DEBUG)  
 	FString vertex = L"../bin/SimpleVertexShader_d.cso";
@@ -47,19 +46,11 @@ bool MyScene::Init ()
 	FString vertex = L"../bin/SimpleVertexShader.cso";
 	FString pixel = L"../bin/SimplePixelShader.cso";
 #endif
-	D3D11_INPUT_ELEMENT_DESC vertexLayoutDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
 
 	// create a new shader resource and add it to the resource manager
-	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel, vertexLayoutDesc, 3);
-	resourceManager->AddResource (s);
+	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel);
 
 	ImageResource* image = new fcore::ImageResource (L"seafloor", L"../bin/textures/seafloor.dds");
-	resourceManager->AddResource (image);
 
 	// create game object
 	GameObject *go = new GameObject (__T ("First GO"));

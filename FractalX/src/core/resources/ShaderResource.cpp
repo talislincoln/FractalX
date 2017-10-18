@@ -8,7 +8,8 @@ namespace fractal
 	{
 		ShaderResource::ShaderResource (const FString& name, 
 			const FString& vertexPath, const FString& pixelPath, 
-			D3D11_INPUT_ELEMENT_DESC* vertexLayout, int numElementsLayout) :
+			D3D11_INPUT_ELEMENT_DESC* vertexLayout /* = nullptr */, 
+			int numElementsLayout /* = 0 */) :
 			Resource(name, ResourceType::RESOURCE_SHADER),
 			m_vertexShader (nullptr),
 			m_pixelShader (nullptr),
@@ -34,10 +35,20 @@ namespace fractal
 			}
 
 			// Create the input layout for the vertex shader.
-			if (FAILED (device->CreateInputLayout (vertexLayout, numElementsLayout, vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), &m_inputLayout)))
+			if (!vertexLayout)
 			{
-				fcout << L" error creating the input layout " << std::endl;
+				// TODO: improve this function to more robust version if it stops working
+				CreateVertexInputLayout (vertexShaderBlob, &m_inputLayout);
 			}
+			else
+			{
+				// in case the function doesn't fully work, there's still the option to give the input layout explicitly
+				if (FAILED (device->CreateInputLayout (vertexLayout, numElementsLayout, vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), &m_inputLayout)))
+				{
+					fcout << L" error creating the input layout " << std::endl;
+				}
+			}
+
 			SafeRelease (vertexShaderBlob);
 
 			// Loading the pixel shader
@@ -52,6 +63,78 @@ namespace fractal
 				fcout << L" error creating the vertex shader " << std::endl;
 			}
 			SafeRelease (pixelShaderBlob);
+		}
+
+		void ShaderResource::CreateVertexInputLayout (ID3DBlob* vertexBlob, ID3D11InputLayout** inputlayout)
+		{
+			ID3D11Device* device = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetDevice ();
+
+			// Reflect shader info
+			ID3D11ShaderReflection* pVertexShaderReflection = NULL;
+			if (FAILED (D3DReflect (vertexBlob->GetBufferPointer (), vertexBlob->GetBufferSize (), IID_ID3D11ShaderReflection, (void**)&pVertexShaderReflection)))
+			{
+				std::cout << "error" << std::endl;
+				//return S_FALSE;
+			}
+
+			// Get shader info
+			D3D11_SHADER_DESC shaderDesc;
+			pVertexShaderReflection->GetDesc (&shaderDesc);
+
+			// Read input layout description from shader info
+			std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
+			for (unsigned int i = 0; i< shaderDesc.InputParameters; i++)
+			{
+				D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
+				pVertexShaderReflection->GetInputParameterDesc (i, &paramDesc);
+
+				// fill out input element desc
+				D3D11_INPUT_ELEMENT_DESC elementDesc;
+				elementDesc.SemanticName = paramDesc.SemanticName;
+				elementDesc.SemanticIndex = paramDesc.SemanticIndex;
+				elementDesc.InputSlot = 0;
+				elementDesc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+				elementDesc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+				elementDesc.InstanceDataStepRate = 0;
+
+				// determine DXGI format
+				if (paramDesc.Mask == 1)
+				{
+					if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) elementDesc.Format = DXGI_FORMAT_R32_UINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) elementDesc.Format = DXGI_FORMAT_R32_SINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) elementDesc.Format = DXGI_FORMAT_R32_FLOAT;
+				}
+				else if (paramDesc.Mask <= 3)
+				{
+					if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) elementDesc.Format = DXGI_FORMAT_R32G32_UINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) elementDesc.Format = DXGI_FORMAT_R32G32_SINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) elementDesc.Format = DXGI_FORMAT_R32G32_FLOAT;
+				}
+				else if (paramDesc.Mask <= 7)
+				{
+					if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) elementDesc.Format = DXGI_FORMAT_R32G32B32_UINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) elementDesc.Format = DXGI_FORMAT_R32G32B32_SINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) elementDesc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+				}
+				else if (paramDesc.Mask <= 15)
+				{
+					if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_UINT32) elementDesc.Format = DXGI_FORMAT_R32G32B32A32_UINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_SINT32) elementDesc.Format = DXGI_FORMAT_R32G32B32A32_SINT;
+					else if (paramDesc.ComponentType == D3D_REGISTER_COMPONENT_FLOAT32) elementDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+				}
+
+				//save element desc
+				inputLayoutDesc.push_back (elementDesc);
+			}
+
+			ID3D11InputLayout* pInputLayout = nullptr;
+
+			// Try to create Input Layout
+			HRESULT hr = device->CreateInputLayout (&inputLayoutDesc[0], inputLayoutDesc.size (), vertexBlob->GetBufferPointer (), vertexBlob->GetBufferSize (), inputlayout);
+
+			//Free allocation shader reflection memory
+			pVertexShaderReflection->Release ();
+			//return &pInputLayout;
 		}
 
 		ShaderResource::~ShaderResource ()
