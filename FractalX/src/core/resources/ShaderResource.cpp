@@ -65,6 +65,7 @@ namespace fractal
 			SafeRelease (pixelShaderBlob);
 		}
 
+		// TODO: Learn more about shader reflection
 		void ShaderResource::CreateVertexInputLayout (ID3DBlob* vertexBlob, ID3D11InputLayout** inputlayout)
 		{
 			ID3D11Device* device = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetDevice ();
