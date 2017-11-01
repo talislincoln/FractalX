@@ -8,18 +8,19 @@ namespace fractal
 	{
 		class FObject
 		{
+		private:
 			static unsigned __int32 counter;
 
-		private:
 			FString m_name;
 
 			unsigned __int32 m_id;
-			
-			bool m_isActive;
 
+			bool m_isActive;
 			bool m_isInitialized;
 			bool m_canDraw;
 			bool m_isDestroyed;
+
+			char padding[4]; // 4 bytes of padding so that we have 3 elements of 4 bytes
 			
 		public:
 			FObject(const FString& name = _T(""));

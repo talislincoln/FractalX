@@ -63,6 +63,8 @@ namespace fractal
 				fcout << L" error creating the vertex shader " << std::endl;
 			}
 			SafeRelease (pixelShaderBlob);
+
+			ConfigureConstantBuffers ();
 		}
 
 		// TODO: Learn more about shader reflection
@@ -184,6 +186,8 @@ namespace fractal
 			SafeRelease (pShaderBlob);
 			SafeRelease (pErrorBlob);
 
+			
+
 			return pShader;
 		}
 
@@ -194,6 +198,17 @@ namespace fractal
 			SafeRelease (m_inputLayout);
 
 			return true;
+		}
+
+		void ShaderResource::UseShader () const
+		{
+			ID3D11DeviceContext* context = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetContext ();
+
+			const UINT vertexStride = sizeof (VertexPosColorTexture);
+			const UINT offset = 0;
+
+			context->VSSetShader (GetVertexShader (), nullptr, 0);
+			context->PSSetShader (GetPixelShader (), nullptr, 0);
 		}
 
 		ID3D11VertexShader* ShaderResource::GetVertexShader () const
@@ -209,6 +224,58 @@ namespace fractal
 		ID3D11InputLayout*	ShaderResource::GetInputLayout () const
 		{
 			return m_inputLayout;
+		}
+
+		void ShaderResource::ConfigureConstantBuffers ()
+		{
+			ID3D11Device* device = SystemManager::Instance ()->GetGraphicsSystem ()->GetDevice ();
+
+			LogManager* logger = LogManager::Instance ();
+			Window* window = SystemManager::Instance ()->GetWindowSystem ();
+			SceneManager* sceneManager = SceneManager::Instance ();
+
+			assert (device);
+
+			// Create the constant buffers for the variables defined in the vertex shader.
+			D3D11_BUFFER_DESC constantBufferDesc;
+			ZeroMemory (&constantBufferDesc, sizeof (D3D11_BUFFER_DESC));
+
+			constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			constantBufferDesc.ByteWidth = sizeof (DirectX::XMMATRIX);
+			constantBufferDesc.CPUAccessFlags = 0;
+			constantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+			HRESULT hr = device->CreateBuffer (&constantBufferDesc, nullptr, &m_constantBuffers[(int)ConstanBuffer::CB_Appliation]);
+			if (FAILED (hr))
+			{
+				logger->LogError (L"Error creating Application buffer");
+			}
+			hr = device->CreateBuffer (&constantBufferDesc, nullptr, &m_constantBuffers[(int)ConstanBuffer::CB_Frame]);
+			if (FAILED (hr))
+			{
+				logger->LogError (L"Error creating Frame buffer");
+			}
+			hr = device->CreateBuffer (&constantBufferDesc, nullptr, &m_constantBuffers[(int)ConstanBuffer::CB_Object]);
+			if (FAILED (hr))
+			{
+				logger->LogError (L"Error creating Object buffer");
+			}
+
+			// Setup the projection matrix.
+			RECT clientRect;
+			GetClientRect (window->GetWindowHandle (), &clientRect);
+
+			// Compute the exact client dimensions.
+			// This is required for a correct projection matrix.
+			float clientWidth = static_cast<float>(clientRect.right - clientRect.left);
+			float clientHeight = static_cast<float>(clientRect.bottom - clientRect.top);
+			
+			SystemManager::Instance ()->GetGraphicsSystem ()->GetContext()->UpdateSubresource (m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (45.0f), clientWidth / clientHeight, 0.1f, 100.0f), 0, 0);
+		}
+
+		ID3D11Buffer*const* ShaderResource::GetConstantBuffers () const
+		{
+			return m_constantBuffers;
 		}
 
 		template<>

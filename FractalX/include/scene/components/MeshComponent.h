@@ -32,6 +32,8 @@ namespace fractal
 			void Update () override;
 			void Draw () const override;
 			bool Shutdown () override;
+
+			class fcore::ShaderResource* GetShader () const;
 		};
 	}
 }

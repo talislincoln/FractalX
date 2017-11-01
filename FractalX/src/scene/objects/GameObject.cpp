@@ -9,14 +9,15 @@ namespace fractal
 		GameObject::GameObject(FString name) :
 			FObject(name),
 			m_parent(nullptr),
-			m_position(DirectX::XMVectorSet (0.0f, 0.0f, 0.0f, 1.0f))
+			m_position (DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f)),
+			m_scaling  (DirectX::XMFLOAT3 (1.0f, 1.0f, 1.0f))
 		{
-
+			// empty
 		}
 
 		GameObject::~GameObject()
 		{
-
+			// empty
 		}
 
 		bool GameObject::Init()
@@ -106,6 +107,77 @@ namespace fractal
 			return true;
 		}
 
+		DirectX::XMMATRIX GameObject::GetRotationMatrix () const
+		{
+			using namespace DirectX;
+
+			XMFLOAT3 rotations = GetRotation ();
+			float rotationX = rotations.x;
+			float rotationY = rotations.y;
+			float rotationZ = rotations.z;
+
+			float yaw, pitch, roll;
+			pitch = rotationX * TO_RADIANS;
+			yaw = rotationY * TO_RADIANS;
+			roll = rotationZ * TO_RADIANS;
+
+			return XMMatrixRotationRollPitchYaw (roll, yaw, pitch);
+		}
+
+		DirectX::XMMATRIX GameObject::GetLookAtMatrix () const
+		{
+			DirectX::XMFLOAT3 pos = GetPosition ();
+
+			return DirectX::XMMatrixLookToLH (DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1), GetForwardVector (), GetUpVector ());
+		}
+
+		DirectX::XMVECTOR GameObject::GetForwardVector () const
+		{
+			return XMVector3TransformCoord (VECTOR_FORWARD, GetRotationMatrix());
+		}
+
+		DirectX::XMVECTOR GameObject::GetUpVector () const
+		{
+			using namespace DirectX;
+
+			return XMVector3TransformCoord (VECTOR_UP, GetRotationMatrix());
+		}
+
+		void GameObject::SetPosition (const DirectX::XMFLOAT3& newPosition)
+		{
+			m_position = newPosition;
+		}
+
+		void GameObject::SetPosition (float x, float y, float z)
+		{
+			m_position = DirectX::XMFLOAT3 (x, y, z);
+		}
+
+		const DirectX::XMFLOAT3& GameObject::GetPosition () const
+		{
+			return m_position;
+		}
+
+		void GameObject::Rotate (const DirectX::XMFLOAT3 &rotations)
+		{
+			m_rotations = rotations;
+		}
+
+		void GameObject::Rotate (float rotationX, float rotationY, float rotationZ)
+		{
+			m_rotations = DirectX::XMFLOAT3 (rotationX, rotationY, rotationZ);
+		}
+
+		const DirectX::XMFLOAT3& GameObject::GetRotation () const
+		{
+			return m_rotations;
+		}
+
+		DirectX::XMFLOAT3 GameObject::GetScale () const
+		{
+			return m_scaling;
+		}
+
 		void GameObject::AddComponent (Component* comp)
 		{
 			std::vector<Component*>::iterator it = std::find (this->m_components.begin (), this->m_components.end (), comp);
@@ -125,21 +197,6 @@ namespace fractal
 				this->m_components.erase (it);
 				SafeDelete (*it);
 			}
-		}
-
-		template <typename T>
-		T* GameObject::GetComponent () const
-		{
-			for (Component* c : this->m_components)
-			{
-				T* comp = dynamic_cast<T*>(c);
-				if (comp == nullptr)
-					continue;
-
-				return comp;
-			}
-
-			return nullptr;
 		}
 
 		std::vector<Component*> GameObject::GetComponents () const

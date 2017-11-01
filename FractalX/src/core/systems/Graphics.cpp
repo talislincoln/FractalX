@@ -83,7 +83,6 @@ namespace fractal
 			sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 			sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 			
-
 			// Use 4X MSAA? 
 			if (m_enable4xMsaa)
 			{
@@ -156,8 +155,6 @@ namespace fractal
 			// The remaining steps that need to be carried out for d3d creation
 			// also need to be executed every time the window is resized.  So
 			// just call the OnResize method here to avoid code duplication.
-			if (!LoadContent ())
-				return false;
 			OnResize ();
 
 			return true;
@@ -167,7 +164,7 @@ namespace fractal
 		{
 			using namespace DirectX;
 
-			DirectX::XMVECTOR eyePosition = XMVectorSet (0, 0, -10, 1);
+			/*DirectX::XMVECTOR eyePosition = XMVectorSet (0, 0, -10, 1);
 			DirectX::XMVECTOR focusPoint = XMVectorSet (0, 0, 0, 1);
 			DirectX::XMVECTOR upDirection = XMVectorSet (0, 1, 0, 0);
 			g_ViewMatrix = XMMatrixLookAtLH (eyePosition, focusPoint, upDirection);
@@ -179,33 +176,14 @@ namespace fractal
 			XMVECTOR rotationAxis = XMVectorSet (0, 1, 1, 0);
 
 			g_WorldMatrix = XMMatrixRotationAxis (rotationAxis, XMConvertToRadians (0));
-			m_d3dImmediateContext->UpdateSubresource (g_d3dConstantBuffers[CB_Object], 0, nullptr, &g_WorldMatrix, 0, 0);
+			m_d3dImmediateContext->UpdateSubresource (g_d3dConstantBuffers[CB_Object], 0, nullptr, &g_WorldMatrix, 0, 0);*/
+
+
 		}
 
 		void Graphics::Draw () const
 		{
-			/*assert (m_d3dImmediateContext);
-			assert (m_swapChain);
-
-			const UINT vertexStride = sizeof (VertexPosColor);
-			const UINT offset = 0;
-
-			m_d3dImmediateContext->IASetVertexBuffers (0, 1, &vertices, &vertexStride, &offset);
-			m_d3dImmediateContext->IASetInputLayout (g_d3dInputLayout);
-			m_d3dImmediateContext->IASetIndexBuffer (indices, DXGI_FORMAT_R16_UINT, 0);
-
-			m_d3dImmediateContext->VSSetShader (g_d3dVertexShader, nullptr, 0);*/
-			m_d3dImmediateContext->VSSetConstantBuffers (0, 3, g_d3dConstantBuffers);
-
 			m_d3dImmediateContext->RSSetState (m_d3dRasterizerState);
-			m_d3dImmediateContext->RSSetViewports (1, &m_screenViewport);
-
-			//m_d3dImmediateContext->PSSetShader (g_d3dPixelShader, nullptr, 0);
-
-			m_d3dImmediateContext->OMSetRenderTargets (1, &m_renderTargetView, m_depthStencilView);
-			m_d3dImmediateContext->OMSetDepthStencilState (m_d3dDepthStencilState, 1);
-			
-			//m_d3dImmediateContext->DrawIndexed ((6), 0, 0);
 		}
 
 		bool Graphics::Shutdown ()
@@ -229,7 +207,7 @@ namespace fractal
 
 		void Graphics::BeginDraw () const
 		{
-			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colours::Blue));
+			m_d3dImmediateContext->ClearRenderTargetView (m_renderTargetView, reinterpret_cast<const float*>(&fractal::Colors::Blue));
 			m_d3dImmediateContext->ClearDepthStencilView (m_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 			m_d3dImmediateContext->IASetPrimitiveTopology (D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -326,7 +304,7 @@ namespace fractal
 				ZeroMemory (&rasterizerDesc, sizeof (D3D11_RASTERIZER_DESC));
 
 				rasterizerDesc.AntialiasedLineEnable = FALSE;
-				rasterizerDesc.CullMode = D3D11_CULL_BACK;
+				rasterizerDesc.CullMode = D3D11_CULL_BACK; 
 				rasterizerDesc.DepthBias = 0;
 				rasterizerDesc.DepthBiasClamp = 0.0f;
 				rasterizerDesc.DepthClipEnable = TRUE;
@@ -345,7 +323,6 @@ namespace fractal
 
 				m_d3dImmediateContext->RSSetViewports (1, &m_screenViewport);
 			}
-			
 		}
 	}
 }

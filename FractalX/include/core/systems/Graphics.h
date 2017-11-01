@@ -36,69 +36,6 @@ namespace fractal
 
 			class Window* m_window;
 
-
-			// Shader resources
-			enum ConstanBuffer
-			{
-				CB_Appliation,
-				CB_Frame,
-				CB_Object,
-				NumConstantBuffers
-			};
-
-			ID3D11Buffer* g_d3dConstantBuffers[NumConstantBuffers];
-			D3D11_VIEWPORT g_Viewport = { 0 };
-
-			// Demo parameters
-			DirectX::XMMATRIX g_WorldMatrix;
-			DirectX::XMMATRIX g_ViewMatrix;
-			DirectX::XMMATRIX g_ProjectionMatrix;
-
-			bool LoadContent ()
-			{
-				assert (m_d3dDevice);
-
-				// Create the constant buffers for the variables defined in the vertex shader.
-				D3D11_BUFFER_DESC constantBufferDesc;
-				ZeroMemory (&constantBufferDesc, sizeof (D3D11_BUFFER_DESC));
-
-				constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-				constantBufferDesc.ByteWidth = sizeof (DirectX::XMMATRIX);
-				constantBufferDesc.CPUAccessFlags = 0;
-				constantBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-
-				HRESULT hr = m_d3dDevice->CreateBuffer (&constantBufferDesc, nullptr, &g_d3dConstantBuffers[CB_Appliation]);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-				hr = m_d3dDevice->CreateBuffer (&constantBufferDesc, nullptr, &g_d3dConstantBuffers[CB_Frame]);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-				hr = m_d3dDevice->CreateBuffer (&constantBufferDesc, nullptr, &g_d3dConstantBuffers[CB_Object]);
-				if (FAILED (hr))
-				{
-					return false;
-				}
-
-				// Setup the projection matrix.
-				RECT clientRect;
-				GetClientRect (m_window->GetWindowHandle(), &clientRect);
-
-				// Compute the exact client dimensions.
-				// This is required for a correct projection matrix.
-				float clientWidth = static_cast<float>(clientRect.right - clientRect.left);
-				float clientHeight = static_cast<float>(clientRect.bottom - clientRect.top);
-
-				g_ProjectionMatrix = DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (45.0f), clientWidth / clientHeight, 0.1f, 100.0f);
-
-				m_d3dImmediateContext->UpdateSubresource (g_d3dConstantBuffers[CB_Appliation], 0, nullptr, &g_ProjectionMatrix, 0, 0);
-				
-				return true;
-			}
-
 		public:
 			Graphics ();
 			~Graphics ();

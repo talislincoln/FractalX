@@ -8,10 +8,20 @@ namespace fractal
 {
 	namespace fcore
 	{
+		// Shader resources
+		enum class ConstanBuffer : unsigned __int8
+		{
+			CB_Appliation,
+			CB_Frame,
+			CB_Object,
+			NumConstantBuffers
+		};
+
 		class ShaderResource : public Resource
 		{
 		private:
 			// Shader data
+			ID3D11Buffer*			m_constantBuffers[(int)ConstanBuffer::NumConstantBuffers];
 			ID3D11VertexShader*		m_vertexShader;
 			ID3D11PixelShader*		m_pixelShader;
 
@@ -23,12 +33,19 @@ namespace fractal
 
 			bool Shutdown () override;
 
+			void UseShader () const;
+
 			ID3D11VertexShader* GetVertexShader () const;
 			ID3D11PixelShader*	GetPixelShader () const;
 
 			ID3D11InputLayout*	GetInputLayout () const;
 
+			ID3D11Buffer*const* GetConstantBuffers () const;
+
 		private:
+			// TODO: make this function abstract. And create a new "BasicShader"
+			virtual void ConfigureConstantBuffers ();
+
 			void CreateVertexInputLayout (ID3DBlob* vertexBlob, ID3D11InputLayout** inputlayout);
 
 			template< class ShaderClass >

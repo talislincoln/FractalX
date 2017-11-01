@@ -12,6 +12,7 @@ namespace fractal
 	namespace fscene
 	{
 		class Scene;
+		class CameraComponent;
 	}
 
 	namespace fcore
@@ -20,7 +21,11 @@ namespace fractal
 		{
 		private:
 			std::vector<fscene::Scene*> m_scenes;
+			std::vector<fscene::CameraComponent*> m_cameras;
+
 			fscene::Scene* m_activeScene;
+			fscene::CameraComponent* m_activeCamera;
+			
 		public:
 			SceneManager() : IManager<SceneManager>() {}
 			~SceneManager () {};
@@ -33,6 +38,10 @@ namespace fractal
 			void AddScene (fscene::Scene* scene);
 			void SetActiveScene (const FString& name);
 			class fscene::Scene* GetActiveScene () const;
+
+			void AddCamera (fscene::CameraComponent* camera);
+			void SetActiveCamera (fscene::CameraComponent* camera);
+			fscene::CameraComponent* GetActiveCamera () const;
 		};
 	}
 }

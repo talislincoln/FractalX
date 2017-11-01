@@ -53,17 +53,38 @@ bool MyScene::Init ()
 	ImageResource* image = new fcore::ImageResource (L"seafloor", L"../bin/textures/seafloor.dds");
 
 	// create game object
-	GameObject *go = new GameObject (__T ("First GO"));
+	m_player = new GameObject (__T ("First GO"));
+	m_cube = new GameObject (__T ("Cube"));
+	m_cube2 = new GameObject (__T ("Cube2"));
 	// add the mesh component to the game object
-	go->AddComponent (new MeshComponent (L"quad", L"SimpleShader", L"seafloor"));
+	m_cube->AddComponent (new MeshComponent (L"quad", L"SimpleShader", L"seafloor"));
+	m_cube2->AddComponent (new MeshComponent (L"quad", L"SimpleShader", L"seafloor"));
+	CameraComponent* c = new CameraComponent (L"MainCamera");
+	c->SetShader (s);
+	m_player->AddComponent (c);
+
+	m_player->SetPosition (DirectX::XMFLOAT3 (0.0f, 0.0f, -10.0f));
+
+	//m_cube->SetPosition (5.0f, 0.0f, 0.0f);
+	//m_cube2->SetPosition (-5.0f, 0.0f, 0.0f);
 	// add GO to the scene
-	AddGameObject (go);
+	AddGameObject (m_player);
+	AddGameObject (m_cube);
+	AddGameObject (m_cube2);
 
 	return Scene::Init ();
 }
 
 void MyScene::Update ()
 {
+	DirectX::XMFLOAT3 rot = m_cube->GetRotation ();
+
+	m_cube->Rotate (rot.x, rot.y + 0.01f, rot.z);
+
+	rot = m_cube2->GetRotation ();
+
+	m_cube2->Rotate (rot.x + 0.01f, rot.y, rot.z);
+
 	Scene::Update ();
 }
 

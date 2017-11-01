@@ -180,6 +180,8 @@
     <ClInclude Include="include\scene\objects\GameObject.h" />
     <ClInclude Include="include\scene\Scene.h" />
     <ClInclude Include="include\utils\DDSTextureLoader.h" />
+    <ClInclude Include="include\utils\defines.h" />
+    <ClInclude Include="include\utils\MathHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\interfaces\IDrawable.cpp" />

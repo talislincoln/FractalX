@@ -102,5 +102,23 @@ namespace fractal
 		{
 			return this->m_activeScene;
 		}
+
+		void SceneManager::AddCamera (fscene::CameraComponent* camera)
+		{
+			if (!m_activeCamera)
+				m_activeCamera = camera;
+
+			m_cameras.push_back (camera);
+		}
+
+		void SceneManager::SetActiveCamera (fscene::CameraComponent* camera)
+		{
+			m_activeCamera = camera;
+		}
+
+		fscene::CameraComponent* SceneManager::GetActiveCamera () const
+		{
+			return m_activeCamera;
+		}
 	}
 }

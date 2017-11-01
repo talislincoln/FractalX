@@ -10,7 +10,7 @@ namespace fractal
 	{
 		class Component : public FObject
 		{
-		private:
+		protected:
 			class GameObject* m_parent;
 		public:
 			Component (const FString& name = _T(""));
