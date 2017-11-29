@@ -53,15 +53,7 @@ namespace fractal
 			inline ID3D11Device* GetDevice () const { return m_d3dDevice; }
 			inline ID3D11DeviceContext* GetContext () const { return m_d3dImmediateContext; }
 
-		private:
-
-			DirectX::XMFLOAT4X4 mWorld;
-			DirectX::XMFLOAT4X4 mView;
-			DirectX::XMFLOAT4X4 mProj;
-
-			float mTheta;
-			float mPhi;
-			float mRadius;
+			DirectX::XMMATRIX GetProjectionMatrix () const;
 		};
 	}
 }

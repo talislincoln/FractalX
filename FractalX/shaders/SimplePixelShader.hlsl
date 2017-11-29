@@ -1,14 +1,14 @@
 Texture2D txDiffuse : register(t0);
 SamplerState samLinear : register(s0);
 
-struct PixelShaderInput
+struct VertexShaderOutput
 {
-	float4 Pos : SV_POSITION;
+	float4 position : SV_POSITION;
 	float4 color : COLOR;
-	float2 Tex : TEXCOORD;
+	float2 texcoord : TEXTCOORD0;
 };
 
-float4 SimplePixelShader (PixelShaderInput IN) : SV_TARGET
+float4 SimplePixelShader (VertexShaderOutput IN) : SV_TARGET
 {
-	return txDiffuse.Sample (samLinear, IN.Tex) * IN.color;
+	return txDiffuse.Sample (samLinear, IN.texcoord) * IN.color;
 }

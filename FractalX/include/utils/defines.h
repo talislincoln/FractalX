@@ -22,6 +22,16 @@ namespace fractal
 #define VECTOR_UP		DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
 #define VECTOR_FORWARD	DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f)
 #define TO_RADIANS		0.0174532925f
+#define MATH_PI			3.1415926535f
+
+	// Shader resources
+	enum class ConstanBuffer : unsigned __int8
+	{
+		CB_Appliation,
+		CB_Frame,
+		CB_Object,
+		NumConstantBuffers
+	};
 
 	enum class SystemType : unsigned __int8
 	{

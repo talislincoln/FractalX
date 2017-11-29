@@ -8,15 +8,6 @@ namespace fractal
 {
 	namespace fcore
 	{
-		// Shader resources
-		enum class ConstanBuffer : unsigned __int8
-		{
-			CB_Appliation,
-			CB_Frame,
-			CB_Object,
-			NumConstantBuffers
-		};
-
 		class ShaderResource : public Resource
 		{
 		private:

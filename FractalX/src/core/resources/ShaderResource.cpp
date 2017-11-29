@@ -19,8 +19,8 @@ namespace fractal
 			assert (device);
 
 			// TODO: Have to figure out a way to change the vertex and pixel shader output name to use long string
-			// m_vertexShader = LoadShader<ID3D11VertexShader> (vertexPath, "SimpleVertexShader", "latest");
-			// m_pixelShader = LoadShader<ID3D11PixelShader> (pixelPath, "SimplePixelShader", "latest");
+			//m_vertexShader = LoadShader<ID3D11VertexShader> (vertexPath, "SimpleVertexShader", "latest");
+			//m_pixelShader = LoadShader<ID3D11PixelShader> (pixelPath, "SimplePixelShader", "latest");
 
 			// Loading the vertex shader
 			ID3DBlob* vertexShaderBlob;
@@ -186,8 +186,6 @@ namespace fractal
 			SafeRelease (pShaderBlob);
 			SafeRelease (pErrorBlob);
 
-			
-
 			return pShader;
 		}
 
@@ -270,7 +268,7 @@ namespace fractal
 			float clientWidth = static_cast<float>(clientRect.right - clientRect.left);
 			float clientHeight = static_cast<float>(clientRect.bottom - clientRect.top);
 			
-			SystemManager::Instance ()->GetGraphicsSystem ()->GetContext()->UpdateSubresource (m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (45.0f), clientWidth / clientHeight, 0.1f, 100.0f), 0, 0);
+			SystemManager::Instance ()->GetGraphicsSystem ()->GetContext()->UpdateSubresource (m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (90.0f), clientWidth / clientHeight, 0.1f, 100.0f), 0, 0);
 		}
 
 		ID3D11Buffer*const* ShaderResource::GetConstantBuffers () const

@@ -73,17 +73,15 @@ namespace fractal
 
 			m_shaderData->UseShader ();		
 
-			
-
 			using namespace DirectX;
 
 			XMFLOAT3 pos = m_parent->GetPosition ();
 			XMFLOAT3 scale = m_parent->GetScale ();
-			XMMATRIX world = (XMMatrixTranslation(pos.x, pos.y, pos.z) * m_parent->GetRotationMatrix () * XMMatrixScaling (scale.x, scale.y, scale.z)) *
-				sceneManager->GetActiveCamera ()->GetViewMatrix () *
-				sceneManager->GetActiveCamera ()->GetCameraProjection ();
+			XMMATRIX world = XMMatrixScaling (scale.x, scale.y, scale.z) * m_parent->GetRotationMatrix () * XMMatrixTranslation (pos.x, pos.y, pos.z);
+			
+			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[1], 0, nullptr, &sceneManager->GetActiveCamera ()->GetViewMatrix (), 0, 0);
 
-			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[2], 0, nullptr, &XMMatrixTranspose(world), 0, 0);
+			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[2], 0, nullptr, &world, 0, 0);
 
 			context->DrawIndexed (m_meshData->GetIndicesCount (), 0, 0);
 		}

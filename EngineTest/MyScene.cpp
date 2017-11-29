@@ -40,7 +40,9 @@ bool MyScene::Init ()
 	MeshDataResource* r = new fcore::MeshDataResource (FString(L"quad"), vertices, indices);
 	
 #if defined(DEBUG) || defined(_DEBUG)  
+	//FString vertex = L"../shaders/SimpleVertexShader.hlsl";
 	FString vertex = L"../bin/SimpleVertexShader_d.cso";
+	//FString pixel = L"../bin/SimplePixelShader.hlsl";
 	FString pixel = L"../bin/SimplePixelShader_d.cso";
 #else
 	FString vertex = L"../bin/SimpleVertexShader.cso";
@@ -65,8 +67,8 @@ bool MyScene::Init ()
 
 	m_player->SetPosition (DirectX::XMFLOAT3 (0.0f, 0.0f, -10.0f));
 
-	//m_cube->SetPosition (5.0f, 0.0f, 0.0f);
-	//m_cube2->SetPosition (-5.0f, 0.0f, 0.0f);
+	m_cube->SetPosition (5.0f, 0.0f, 0.0f);
+	m_cube2->SetPosition (-5.0f, 0.0f, 0.0f);
 	// add GO to the scene
 	AddGameObject (m_player);
 	AddGameObject (m_cube);
@@ -79,7 +81,7 @@ void MyScene::Update ()
 {
 	DirectX::XMFLOAT3 rot = m_cube->GetRotation ();
 
-	m_cube->Rotate (rot.x, rot.y + 0.01f, rot.z);
+	m_cube->Rotate (rot.x + 0.01f, rot.y + 0.01f, rot.z + 0.01f);
 
 	rot = m_cube2->GetRotation ();
 

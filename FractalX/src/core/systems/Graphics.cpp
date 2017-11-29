@@ -320,6 +320,8 @@ namespace fractal
 				{
 					//return -1;
 				}
+				//m_d3dImmediateContext->UpdateSubresource (, 0, nullptr, &XMMatrixPerspectiveFovLH(), 0, 0);
+				//SystemManager::Instance ()->GetGraphicsSystem ()->GetContext ()->UpdateSubresource (m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (45.0f), clientWidth / clientHeight, 0.1f, 100.0f), 0, 0);
 
 				m_d3dImmediateContext->RSSetViewports (1, &m_screenViewport);
 			}
