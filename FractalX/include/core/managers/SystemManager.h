@@ -43,9 +43,13 @@ namespace fractal
 			class Clock*	GetClockSystem () const;
 
 			class System* GetSystem (SystemType type) const;
+
 			std::vector<class System*> GetSystems () const;
 			std::vector<class IDrawable*> GetDrawableSystems () const;
+
+			template <typename T> static T* GetSystem ();
 		};
+
 	}
 }
 

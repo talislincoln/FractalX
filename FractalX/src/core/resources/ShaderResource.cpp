@@ -202,9 +202,6 @@ namespace fractal
 		{
 			ID3D11DeviceContext* context = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetContext ();
 
-			const UINT vertexStride = sizeof (VertexPosColorTexture);
-			const UINT offset = 0;
-
 			context->VSSetShader (GetVertexShader (), nullptr, 0);
 			context->PSSetShader (GetPixelShader (), nullptr, 0);
 		}

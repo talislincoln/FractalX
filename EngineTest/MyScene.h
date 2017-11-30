@@ -7,7 +7,7 @@ class MyScene : public fractal::fscene::Scene
 private:
 	class fractal::fscene::GameObject* m_player;
 	class fractal::fscene::GameObject* m_cube;
-	class fractal::fscene::GameObject* m_cube2;
+	class fractal::fscene::GameObject* m_sphere;
 
 public:
 	MyScene ();

@@ -133,5 +133,17 @@ namespace fractal
 		{
 			return m_drawableSystems;
 		}
+
+		template<typename T>
+		T* SystemManager::GetSystem ()
+		{
+			SystemManager* instance = SystemManager::Instance ();
+			/*std::vector<
+				if (this->m_resources[path] != nullptr)
+					return dynamic_cast<T*>(this->m_resources[path]);*/
+
+			// if didn't find the resouce, return nullptr
+			return nullptr;
+		}
 	}
 }

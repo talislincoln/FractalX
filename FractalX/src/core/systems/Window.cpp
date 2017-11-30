@@ -130,7 +130,6 @@ namespace fractal
 			// TODO: Send MESSAGES BASED ON THE EVENTS
 			// Send messages: OnResize(), OnButtonDown, OnButtonUp, OnPaused, and so on...
 
-
 			switch (msg)
 			{
 			case WM_PAINT:

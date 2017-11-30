@@ -55,6 +55,7 @@ namespace fractal
 			if (!this->ShutDown())
 			{
 				//Logger.Error("Failed to Shutdown the engine");
+
 				return fractal::SHUTDOWN_FAILED;
 			}
 

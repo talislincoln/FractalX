@@ -9,6 +9,12 @@ namespace fractal
 {
 	namespace fcore
 	{
+		struct MeshData
+		{
+			std::vector<VertexPosColorTexture> vertices;
+			std::vector<WORD> indices;
+		};
+
 		class MeshDataResource : public Resource
 		{
 		private:
@@ -19,7 +25,8 @@ namespace fractal
 
 		public:
 			MeshDataResource (const FString& path);
-			MeshDataResource (const FString& name, std::vector<VertexPosColorTexture> vertices, std::vector<WORD> indices);
+			MeshDataResource (const FString& name, const MeshData& meshData);
+			MeshDataResource (const FString& name, const std::vector<VertexPosColorTexture>& vertices, const std::vector<WORD>& indices);
 
 			MeshDataResource () = delete;
 			MeshDataResource (MeshDataResource&) = delete;

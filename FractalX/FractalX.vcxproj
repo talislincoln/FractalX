@@ -181,6 +181,7 @@
     <ClInclude Include="include\scene\Scene.h" />
     <ClInclude Include="include\utils\DDSTextureLoader.h" />
     <ClInclude Include="include\utils\defines.h" />
+    <ClInclude Include="include\utils\GeometryGenerator.h" />
     <ClInclude Include="include\utils\MathHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -222,6 +223,7 @@
     <ClCompile Include="src\scene\objects\GameObject.cpp" />
     <ClCompile Include="src\scene\Scene.cpp" />
     <ClCompile Include="src\utils\DDSTextureLoader.cpp" />
+    <ClCompile Include="src\utils\GeometryGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\SimplePixelShader.hlsl">
@@ -251,6 +253,9 @@
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">include/VertexShader.h</HeaderFileOutput>
       <FileType>Document</FileType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\bin\textures\lights.dds" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,7 +8,8 @@ namespace fractal
 {
 	namespace fscene
 	{
-		CameraComponent::CameraComponent (const FString& name)
+		CameraComponent::CameraComponent (const FString& name) :
+			m_clippingPlanes(DirectX::XMFLOAT2(0.3f, 1000.0f))
 		{
 			// empty
 			fcore::SceneManager* sceneManager = fcore::SceneManager::Instance ();
@@ -61,7 +62,9 @@ namespace fractal
 
 		DirectX::XMMATRIX CameraComponent::GetCameraProjection () const
 		{
-			return DirectX::XMMatrixPerspectiveFovLH (0.4f*3.14f, 800.0f / 600.0f, 1.0f, 1000.0f);
+			fcore::Window *w =fcore::SystemManager::Instance ()->GetWindowSystem();
+			
+			return DirectX::XMMatrixPerspectiveFovLH (0.4f*3.14f, w->AspectRation (), m_clippingPlanes.x, m_clippingPlanes.y);
 		}
 	}
 }

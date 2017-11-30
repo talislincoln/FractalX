@@ -29,23 +29,7 @@ namespace fractal
 			m_imageData = resourceManager->GetResource<fcore::ImageResource> (imageResourceName);
 
 			// TODO: double check if we should put the rest of this function in the draw methods
-			const UINT vertexStride = sizeof (VertexPosColorTexture);
-			const UINT offset = 0;
-
-			//m_shaderData->UseShader ();
-
-			ID3D11Buffer* vertexBuffer = m_meshData->GetVertexBuffer ();
-			context->IASetVertexBuffers (0, 1, &vertexBuffer, &vertexStride, &offset);
-			context->IASetInputLayout (m_shaderData->GetInputLayout ());
-
-			ID3D11Buffer* indexBuffer = m_meshData->GetIndexBuffer ();
-			context->IASetIndexBuffer (indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-
-			ID3D11ShaderResourceView* rv = m_imageData->GetResourceView ();
-			context->PSSetShaderResources (0, 1, &rv);
-			ID3D11SamplerState* sampler = m_imageData->GetSampler ();
-			context->PSSetSamplers (0, 1, &sampler);
-			context->VSSetConstantBuffers (0, 3, m_shaderData->GetConstantBuffers ());
+			
 		}
 
 		MeshComponent::~MeshComponent ()
@@ -72,16 +56,33 @@ namespace fractal
 			fcore::SceneManager* sceneManager = fractal::fcore::SceneManager::Instance ();
 
 			m_shaderData->UseShader ();		
-
 			using namespace DirectX;
 
 			XMFLOAT3 pos = m_parent->GetPosition ();
 			XMFLOAT3 scale = m_parent->GetScale ();
 			XMMATRIX world = XMMatrixScaling (scale.x, scale.y, scale.z) * m_parent->GetRotationMatrix () * XMMatrixTranslation (pos.x, pos.y, pos.z);
 			
-			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[1], 0, nullptr, &sceneManager->GetActiveCamera ()->GetViewMatrix (), 0, 0);
+			//context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[1], 0, nullptr, &sceneManager->GetActiveCamera ()->GetViewMatrix (), 0, 0);
 
 			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[2], 0, nullptr, &world, 0, 0);
+
+			const UINT vertexStride = sizeof (VertexPosColorTexture);
+			const UINT offset = 0;
+
+			//m_shaderData->UseShader ();
+
+			ID3D11Buffer* vertexBuffer = m_meshData->GetVertexBuffer ();
+			context->IASetVertexBuffers (0, 1, &vertexBuffer, &vertexStride, &offset);
+			context->IASetInputLayout (m_shaderData->GetInputLayout ());
+
+			ID3D11Buffer* indexBuffer = m_meshData->GetIndexBuffer ();
+			context->IASetIndexBuffer (indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+			ID3D11ShaderResourceView* rv = m_imageData->GetResourceView ();
+			context->PSSetShaderResources (0, 1, &rv);
+			ID3D11SamplerState* sampler = m_imageData->GetSampler ();
+			context->PSSetSamplers (0, 1, &sampler);
+			context->VSSetConstantBuffers (0, 3, m_shaderData->GetConstantBuffers ());
 
 			context->DrawIndexed (m_meshData->GetIndicesCount (), 0, 0);
 		}

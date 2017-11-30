@@ -102,13 +102,20 @@ namespace fractal
 		DirectX::XMFLOAT3 Color;
 		DirectX::XMFLOAT2 UV;
 
+		VertexPosColorTexture ()
+		{
+			// empty
+		};
+
+		VertexPosColorTexture (float x, float y, float z, float r, float g, float b, float u, float v) :
+			Position(DirectX::XMFLOAT3(x, y, z)), Color (DirectX::XMFLOAT3 (r, g, b)), UV (DirectX::XMFLOAT2 (u, v))
+		{
+			// empty
+		}
+
 		VertexPosColorTexture (DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT2 uvs) :
 			Position (position), Color (color), UV(uvs) {}
-	};
-
-
-
-	
+	};	
 	
 	/*std::wstring widen (const std::string& str)
 	{

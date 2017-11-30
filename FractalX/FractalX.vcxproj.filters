@@ -108,6 +108,9 @@
     <ClInclude Include="include\utils\MathHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\utils\GeometryGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp">
@@ -188,9 +191,15 @@
     <ClCompile Include="src\utils\DDSTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\GeometryGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\SimpleVertexShader.hlsl" />
     <FxCompile Include="shaders\SimplePixelShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\bin\textures\lights.dds" />
   </ItemGroup>
 </Project>

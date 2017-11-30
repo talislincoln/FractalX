@@ -17,6 +17,7 @@ namespace fractal
 		private:
 			//DirectX::XMVECTOR m_target;
 			fcore::ShaderResource* m_shader;
+			DirectX::XMFLOAT2 m_clippingPlanes;
 		public:
 			CameraComponent (const FString& name);
 			~CameraComponent ();
