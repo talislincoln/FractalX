@@ -8,7 +8,7 @@ namespace fractal
 	namespace fcore
 	{
 		ImageResource::ImageResource (const FString& name, const FString& path) :
-			Resource (path, ResourceType::RESOURCE_IMAGE),
+			Resource (name, ResourceType::RESOURCE_IMAGE),
 			m_textureResourceView (nullptr),
 			m_samplerLinear (nullptr)
 		{

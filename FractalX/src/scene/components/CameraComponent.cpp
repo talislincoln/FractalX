@@ -64,7 +64,7 @@ namespace fractal
 		{
 			fcore::Window *w =fcore::SystemManager::Instance ()->GetWindowSystem();
 			
-			return DirectX::XMMatrixPerspectiveFovLH (0.4f*3.14f, w->AspectRation (), m_clippingPlanes.x, m_clippingPlanes.y);
+			return DirectX::XMMatrixPerspectiveFovLH (45.0f * MATH_PI / 180.0f, w->AspectRation (), m_clippingPlanes.x, m_clippingPlanes.y);
 		}
 	}
 }

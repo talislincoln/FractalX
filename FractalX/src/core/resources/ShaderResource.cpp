@@ -265,7 +265,7 @@ namespace fractal
 			float clientWidth = static_cast<float>(clientRect.right - clientRect.left);
 			float clientHeight = static_cast<float>(clientRect.bottom - clientRect.top);
 			
-			SystemManager::Instance ()->GetGraphicsSystem ()->GetContext()->UpdateSubresource (m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (90.0f), clientWidth / clientHeight, 0.1f, 100.0f), 0, 0);
+			SystemManager::Instance ()->GetGraphicsSystem ()->GetContext()->UpdateSubresource (m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (45.0f), clientWidth / clientHeight, 0.3f, 1000.0f), 0, 0);
 		}
 
 		ID3D11Buffer*const* ShaderResource::GetConstantBuffers () const

@@ -34,11 +34,11 @@ bool MyScene::Init ()
 	ResourceManager* resourceManager = ResourceManager::Instance ();
 
 	// create a new mesh data resource and add it to the manager
-	MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::CreateSphere (3.0f, 10.0f, 10.0f));
+	MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::CreateSphere (3.0f, 20.0f, 20.0f));
 	MeshDataResource* r = new fcore::MeshDataResource (FString (L"box"), GeometryGenerator::CreateBox (3.0f, 3.0f, 3.0f));
 	// create a new shader resource and add it to the resource manager
 	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel);
-	ImageResource* image = new fcore::ImageResource (L"seafloor", L"../bin/textures/lights.dds");
+	ImageResource* image = new fcore::ImageResource (L"lights", L"../resources/textures/earth.dds");
 
 	// create game object
 	m_player = new GameObject (__T ("First GO"));
@@ -71,7 +71,7 @@ void MyScene::Update ()
 
 	rot = m_sphere->GetRotation ();
 
-	m_sphere->Rotate (rot.x + 0.01f, rot.y, rot.z);
+	m_sphere->Rotate (rot.x, rot.y + 0.01f, rot.z);
 
 	Scene::Update ();
 }

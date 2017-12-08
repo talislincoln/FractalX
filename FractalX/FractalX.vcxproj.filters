@@ -201,5 +201,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\bin\textures\lights.dds" />
+    <Image Include="..\bin\textures\earth.DDS" />
   </ItemGroup>
 </Project>
