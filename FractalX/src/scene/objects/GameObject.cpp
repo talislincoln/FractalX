@@ -10,7 +10,9 @@ namespace fractal
 			FObject(name),
 			m_parent(nullptr),
 			m_position (DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f)),
-			m_scaling  (DirectX::XMFLOAT3 (1.0f, 1.0f, 1.0f))
+			m_rotations (DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f)),
+			m_scaling  (DirectX::XMFLOAT3 (1.0f, 1.0f, 1.0f)),
+			m_isDirty (true)
 		{
 			// empty
 		}
@@ -49,6 +51,12 @@ namespace fractal
 
 		void GameObject::Update ()
 		{
+			if (m_isDirty)
+			{
+				m_worldMatrix = DirectX::XMMatrixScaling (m_scaling.x, m_scaling.y, m_scaling.z) * GetRotationMatrix() * DirectX::XMMatrixTranslation (m_position.x, m_position.y, m_position.z);
+				m_isDirty = false;
+			}
+
 			// update components
 			for (Component* c : m_components)
 			{
@@ -131,6 +139,11 @@ namespace fractal
 			return DirectX::XMMatrixLookToLH (DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1), GetForwardVector (), GetUpVector ());
 		}
 
+		DirectX::XMMATRIX GameObject::GetWorldMatrix () const
+		{
+			return m_worldMatrix;
+		}
+
 		DirectX::XMVECTOR GameObject::GetForwardVector () const
 		{
 			return XMVector3TransformCoord (VECTOR_FORWARD, GetRotationMatrix());
@@ -146,11 +159,13 @@ namespace fractal
 		void GameObject::SetPosition (const DirectX::XMFLOAT3& newPosition)
 		{
 			m_position = newPosition;
+			m_isDirty = true;
 		}
 
 		void GameObject::SetPosition (float x, float y, float z)
 		{
 			m_position = DirectX::XMFLOAT3 (x, y, z);
+			m_isDirty = true;
 		}
 
 		const DirectX::XMFLOAT3& GameObject::GetPosition () const
@@ -161,11 +176,13 @@ namespace fractal
 		void GameObject::Rotate (const DirectX::XMFLOAT3 &rotations)
 		{
 			m_rotations = rotations;
+			m_isDirty = true;
 		}
 
 		void GameObject::Rotate (float rotationX, float rotationY, float rotationZ)
 		{
 			m_rotations = DirectX::XMFLOAT3 (rotationX, rotationY, rotationZ);
+			m_isDirty = true;
 		}
 
 		const DirectX::XMFLOAT3& GameObject::GetRotation () const

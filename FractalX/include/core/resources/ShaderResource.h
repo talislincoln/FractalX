@@ -19,7 +19,8 @@ namespace fractal
 			ID3D11InputLayout*		m_inputLayout;
 
 		public:
-			ShaderResource (const FString& name, const FString& vertexPath, const FString& pixelPath, D3D11_INPUT_ELEMENT_DESC* vertexLayout = nullptr , int numElementsLayout = 0);
+			ShaderResource (const FString& name, const FString& vertexPath, const FString& pixelPath, 
+				bool isCompiled = true, D3D11_INPUT_ELEMENT_DESC* vertexLayout = nullptr , int numElementsLayout = 0);
 			~ShaderResource ();
 
 			bool Shutdown () override;
@@ -40,7 +41,8 @@ namespace fractal
 			void CreateVertexInputLayout (ID3DBlob* vertexBlob, ID3D11InputLayout** inputlayout);
 
 			template< class ShaderClass >
-			ShaderClass* LoadShader (const FString& fileName, const std::string& entryPoint, const std::string& profile);
+			ShaderClass* LoadShader (const FString& fileName, const std::string& entryPoint, const std::string& profile, 
+				D3D11_INPUT_ELEMENT_DESC* vertexLayout, int numElementsLayout);
 
 			// Get the latest profile for the specified shader type.
 			template< class ShaderClass >

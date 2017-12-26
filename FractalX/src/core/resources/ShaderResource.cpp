@@ -8,6 +8,7 @@ namespace fractal
 	{
 		ShaderResource::ShaderResource (const FString& name, 
 			const FString& vertexPath, const FString& pixelPath, 
+			bool isCompiled /* = true */,
 			D3D11_INPUT_ELEMENT_DESC* vertexLayout /* = nullptr */, 
 			int numElementsLayout /* = 0 */) :
 			Resource(name, ResourceType::RESOURCE_SHADER),
@@ -18,51 +19,56 @@ namespace fractal
 			ID3D11Device* device = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetDevice ();
 			assert (device);
 
-			// TODO: Have to figure out a way to change the vertex and pixel shader output name to use long string
-			//m_vertexShader = LoadShader<ID3D11VertexShader> (vertexPath, "SimpleVertexShader", "latest");
-			//m_pixelShader = LoadShader<ID3D11PixelShader> (pixelPath, "SimplePixelShader", "latest");
-
-			// Loading the vertex shader
-			ID3DBlob* vertexShaderBlob;
-			if (FAILED (D3DReadFileToBlob (vertexPath.c_str(), &vertexShaderBlob)))
+			if (isCompiled)
 			{
-				fcout << L" error loading the vertex shader " << std::endl;
-			}
+				// Loading the vertex shader
+				ID3DBlob* vertexShaderBlob;
+				if (FAILED (D3DReadFileToBlob (vertexPath.c_str (), &vertexShaderBlob)))
+				{
+					fcout << L" error loading the vertex shader " << std::endl;
+				}
 
-			if (FAILED (device->CreateVertexShader (vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), nullptr, &m_vertexShader)))
-			{
-				fcout << L" error creating the vertex shader " << std::endl;
-			}
+				if (FAILED (device->CreateVertexShader (vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), nullptr, &m_vertexShader)))
+				{
+					fcout << L" error creating the vertex shader " << std::endl;
+				}
 
-			// Create the input layout for the vertex shader.
-			if (!vertexLayout)
-			{
-				// TODO: improve this function to more robust version if it stops working
-				CreateVertexInputLayout (vertexShaderBlob, &m_inputLayout);
+				// Create the input layout for the vertex shader.
+				if (!vertexLayout)
+				{
+					// TODO: improve this function to more robust version if it stops working
+					CreateVertexInputLayout (vertexShaderBlob, &m_inputLayout);
+				}
+				else
+				{
+					// in case the function doesn't fully work, there's still the option to give the input layout explicitly
+					if (FAILED (device->CreateInputLayout (vertexLayout, numElementsLayout, vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), &m_inputLayout)))
+					{
+						fcout << L" error creating the input layout " << std::endl;
+					}
+				}
+
+				SafeRelease (vertexShaderBlob);
+
+				// Loading the pixel shader
+				ID3DBlob* pixelShaderBlob;
+				if (FAILED (D3DReadFileToBlob (pixelPath.c_str (), &pixelShaderBlob)))
+				{
+					fcout << L" error loading the pixel shader " << std::endl;
+				}
+
+				if (FAILED (device->CreatePixelShader (pixelShaderBlob->GetBufferPointer (), pixelShaderBlob->GetBufferSize (), nullptr, &m_pixelShader)))
+				{
+					fcout << L" error creating the vertex shader " << std::endl;
+				}
+				SafeRelease (pixelShaderBlob);
 			}
 			else
 			{
-				// in case the function doesn't fully work, there's still the option to give the input layout explicitly
-				if (FAILED (device->CreateInputLayout (vertexLayout, numElementsLayout, vertexShaderBlob->GetBufferPointer (), vertexShaderBlob->GetBufferSize (), &m_inputLayout)))
-				{
-					fcout << L" error creating the input layout " << std::endl;
-				}
+				// TODO: Have to figure out a way to change the vertex and pixel shader output name to use long string
+				m_vertexShader = LoadShader<ID3D11VertexShader> (vertexPath, "SimpleVertexShader", "latest", vertexLayout, numElementsLayout);
+				m_pixelShader = LoadShader<ID3D11PixelShader> (pixelPath, "SimplePixelShader", "latest", vertexLayout, numElementsLayout);
 			}
-
-			SafeRelease (vertexShaderBlob);
-
-			// Loading the pixel shader
-			ID3DBlob* pixelShaderBlob;
-			if (FAILED (D3DReadFileToBlob (pixelPath.c_str (), &pixelShaderBlob)))
-			{
-				fcout << L" error loading the pixel shader " << std::endl;
-			}
-
-			if (FAILED (device->CreatePixelShader (pixelShaderBlob->GetBufferPointer (), pixelShaderBlob->GetBufferSize (), nullptr, &m_pixelShader)))
-			{
-				fcout << L" error creating the vertex shader " << std::endl;
-			}
-			SafeRelease (pixelShaderBlob);
 
 			ConfigureConstantBuffers ();
 		}
@@ -146,11 +152,14 @@ namespace fractal
 		}
 
 		template< class ShaderClass >
-		ShaderClass* ShaderResource::LoadShader (const FString& fileName, const std::string& entryPoint, const std::string& _profile)
+		ShaderClass* ShaderResource::LoadShader (const FString& fileName, const std::string& entryPoint, const std::string& _profile, 
+			D3D11_INPUT_ELEMENT_DESC* vertexLayout, int numElementsLayout)
 		{
 			ID3DBlob* pShaderBlob = nullptr;
 			ID3DBlob* pErrorBlob = nullptr;
 			ShaderClass* pShader = nullptr;
+
+			ID3D11Device* device = dynamic_cast<fractal::fcore::Graphics*>(fractal::fcore::SystemManager::Instance ()->GetSystem (fractal::SystemType::GRAPHICS_SYSTEM))->GetDevice ();
 
 			std::string profile = _profile;
 			if (profile == "latest")
@@ -182,6 +191,25 @@ namespace fractal
 			}
 
 			pShader = CreateShader<ShaderClass> (pShaderBlob, nullptr);
+
+			// create the input layout if constructing fragment shader
+			if (typeid(ShaderClass).name () == typeid(ID3D11VertexShader).name ())
+			{
+				// Create the input layout for the vertex shader.
+				if (!vertexLayout)
+				{
+					// TODO: improve this function to more robust version if it stops working
+					CreateVertexInputLayout (pShaderBlob, &m_inputLayout);
+				}
+				else
+				{
+					// in case the function doesn't fully work, there's still the option to give the input layout explicitly
+					if (FAILED (device->CreateInputLayout (vertexLayout, numElementsLayout, pShaderBlob->GetBufferPointer (), pShaderBlob->GetBufferSize (), &m_inputLayout)))
+					{
+						fcout << L" error creating the input layout " << std::endl;
+					}
+				}
+			}
 
 			SafeRelease (pShaderBlob);
 			SafeRelease (pErrorBlob);

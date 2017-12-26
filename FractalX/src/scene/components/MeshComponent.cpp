@@ -26,10 +26,7 @@ namespace fractal
 
 			m_meshData = resourceManager->GetResource<fcore::MeshDataResource> (meshResourceName);
 			m_shaderData = resourceManager->GetResource<fcore::ShaderResource> (shaderResourceName);
-			m_imageData = resourceManager->GetResource<fcore::ImageResource> (imageResourceName);
-
-			// TODO: double check if we should put the rest of this function in the draw methods
-			
+			m_imageData = resourceManager->GetResource<fcore::ImageResource> (imageResourceName);	
 		}
 
 		MeshComponent::~MeshComponent ()
@@ -58,18 +55,11 @@ namespace fractal
 			m_shaderData->UseShader ();		
 			using namespace DirectX;
 
-			XMFLOAT3 pos = m_parent->GetPosition ();
-			XMFLOAT3 scale = m_parent->GetScale ();
-			XMMATRIX world = XMMatrixScaling (scale.x, scale.y, scale.z) * m_parent->GetRotationMatrix () * XMMatrixTranslation (pos.x, pos.y, pos.z);
-			
 			//context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[1], 0, nullptr, &sceneManager->GetActiveCamera ()->GetViewMatrix (), 0, 0);
-
-			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[2], 0, nullptr, &world, 0, 0);
+			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[2], 0, nullptr, &m_parent->GetWorldMatrix(), 0, 0);
 
 			const UINT vertexStride = sizeof (VertexPosColorTexture);
 			const UINT offset = 0;
-
-			//m_shaderData->UseShader ();
 
 			ID3D11Buffer* vertexBuffer = m_meshData->GetVertexBuffer ();
 			context->IASetVertexBuffers (0, 1, &vertexBuffer, &vertexStride, &offset);

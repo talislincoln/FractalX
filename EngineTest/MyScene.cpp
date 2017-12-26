@@ -21,10 +21,10 @@ bool MyScene::Init ()
 	using namespace fcore;
 
 #if defined(DEBUG) || defined(_DEBUG)  
-	//FString vertex = L"../shaders/SimpleVertexShader.hlsl";
-	FString vertex = L"../bin/SimpleVertexShader_d.cso";
-	//FString pixel = L"../bin/SimplePixelShader.hlsl";
-	FString pixel = L"../bin/SimplePixelShader_d.cso";
+	FString vertex = L"../resources/shaders/SimpleVertexShader.hlsl";
+	//FString vertex = L"../bin/SimpleVertexShader_d.cso";
+	FString pixel = L"../resources/shaders/SimplePixelShader.hlsl";
+	//FString pixel = L"../bin/SimplePixelShader_d.cso";
 #else
 	FString vertex = L"../bin/SimpleVertexShader.cso";
 	FString pixel = L"../bin/SimplePixelShader.cso";
@@ -37,7 +37,7 @@ bool MyScene::Init ()
 	MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::CreateSphere (3.0f, 20.0f, 20.0f));
 	MeshDataResource* r = new fcore::MeshDataResource (FString (L"box"), GeometryGenerator::CreateBox (3.0f, 3.0f, 3.0f));
 	// create a new shader resource and add it to the resource manager
-	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel);
+	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel, false);
 	ImageResource* image = new fcore::ImageResource (L"lights", L"../resources/textures/earth.dds");
 
 	// create game object

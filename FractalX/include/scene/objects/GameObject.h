@@ -12,12 +12,16 @@ namespace fractal
 		class GameObject : public FObject
 		{
 		private:
+			DirectX::XMMATRIX m_worldMatrix;
+
 			DirectX::XMFLOAT3 m_position;
 			DirectX::XMFLOAT3 m_rotations;
 			DirectX::XMFLOAT3 m_scaling;
 
 			// in a perfect would, this would align with the above variables
 			float m_padding; 
+
+			bool m_isDirty;
 
 			std::vector<class Component*> m_components;
 			std::vector<class GameObject*> m_children;
@@ -35,8 +39,10 @@ namespace fractal
 
 			DirectX::XMMATRIX GetRotationMatrix () const;
 			DirectX::XMMATRIX GetLookAtMatrix () const;
+			DirectX::XMMATRIX GetWorldMatrix () const;
 			DirectX::XMVECTOR GetForwardVector () const;
 			DirectX::XMVECTOR GetUpVector () const;
+
 
 			void SetPosition (const DirectX::XMFLOAT3& newPosition);
 			void SetPosition (float x, float y, float z);
