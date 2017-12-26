@@ -8,12 +8,16 @@ namespace fractal
 {
 	namespace fscene
 	{
-		CameraComponent::CameraComponent (const FString& name) :
-			m_clippingPlanes(DirectX::XMFLOAT2(0.3f, 1000.0f))
+		CameraComponent::CameraComponent (const FString& name, float fov /* = 60.0f */, 
+			float nearPlane /* = 0.3f */, float farPlane /* = 1000.0f */) :
+			m_clippingPlanes(DirectX::XMFLOAT2(nearPlane, farPlane)),
+			m_fov(fov), m_isDirty(false)
 		{
 			// empty
 			fcore::SceneManager* sceneManager = fcore::SceneManager::Instance ();
 			sceneManager->AddCamera (this);
+
+			UpdateProjectionMatrix ();
 		}
 
 		CameraComponent::~CameraComponent ()
@@ -40,7 +44,6 @@ namespace fractal
 
 		void CameraComponent::Draw () const
 		{
-			
 		}
 
 		bool CameraComponent::Shutdown ()
@@ -53,6 +56,24 @@ namespace fractal
 			m_shader = shader;
 		}
 
+		void CameraComponent::SetFieldOfView (float fov)
+		{
+			m_fov = fov;
+
+			UpdateProjectionMatrix ();
+		}
+
+		float CameraComponent::GetFieldOfView () const
+		{
+			return m_fov;
+		}
+
+		void CameraComponent::SetClippingPlanes (float nearPlane, float farPlane)
+		{
+			m_clippingPlanes = DirectX::XMFLOAT2 (nearPlane, farPlane);
+			UpdateProjectionMatrix ();
+		}
+
 		DirectX::XMMATRIX CameraComponent::GetViewMatrix () const
 		{
 			DirectX::XMFLOAT3 pos = m_parent->GetPosition ();
@@ -60,11 +81,24 @@ namespace fractal
 			return DirectX::XMMatrixLookToLH (DirectX::XMVectorSet (pos.x, pos.y, pos.z, 1), m_parent->GetForwardVector(), m_parent->GetUpVector());
 		}
 
-		DirectX::XMMATRIX CameraComponent::GetCameraProjection () const
+		void CameraComponent::SetProjectionMatrix (float fov, float nearPlane, float farPlane)
 		{
-			fcore::Window *w =fcore::SystemManager::Instance ()->GetWindowSystem();
-			
-			return DirectX::XMMatrixPerspectiveFovLH (45.0f * MATH_PI / 180.0f, w->AspectRation (), m_clippingPlanes.x, m_clippingPlanes.y);
+			m_fov = fov;
+			m_clippingPlanes.x = nearPlane;
+			m_clippingPlanes.y = farPlane;
+
+			UpdateProjectionMatrix ();
+		}
+
+		DirectX::XMMATRIX CameraComponent::GetProjectionMatrix () const
+		{
+			return m_projectionMatrix;
+		}
+
+		void CameraComponent::UpdateProjectionMatrix ()
+		{
+			fcore::Window *w = fcore::SystemManager::Instance ()->GetWindowSystem ();
+			m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH (m_fov * MATH_PI / 180.0f, w->AspectRation (), m_clippingPlanes.x, m_clippingPlanes.y);
 		}
 	}
 }

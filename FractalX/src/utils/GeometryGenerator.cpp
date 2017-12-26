@@ -3,6 +3,13 @@
 
 namespace fractal
 {
+	fcore::MeshData GeometryGenerator::LoadObjFromFile (FString filePath)
+	{
+		fcore::MeshData obj;
+
+		return obj;
+	}
+
 	fcore::MeshData GeometryGenerator::CreateBox (float width, float height, float depth)
 	{
 		fcore::MeshData box;
@@ -32,22 +39,22 @@ namespace fractal
 		vertices[11] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
 		// Fill in the bottom face vertex data.
-		vertices[12] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f);
-		vertices[13] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
-		vertices[14] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-		vertices[15] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+		vertices[12] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+		vertices[13] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
+		vertices[14] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+		vertices[15] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
 
 		// Fill in the left face vertex data.
-		vertices[16] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
-		vertices[17] = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-		vertices[18] = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-		vertices[19] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f);
+		vertices[16] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
+		vertices[17] = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+		vertices[18] = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
+		vertices[19] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
 		// Fill in the right face vertex data.
-		vertices[20] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
-		vertices[21] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-		vertices[22] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f);
-		vertices[23] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f);
+		vertices[20] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
+		vertices[21] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+		vertices[22] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
+		vertices[23] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
 		box.vertices.assign (&vertices[0], &vertices[24]);
 

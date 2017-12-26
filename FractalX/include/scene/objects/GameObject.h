@@ -43,7 +43,6 @@ namespace fractal
 			DirectX::XMVECTOR GetForwardVector () const;
 			DirectX::XMVECTOR GetUpVector () const;
 
-
 			void SetPosition (const DirectX::XMFLOAT3& newPosition);
 			void SetPosition (float x, float y, float z);
 			const DirectX::XMFLOAT3& GetPosition () const;

@@ -12,9 +12,9 @@ namespace fractal
 			m_position (DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f)),
 			m_rotations (DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f)),
 			m_scaling  (DirectX::XMFLOAT3 (1.0f, 1.0f, 1.0f)),
-			m_isDirty (true)
+			m_isDirty (false)
 		{
-			// empty
+			m_worldMatrix = DirectX::XMMatrixScaling (m_scaling.x, m_scaling.y, m_scaling.z) * GetRotationMatrix () * DirectX::XMMatrixTranslation (m_position.x, m_position.y, m_position.z);
 		}
 
 		GameObject::~GameObject()

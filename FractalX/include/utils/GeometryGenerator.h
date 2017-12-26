@@ -17,6 +17,7 @@ namespace fractal
 	class GeometryGenerator
 	{
 	public:
+		static fcore::MeshData LoadObjFromFile (FString filePath);
 		static fcore::MeshData CreateBox (float width, float height, float depth);
 		static fcore::MeshData CreateSphere (float radius, UINT sliceCount, UINT stackCount);
 	};
