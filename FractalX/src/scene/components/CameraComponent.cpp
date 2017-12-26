@@ -76,9 +76,9 @@ namespace fractal
 
 		DirectX::XMMATRIX CameraComponent::GetViewMatrix () const
 		{
-			DirectX::XMFLOAT3 pos = m_parent->GetPosition ();
+			DirectX::XMFLOAT3 pos = m_gameObject->GetPosition ();
 
-			return DirectX::XMMatrixLookToLH (DirectX::XMVectorSet (pos.x, pos.y, pos.z, 1), m_parent->GetForwardVector(), m_parent->GetUpVector());
+			return DirectX::XMMatrixLookToLH (DirectX::XMVectorSet (pos.x, pos.y, pos.z, 1), m_gameObject->GetForwardVector(), m_gameObject->GetUpVector());
 		}
 
 		void CameraComponent::SetProjectionMatrix (float fov, float nearPlane, float farPlane)

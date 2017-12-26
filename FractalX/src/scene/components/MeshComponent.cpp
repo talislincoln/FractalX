@@ -56,7 +56,8 @@ namespace fractal
 			using namespace DirectX;
 
 			//context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[1], 0, nullptr, &sceneManager->GetActiveCamera ()->GetViewMatrix (), 0, 0);
-			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[2], 0, nullptr, &m_parent->GetWorldMatrix(), 0, 0);
+			XMMATRIX aux = m_gameObject->GetWorldMatrix ();
+			context->UpdateSubresource (m_shaderData->GetConstantBuffers ()[2], 0, nullptr, &aux, 0, 0);
 
 			const UINT vertexStride = sizeof (VertexPosColorTexture);
 			const UINT offset = 0;

@@ -8,7 +8,7 @@ namespace fractal
 	{
 		Component::Component (const FString& name) :
 			FObject (name),
-			m_parent (nullptr)
+			m_gameObject (nullptr)
 		{
 			//empty
 		}
@@ -18,14 +18,14 @@ namespace fractal
 			//empty
 		}
 
-		void Component::SetParent (GameObject* parent)
+		void Component::SetGameObject (GameObject* go)
 		{
-			m_parent = parent;
+			m_gameObject = go;
 		}
 
-		GameObject* Component::GetParent () const
+		GameObject* Component::GetGameObject () const
 		{
-			return m_parent;
+			return m_gameObject;
 		}
 	}
 }

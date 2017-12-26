@@ -11,13 +11,13 @@ namespace fractal
 		class Component : public FObject
 		{
 		protected:
-			class GameObject* m_parent;
+			class GameObject* m_gameObject;
 		public:
 			Component (const FString& name = _T(""));
 			virtual ~Component ();
 
-			void SetParent (class GameObject* parent);
-			class GameObject* GetParent () const;
+			void SetGameObject (class GameObject* parent);
+			class GameObject* GetGameObject () const;
 		};
 	}
 }

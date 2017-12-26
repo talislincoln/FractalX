@@ -13,6 +13,7 @@ namespace fractal
 		{
 		private:
 			DirectX::XMMATRIX m_worldMatrix;
+			DirectX::XMMATRIX m_localTransform;
 
 			DirectX::XMFLOAT3 m_position;
 			DirectX::XMFLOAT3 m_rotations;
@@ -29,7 +30,8 @@ namespace fractal
 			class GameObject* m_parent;
 
 		public:
-			GameObject(FString name);
+			GameObject (FString name);
+			GameObject(FString name, GameObject* parent);
 			~GameObject();
 
 			virtual bool Init() override;
@@ -38,10 +40,13 @@ namespace fractal
 			virtual bool Shutdown() override;
 
 			DirectX::XMMATRIX GetRotationMatrix () const;
-			DirectX::XMMATRIX GetLookAtMatrix () const;
+			//DirectX::XMMATRIX GetLookAtMatrix () const;
 			DirectX::XMMATRIX GetWorldMatrix () const;
 			DirectX::XMVECTOR GetForwardVector () const;
 			DirectX::XMVECTOR GetUpVector () const;
+
+			void Translate (const DirectX::XMFLOAT3& newPosition);
+			void Translate (float x, float y, float z);
 
 			void SetPosition (const DirectX::XMFLOAT3& newPosition);
 			void SetPosition (float x, float y, float z);
@@ -51,6 +56,7 @@ namespace fractal
 			void Rotate (float rotationX, float rotationY, float rotationZ);
 			const DirectX::XMFLOAT3& GetRotation () const;
 
+			void SetScate (float x, float y, float z);
 			DirectX::XMFLOAT3 GetScale () const;
 
 			void AddComponent (class Component* comp);
@@ -65,6 +71,9 @@ namespace fractal
 			GameObject* GetParent () const;
 
 			GameObject* GetRootParent () const;
+
+		protected:
+			void UpdateWorldTransform ();
 		};
 
 		template <typename T>

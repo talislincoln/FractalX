@@ -55,10 +55,18 @@ namespace fractal
 		{
 			for (GameObject* obj : this->m_objects)
 			{
-				if (!obj->Shutdown ())
-					return false;
+				// if the object doesn't have a parent can clean - otherwise the parent will take care of it
+				if (!obj->GetParent ())
+				{
+					if (!obj->Shutdown ())
+						return false;
 
-				SafeDelete (obj);
+					SafeDelete (obj);
+				}
+				else
+				{
+					continue;
+				}
 			}
 
 			m_objects.clear ();

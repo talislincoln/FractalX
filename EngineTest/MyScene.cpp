@@ -1,6 +1,8 @@
 #include <FractalPCH.h>
 #include "MyScene.h"
 
+#include <cmath>
+
 #include <scene\objects\GameObject.h>
 #include <scene\EngineScene.h>
 #include <core\EngineCore.h>
@@ -48,12 +50,14 @@ bool MyScene::Init ()
 	m_player->AddComponent (c);
 	AddGameObject (m_player);
 
-	m_cube = new GameObject (__T ("Cube"));
+	m_sphere = new GameObject (__T ("Sphere"));
+	
+	m_cube = new GameObject (__T ("Cube"), m_sphere);
+
 	m_cube->AddComponent (new MeshComponent (L"box", L"SimpleShader", L"lights"));
 	m_cube->SetPosition (5.0f, 0.0f, 0.0f);
 	AddGameObject (m_cube);
 
-	m_sphere = new GameObject (__T ("Sphere"));
 	//m_sphere->SetPosition (-5.0f, 0.0f, 0.0f);
 	MeshComponent* mc = new MeshComponent(L"sphere", L"SimpleShader", L"lights");
 	m_sphere->AddComponent (mc);
@@ -66,11 +70,15 @@ bool MyScene::Init ()
 void MyScene::Update ()
 {
 	DirectX::XMFLOAT3 rot = m_cube->GetRotation ();
-
-	m_cube->Rotate (rot.x + 0.01f, rot.y + 0.01f, rot.z + 0.01f);
+	
+	fractal::fcore::Clock *clock = fractal::fcore::SystemManager::Instance ()->GetClockSystem ();
+	
+	//m_cube->Rotate (rot.x + 0.01f, rot.y + 0.01f, rot.z + 0.01f);
 
 	rot = m_sphere->GetRotation ();
 
+	//m_sphere->Translate (sin (clock->TotalTime ()) * 0.001f, 0.0f, 0.0f);
+	
 	m_sphere->Rotate (rot.x, rot.y + 0.01f, rot.z);
 
 	Scene::Update ();

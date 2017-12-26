@@ -6,15 +6,27 @@ namespace fractal
 {
 	namespace fscene
 	{
-		GameObject::GameObject(FString name) :
+		GameObject::GameObject (FString name) :
+			GameObject(name, nullptr)
+		{
+			// empty
+		}
+
+		GameObject::GameObject(FString name, GameObject* parent) :
 			FObject(name),
+			m_worldMatrix(DirectX::XMMatrixIdentity()),
+			m_localTransform (DirectX::XMMatrixIdentity ()),
 			m_parent(nullptr),
 			m_position (DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f)),
 			m_rotations (DirectX::XMFLOAT3 (0.0f, 0.0f, 0.0f)),
 			m_scaling  (DirectX::XMFLOAT3 (1.0f, 1.0f, 1.0f)),
 			m_isDirty (false)
 		{
-			m_worldMatrix = DirectX::XMMatrixScaling (m_scaling.x, m_scaling.y, m_scaling.z) * GetRotationMatrix () * DirectX::XMMatrixTranslation (m_position.x, m_position.y, m_position.z);
+			if (parent)
+			{
+				parent->AddChildObject (this);
+				m_worldMatrix = m_parent->GetWorldMatrix ();
+			}
 		}
 
 		GameObject::~GameObject()
@@ -53,7 +65,11 @@ namespace fractal
 		{
 			if (m_isDirty)
 			{
-				m_worldMatrix = DirectX::XMMatrixScaling (m_scaling.x, m_scaling.y, m_scaling.z) * GetRotationMatrix() * DirectX::XMMatrixTranslation (m_position.x, m_position.y, m_position.z);
+				m_localTransform = DirectX::XMMatrixScaling (m_scaling.x, m_scaling.y, m_scaling.z) * GetRotationMatrix() * DirectX::XMMatrixTranslation (m_position.x, m_position.y, m_position.z);
+				for (GameObject* child : m_children)
+				{
+					child->UpdateWorldTransform ();
+				}
 				m_isDirty = false;
 			}
 
@@ -132,16 +148,16 @@ namespace fractal
 			return XMMatrixRotationRollPitchYaw (roll, yaw, pitch);
 		}
 
-		DirectX::XMMATRIX GameObject::GetLookAtMatrix () const
+		/*DirectX::XMMATRIX GameObject::GetLookAtMatrix () const
 		{
 			DirectX::XMFLOAT3 pos = GetPosition ();
 
 			return DirectX::XMMatrixLookToLH (DirectX::XMVectorSet(pos.x, pos.y, pos.z, 1), GetForwardVector (), GetUpVector ());
-		}
+		}*/
 
 		DirectX::XMMATRIX GameObject::GetWorldMatrix () const
 		{
-			return m_worldMatrix;
+			return m_worldMatrix * m_localTransform;
 		}
 
 		DirectX::XMVECTOR GameObject::GetForwardVector () const
@@ -154,6 +170,22 @@ namespace fractal
 			using namespace DirectX;
 
 			return XMVector3TransformCoord (VECTOR_UP, GetRotationMatrix());
+		}
+
+		void GameObject::Translate (const DirectX::XMFLOAT3& increment)
+		{
+			m_position.x += increment.x;
+			m_position.y += increment.y;
+			m_position.z += increment.z;
+			m_isDirty = true;
+		}
+
+		void GameObject::Translate (float x, float y, float z)
+		{
+			m_position.x += x;
+			m_position.y += y;
+			m_position.z += z;
+			m_isDirty = true;
 		}
 
 		void GameObject::SetPosition (const DirectX::XMFLOAT3& newPosition)
@@ -190,6 +222,15 @@ namespace fractal
 			return m_rotations;
 		}
 
+		void GameObject::SetScate (float x, float y, float z)
+		{
+			m_scaling.x = x;
+			m_scaling.y = y;
+			m_scaling.z = z;
+			
+			m_isDirty = true;
+		}
+
 		DirectX::XMFLOAT3 GameObject::GetScale () const
 		{
 			return m_scaling;
@@ -201,7 +242,7 @@ namespace fractal
 			if (it == this->m_components.end ())
 			{
 				this->m_components.push_back (comp);
-				comp->SetParent (this);
+				comp->SetGameObject (this);
 			}
 		}
 
@@ -247,6 +288,7 @@ namespace fractal
 		void GameObject::SetParent (GameObject* obj)
 		{
 			m_parent = obj;
+			m_worldMatrix = obj->GetWorldMatrix ();
 		}
 
 		GameObject* GameObject::GetParent () const
@@ -257,6 +299,11 @@ namespace fractal
 		GameObject* GameObject::GetRootParent () const
 		{
 			return m_parent == nullptr ? const_cast<GameObject*>(this) : m_parent->GetRootParent ();
+		}
+
+		void GameObject::UpdateWorldTransform ()
+		{
+			m_worldMatrix = m_parent->GetWorldMatrix ();
 		}
 	}
 }
