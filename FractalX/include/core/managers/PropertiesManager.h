@@ -18,10 +18,8 @@ namespace fractal
 		class PropertiesManager : public IManager<PropertiesManager>
 		{
 		private:
-			std::unordered_map<std::string, float> m_properties;
-			std::vector<Section> m_sections;
-
-			std::unordered_map< std::string, std::unordered_map<std::string, std::string> > sections;
+			
+			std::unordered_map< std::string, std::unordered_map<std::string, std::string> > m_sections;
 		public:
 			PropertiesManager ();
 			~PropertiesManager ();
@@ -34,7 +32,7 @@ namespace fractal
 			std::string GetValue (const std::string& section, const std::string& key) const;
 
 		private:
-			const Section* GetSection (const std::string& sectionName) const;
+			const std::unordered_map<std::string, std::string>* GetSectionValues (const std::string& sectionName) const;
 
 			static void LeftTrim (std::string& s);
 			static void RightTrim (std::string& s);

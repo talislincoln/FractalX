@@ -42,6 +42,8 @@ namespace fractal
 			void AddCamera (fscene::CameraComponent* camera);
 			void SetActiveCamera (fscene::CameraComponent* camera);
 			fscene::CameraComponent* GetActiveCamera () const;
+
+			DirectX::XMMATRIX GetPerspectiveMatrix () const;
 		};
 	}
 }

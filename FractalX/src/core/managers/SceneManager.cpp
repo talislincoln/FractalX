@@ -1,6 +1,9 @@
 #include <FractalPCH.h>
 #include <core\managers\SceneManager.h>
+#include <core\managers\SystemManager.h>
+#include <core\systems\Window.h>
 #include <scene\Scene.h>
+#include <scene\components\CameraComponent.h>
 #include <algorithm>
 
 namespace fractal
@@ -119,6 +122,21 @@ namespace fractal
 		fscene::CameraComponent* SceneManager::GetActiveCamera () const
 		{
 			return m_activeCamera;
+		}
+
+		DirectX::XMMATRIX SceneManager::GetPerspectiveMatrix () const
+		{
+			Window* w = SystemManager::Instance ()->GetWindowSystem ();
+			if (m_activeCamera)
+			{
+				return DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (m_activeCamera->GetFieldOfView()), 
+					w->AspectRation(), m_activeCamera->GetNearClippingPlane(), m_activeCamera->GetFarClippingPlane());
+			}
+			// no active camera, create a default perspective matrix
+			else 
+			{
+				return DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (60.0f), w->AspectRation (), 0.3f, 1000.0f);
+			}
 		}
 	}
 }

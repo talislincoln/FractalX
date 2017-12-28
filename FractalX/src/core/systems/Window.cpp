@@ -4,6 +4,9 @@
 #include <core\systems\Graphics.h>
 #include <core\systems\Clock.h>
 #include <core\managers\SystemManager.h>
+#include <core\managers\PropertiesManager.h>
+
+#include <sstream>
 
 namespace fractal
 {
@@ -34,6 +37,22 @@ namespace fractal
 
 		bool Window::Init ()
 		{
+			// get properties from the .INI file
+			PropertiesManager* pm = PropertiesManager::Instance ();
+			std::string v = pm->GetValue (WINDOW_SECTION_NAME, WINDOW_HEIGHT_NAME);
+			if (v != "")
+			{
+				std::stringstream stream(v);
+				stream >> m_windowHeight;
+			}
+
+			v = pm->GetValue (WINDOW_SECTION_NAME, WINDOW_WIDTH_NAME);
+			if (v != "")
+			{
+				std::stringstream stream (v);
+				stream >> m_windowWidth;
+			}
+
 			WNDCLASS wc;
 			wc.style = CS_HREDRAW | CS_VREDRAW;
 			wc.lpfnWndProc = WndProc;
@@ -70,14 +89,6 @@ namespace fractal
 			UpdateWindow (m_hWindow);
 
 			return true;
-
-			/*if (!SpawnWindow ())
-			{
-				Shutdown ();
-				return false;
-			}
-
-			return true;*/
 		}
 
 		void Window::Update ()
@@ -103,7 +114,6 @@ namespace fractal
 
 		LRESULT CALLBACK Window::WndProc (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
-			
 			if (uMsg == WM_CREATE)
 			{
 				// if the message is WM_CREATE, the lParam contains a pointer to a CREATESTRUCT
@@ -120,7 +130,6 @@ namespace fractal
 				{
 					return window->HandleEvent (hWnd, uMsg, wParam, lParam);
 				}
-					
 			}
 			return DefWindowProc (hWnd, uMsg, wParam, lParam);
 		}
@@ -138,9 +147,9 @@ namespace fractal
 				HDC hDC = BeginPaint (hwnd, &paintStruct);
 				EndPaint (hwnd, &paintStruct);
 			}
-				// WM_ACTIVATE is sent when the window is activated or deactivated.  
-				// We pause the game when the window is deactivated and unpause it 
-				// when it becomes active.  
+			// WM_ACTIVATE is sent when the window is activated or deactivated.  
+			// We pause the game when the window is deactivated and unpause it 
+			// when it becomes active.  
 			case WM_ACTIVATE:
 			{
 				Clock* c = static_cast<Clock*>(SystemManager::Instance ()->GetSystem (SystemType::TIMER_SYSTEM));
@@ -159,7 +168,7 @@ namespace fractal
 				}
 				return 0;
 			}
-				// WM_SIZE is sent when the user resizes the window.  
+			// WM_SIZE is sent when the user resizes the window.  
 			case WM_SIZE:
 			{
 				// Save the new client area dimensions.
@@ -167,7 +176,6 @@ namespace fractal
 				m_windowHeight = HIWORD (lparam);
 
 				Graphics* graphics = dynamic_cast<Graphics*>(SystemManager::Instance ()->GetSystem (SystemType::GRAPHICS_SYSTEM));
-				// graphics->onResize (LOWORD (lParam), HIWORD (lParam));
 				if (graphics)
 				{
 					if (wparam == SIZE_MINIMIZED)
@@ -185,7 +193,6 @@ namespace fractal
 					}
 					else if (wparam == SIZE_RESTORED)
 					{
-
 						// Restoring from minimized state?
 						if (m_minimized)
 						{

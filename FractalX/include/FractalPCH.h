@@ -91,10 +91,6 @@ inline void SafeRelease(T& ptr)
 
 namespace fractal
 {
-	const int INITIALIZATION_FAILED = 0x0001;
-	const int SHUTDOWN_FAILED = 0x0010;
-
-	
 
 	struct VertexPosColorTexture
 	{

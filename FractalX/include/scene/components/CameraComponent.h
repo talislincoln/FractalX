@@ -39,6 +39,8 @@ namespace fractal
 			void SetFieldOfView (float fov);
 			float GetFieldOfView () const;
 
+			float GetNearClippingPlane () const;
+			float GetFarClippingPlane () const;
 			void SetClippingPlanes (float nearPlane, float farPlane);
 
 			DirectX::XMMATRIX GetViewMatrix () const;

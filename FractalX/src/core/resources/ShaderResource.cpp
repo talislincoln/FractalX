@@ -284,16 +284,10 @@ namespace fractal
 				logger->LogError (L"Error creating Object buffer");
 			}
 
-			// Setup the projection matrix.
-			RECT clientRect;
-			GetClientRect (window->GetWindowHandle (), &clientRect);
-
-			// Compute the exact client dimensions.
-			// This is required for a correct projection matrix.
-			float clientWidth = static_cast<float>(clientRect.right - clientRect.left);
-			float clientHeight = static_cast<float>(clientRect.bottom - clientRect.top);
+			SceneManager* sm = SceneManager::Instance ();
 			
-			SystemManager::Instance ()->GetGraphicsSystem ()->GetContext()->UpdateSubresource (m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &DirectX::XMMatrixPerspectiveFovLH (DirectX::XMConvertToRadians (45.0f), clientWidth / clientHeight, 0.3f, 1000.0f), 0, 0);
+			SystemManager::Instance ()->GetGraphicsSystem ()->GetContext()->UpdateSubresource (
+				m_constantBuffers[(int)ConstanBuffer::CB_Appliation], 0, nullptr, &sm->GetPerspectiveMatrix(), 0, 0);
 		}
 
 		ID3D11Buffer*const* ShaderResource::GetConstantBuffers () const

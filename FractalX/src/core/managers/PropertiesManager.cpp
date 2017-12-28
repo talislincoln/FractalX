@@ -127,25 +127,29 @@ namespace fractal
 
 		std::string PropertiesManager::GetValue (const std::string& section, const std::string& key) const
 		{
-			const Section* sect = GetSection(section);
-
-			if (sect != NULL)
+			auto sectionValues = GetSectionValues (section);
+			if (sectionValues)
 			{
-				const auto& it = sect->KeyValues.find (key);
-				if (it != sect->KeyValues.end ())
+				auto it = sectionValues->find (key);
+				if (it != sectionValues->end ())
+				{
 					return it->second;
+				}
 			}
+
 			return "";
 		}
 
-		const Section* PropertiesManager::GetSection (const std::string& name)  const
+		const std::unordered_map<std::string, std::string>* PropertiesManager::GetSectionValues (const std::string& name)  const
 		{
-			std::vector<Section>::const_iterator found = std::find_if (m_sections.begin (), m_sections.end (), [name](const Section& sect) 
-				{
-					return sect.Name.compare (name) == 0;
-				});
-
-			return found != m_sections.end () ? &*found : nullptr;
+			const auto it = m_sections.find (name);
+			if (it != m_sections.end ())
+			{
+				return &it->second;
+			} else 
+			{
+				return nullptr;
+			}
 		}
 
 		void PropertiesManager::LeftTrim (std::string& s)
@@ -189,7 +193,7 @@ namespace fractal
 				{
 					if (pieces.size () == 4)
 					{ // exactly enough matches
-						sections[current_section][pieces[1].str ()] = pieces[2].str ();
+						m_sections[current_section][pieces[1].str ()] = pieces[2].str ();
 					}
 				}
 			}

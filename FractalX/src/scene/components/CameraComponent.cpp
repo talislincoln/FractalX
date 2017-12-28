@@ -68,6 +68,16 @@ namespace fractal
 			return m_fov;
 		}
 
+		float CameraComponent::GetNearClippingPlane () const
+		{
+			return m_clippingPlanes.x;
+		}
+
+		float CameraComponent::GetFarClippingPlane () const
+		{
+			return m_clippingPlanes.y;
+		}
+
 		void CameraComponent::SetClippingPlanes (float nearPlane, float farPlane)
 		{
 			m_clippingPlanes = DirectX::XMFLOAT2 (nearPlane, farPlane);

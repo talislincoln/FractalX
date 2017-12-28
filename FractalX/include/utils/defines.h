@@ -4,6 +4,17 @@
 
 namespace fractal
 {
+	const std::string WINDOW_SECTION_NAME = "window";
+	const std::string WINDOW_WIDTH_NAME = "width";
+	const std::string WINDOW_HEIGHT_NAME = "height";
+
+	const std::string CAMERA_SECTION_NAME = "camera";
+	const std::string CAMERA_NEARPLANE_NAME = "near";
+	const std::string CMAERA_FARPLANE_NAME = "far";
+
+	const int INITIALIZATION_FAILED = 0x0001;
+	const int SHUTDOWN_FAILED = 0x0010;
+
 	namespace Colors
 	{
 		XMGLOBALCONST DirectX::XMVECTORF32 White = { 1.0f, 1.0f, 1.0f, 1.0f };
