@@ -51,18 +51,14 @@ bool MyScene::Init ()
 	AddGameObject (m_player);
 
 	m_sphere = new GameObject (__T ("Sphere"));
-	
-	m_cube = new GameObject (__T ("Cube"), m_sphere);
+	MeshComponent* mc = new MeshComponent (L"sphere", L"SimpleShader", L"lights");
+	m_sphere->AddComponent (mc);
+	AddGameObject (m_sphere);
 
+	m_cube = new GameObject (__T ("Cube"), m_sphere);
 	m_cube->AddComponent (new MeshComponent (L"box", L"SimpleShader", L"lights"));
 	m_cube->SetPosition (5.0f, 0.0f, 0.0f);
 	AddGameObject (m_cube);
-
-	//m_sphere->SetPosition (-5.0f, 0.0f, 0.0f);
-	MeshComponent* mc = new MeshComponent(L"sphere", L"SimpleShader", L"lights");
-	m_sphere->AddComponent (mc);
-	AddGameObject (m_sphere);
-	
 
 	return Scene::Init ();
 }
@@ -73,11 +69,11 @@ void MyScene::Update ()
 	
 	fractal::fcore::Clock *clock = fractal::fcore::SystemManager::Instance ()->GetClockSystem ();
 	
-	//m_cube->Rotate (rot.x + 0.01f, rot.y + 0.01f, rot.z + 0.01f);
+	m_cube->Rotate (rot.x, rot.y - 0.01f, rot.z);
 
 	rot = m_sphere->GetRotation ();
 
-	//m_sphere->Translate (sin (clock->TotalTime ()) * 0.001f, 0.0f, 0.0f);
+	m_sphere->SetPosition (sin (clock->TotalTime ())* 5.0f, 0.0f, 0.0f);
 	
 	m_sphere->Rotate (rot.x, rot.y + 0.01f, rot.z);
 

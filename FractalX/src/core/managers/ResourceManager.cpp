@@ -8,23 +8,22 @@ namespace fractal
 	{
 		ResourceManager::ResourceManager () : IManager<ResourceManager> ()
 		{
-
+			// empty
 		}
 
 		ResourceManager::~ResourceManager ()
 		{
-
+			// empty
 		}
 
 		bool ResourceManager::Init ()
 		{
-
 			return true;
 		}
 
 		void ResourceManager::Update ()
 		{
-
+			// empty
 		}
 
 		bool ResourceManager::Shutdown ()

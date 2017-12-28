@@ -33,7 +33,7 @@ namespace fractal
 				System* s = SystemFactory::CreateSystem ((SystemType)i);
 				
 				// TODO: change the if checking to assert when all the systems has been created
-				//assert (s);
+				assert (s);
 
 				if (s)
 				{

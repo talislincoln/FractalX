@@ -3,6 +3,7 @@
 #include <core\EngineCore.h>
 
 #include <sstream>
+#include <core\managers\PropertiesManager.h>
 
 namespace fractal
 {
@@ -67,6 +68,12 @@ namespace fractal
 			if (!this->CreateManagers ())
 				return false;
 
+			if (!PropertiesManager::Instance ()->Init ())
+			{
+				LogManager::Instance ()->LogError (L"Failed to Init Properties Manager.");
+				return false;
+			}
+
 			// create all the inner systems
 			SystemManager::Instance ()->CreateSystems ();
 			
@@ -106,6 +113,12 @@ namespace fractal
 			if (!ResourceManager::Instance ())
 			{
 				LogManager::Instance ()->LogError (L"Failed to create system Manager");
+				return false;
+			}
+
+			if (!PropertiesManager::Instance ())
+			{
+				LogManager::Instance ()->LogError (L"Failed to create PropertiesManager");
 				return false;
 			}
 

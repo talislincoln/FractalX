@@ -145,6 +145,7 @@ namespace fractal
 			yaw = rotationY * TO_RADIANS;
 			roll = rotationZ * TO_RADIANS;
 
+			//return m_parent ? m_parent->GetWorldMatrix() * XMMatrixRotationRollPitchYaw (roll, yaw, pitch) : XMMatrixRotationRollPitchYaw (roll, yaw, pitch);
 			return XMMatrixRotationRollPitchYaw (roll, yaw, pitch);
 		}
 
@@ -157,7 +158,7 @@ namespace fractal
 
 		DirectX::XMMATRIX GameObject::GetWorldMatrix () const
 		{
-			return m_worldMatrix * m_localTransform;
+			return  m_localTransform * m_worldMatrix;
 		}
 
 		DirectX::XMVECTOR GameObject::GetForwardVector () const
