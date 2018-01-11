@@ -36,7 +36,8 @@ bool MyScene::Init ()
 	ResourceManager* resourceManager = ResourceManager::Instance ();
 
 	// create a new mesh data resource and add it to the manager
-	MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::CreateSphere (3.0f, 20.0f, 20.0f));
+	MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::LoadObjFromFile ("../resources/models/torus.obj"));
+	//MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::CreateSphere (3.0f, 20.0f, 20.0f));
 	MeshDataResource* r = new fcore::MeshDataResource (FString (L"box"), GeometryGenerator::CreateBox (3.0f, 3.0f, 3.0f));
 	// create a new shader resource and add it to the resource manager
 	ShaderResource *s = new fcore::ShaderResource (L"SimpleShader", vertex, pixel, false);

@@ -17,9 +17,11 @@ namespace fractal
 	class GeometryGenerator
 	{
 	public:
-		static fcore::MeshData LoadObjFromFile (FString filePath);
+		static fcore::MeshData LoadObjFromFile (const std::string& filePath);
 		static fcore::MeshData CreateBox (float width, float height, float depth);
 		static fcore::MeshData CreateSphere (float radius, UINT sliceCount, UINT stackCount);
+	private:
+		static bool ReadFileCounts (const std::string& filePath, int& vertexCount, int& textureCount, int& normalCount, int& faceCount);
 	};
 }
 

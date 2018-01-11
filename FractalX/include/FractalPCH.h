@@ -98,7 +98,8 @@ namespace fractal
 		DirectX::XMFLOAT3 Color;
 		DirectX::XMFLOAT2 UV;
 
-		VertexPosColorTexture ()
+		VertexPosColorTexture () :
+			VertexPosColorTexture(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f)
 		{
 			// empty
 		};

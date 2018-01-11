@@ -1,11 +1,115 @@
 #include <FractalPCH.h>
 #include <utils\GeometryGenerator.h>
 
+#include <fstream>
+
 namespace fractal
 {
-	fcore::MeshData GeometryGenerator::LoadObjFromFile (FString filePath)
+	fcore::MeshData GeometryGenerator::LoadObjFromFile (const std::string& filePath)
 	{
 		fcore::MeshData obj;
+
+		int vertexCount, textureCount, normalCount, faceCount;
+
+		if (!ReadFileCounts (filePath, vertexCount, textureCount, normalCount, faceCount))
+		{
+			return obj;
+		}
+
+		VertexPosColorTexture* vertices = new VertexPosColorTexture[vertexCount];
+		int vertexIndex = 0, texcoordIndex = 0, normalIndex = 0, faceIndex = 0, vIndex = 0, tIndex = 0, nIndex = 0;
+
+		WORD* faces = new WORD[faceCount];
+
+		std::ifstream fin;
+		// Open the file.
+		fin.open (filePath);
+
+		// Check if it was successful in opening the file.
+		if (fin.fail () == true)
+		{
+			return obj;
+		}
+
+		char input, input2; int trash;
+		// Read in the vertices, texture coordinates, and normals into the data structures.
+		// Important: Also convert to left hand coordinate system since Maya uses right hand coordinate system.
+		fin.get (input);
+		while (!fin.eof ())
+		{
+			if (input == 'v')
+			{
+				fin.get (input);
+
+				// Read in the vertices.
+				if (input == ' ')
+				{
+					fin >> vertices[vertexIndex].Position.x >> vertices[vertexIndex].Position.y >> vertices[vertexIndex].Position.z;
+
+					// Invert the Z vertex to change to left hand system.
+					//vertices[vertexIndex].Position.z = vertices[vertexIndex].Position.z * -1.0f;
+					vertexIndex++;
+				}
+
+				// Read in the texture uv coordinates.
+				if (input == 't')
+				{
+					fin >> vertices[texcoordIndex].UV.x >> vertices[texcoordIndex].UV.y;
+
+					// Invert the V texture coordinates to left hand system.
+					//vertices[texcoordIndex].UV.y = 1.0f - vertices[texcoordIndex].UV.y;
+					texcoordIndex++;
+				}
+
+				// Read in the normals.
+				/*if (input == 'n')
+				{
+					fin >> normals[normalIndex].x >> normals[normalIndex].y >> normals[normalIndex].z;
+
+					// Invert the Z normal to change to left hand system.
+					normals[normalIndex].z = normals[normalIndex].z * -1.0f;
+					normalIndex++;
+				}*/
+			}
+
+			// Read in the faces.
+			if (input == 'f')
+			{
+				fin.get (input);
+				if (input == ' ')
+				{
+					// Read the face data in backwards to convert it to a left hand system from right hand system.
+					fin >> faces[faceIndex + 2]; // >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 1] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex];
+					fin >> input2 /*>> trash*/ >> input2 >> trash;
+					fin >> faces[faceIndex + 1];
+					fin >> input2 /*>> trash*/ >> input2 >> trash;
+					fin >> faces[faceIndex];
+						//>> faces[faceIndex + 1] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 1] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 1]
+						//>> faces[faceIndex + 2] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 2] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 2];
+					faceIndex +=3;
+				}
+			}
+
+			// Read in the remainder of the line.
+			while (input != '\n')
+			{
+				fin.get (input);
+			}
+
+			// Start reading the beginning of the next line.
+			fin.get (input);
+		}
+
+		//UINT aa[reinterpret_cast<const UINT>(faceCount)];
+
+		obj.vertices.assign (&vertices[0], &vertices[vertexCount]);
+		obj.indices.assign (&faces[0], &faces[faceCount]);
+
+		delete[] vertices;
+		delete[] faces;
+		// Close the file.
+		fin.close ();
+
 
 		return obj;
 	}
@@ -183,5 +287,62 @@ namespace fractal
 		}
 
 		return sphere;
+	}
+
+	bool GeometryGenerator::ReadFileCounts (const std::string& filePath, int& vertexCount, int& textureCount, int& normalCount, int& faceCount)
+	{
+		std::ifstream fin;
+		char input;
+
+
+		// Initialize the counts.
+		vertexCount = 0;
+		textureCount = 0;
+		normalCount = 0;
+		faceCount = 0;
+
+		// Open the file.
+		fin.open (filePath);
+
+		// Check if it was successful in opening the file.
+		if (fin.fail () == true)
+		{
+			return false;
+		}
+
+		// Read from the file and continue to read until the end of the file is reached.
+		fin.get (input);
+		while (!fin.eof ())
+		{
+			// If the line starts with 'v' then count either the vertex, the texture coordinates, or the normal vector.
+			if (input == 'v')
+			{
+				fin.get (input);
+				if (input == ' ') { vertexCount++; }
+				if (input == 't') { textureCount++; }
+				if (input == 'n') { normalCount++; }
+			}
+
+			// If the line starts with 'f' then increment the face count.
+			if (input == 'f')
+			{
+				fin.get (input);
+				if (input == ' ') { faceCount += 3; }
+			}
+
+			// Otherwise read in the remainder of the line.
+			while (input != '\n')
+			{
+				fin.get (input);
+			}
+
+			// Start reading the beginning of the next line.
+			fin.get (input);
+		}
+
+		// Close the file.
+		fin.close ();
+
+		return true;
 	}
 }
