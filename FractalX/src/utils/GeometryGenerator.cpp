@@ -47,17 +47,17 @@ namespace fractal
 					fin >> vertices[vertexIndex].Position.x >> vertices[vertexIndex].Position.y >> vertices[vertexIndex].Position.z;
 
 					// Invert the Z vertex to change to left hand system.
-					//vertices[vertexIndex].Position.z = vertices[vertexIndex].Position.z * -1.0f;
+					vertices[vertexIndex].Position.z = vertices[vertexIndex].Position.z * -1.0f;
 					vertexIndex++;
 				}
 
 				// Read in the texture uv coordinates.
 				if (input == 't')
 				{
-					fin >> vertices[texcoordIndex].UV.x >> vertices[texcoordIndex].UV.y;
+					fin >> vertices[texcoordIndex].UV.y >> vertices[texcoordIndex].UV.x;
 
 					// Invert the V texture coordinates to left hand system.
-					//vertices[texcoordIndex].UV.y = 1.0f - vertices[texcoordIndex].UV.y;
+					//vertices[texcoordIndex].UV.x = 1.0f - vertices[texcoordIndex].UV.x;
 					texcoordIndex++;
 				}
 
@@ -79,13 +79,12 @@ namespace fractal
 				if (input == ' ')
 				{
 					// Read the face data in backwards to convert it to a left hand system from right hand system.
-					fin >> faces[faceIndex + 2]; // >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 1] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex];
-					fin >> input2 /*>> trash*/ >> input2 >> trash;
-					fin >> faces[faceIndex + 1];
-					fin >> input2 /*>> trash*/ >> input2 >> trash;
-					fin >> faces[faceIndex];
-						//>> faces[faceIndex + 1] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 1] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 1]
-						//>> faces[faceIndex + 2] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 2] >> input2 >> input2 >> input2 >> input2 >> input2 >> faces[faceIndex + 2];
+					fin >> faces[faceIndex] >> input2 >> trash >> input2 >> trash >> faces[faceIndex + 1] >> input2 >> trash >> input2 >> trash >> faces[faceIndex + 2];
+
+					faces[faceIndex + 2] = faces[faceIndex + 2] - 1;
+					faces[faceIndex + 1] = faces[faceIndex + 1] - 1;
+					faces[faceIndex] = faces[faceIndex] - 1;
+
 					faceIndex +=3;
 				}
 			}
