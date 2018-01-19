@@ -8,9 +8,17 @@ namespace fractal
 {
 	namespace fcore
 	{
+		struct light
+		{
+			DirectX::XMFLOAT4 m_ambientColor;
+			DirectX::XMFLOAT4 m_diffuseColor;
+		};
+
 		class ShaderResource : public Resource
 		{
-		private:
+		public:
+			ID3D11Buffer * lightBuffer;
+		public:
 			// Shader data
 			ID3D11Buffer*			m_constantBuffers[(int)ConstanBuffer::NumConstantBuffers];
 			ID3D11VertexShader*		m_vertexShader;

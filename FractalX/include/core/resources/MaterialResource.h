@@ -10,12 +10,20 @@ namespace fractal
 		class MaterialResource : Resource
 		{
 			DirectX::XMFLOAT4 m_diffuseColor;
-			DirectX::XMFLOAT4 m_ambientColor;
-			DirectX::XMFLOAT4 m_specularColor;
-			DirectX::XMFLOAT4 m_emissiveColor;
+			//DirectX::XMFLOAT4 m_ambientColor;
+			//DirectX::XMFLOAT4 m_specularColor;
+			//DirectX::XMFLOAT4 m_emissiveColor;
 
 			float m_metallic;
 			float m_smoothness;
+
+			class ShaderResource* m_shaderResource;
+
+		public:
+			MaterialResource (const FString& name, class ShaderResource* shaderResource, float r, float g, float b, float a);
+			~MaterialResource ();
+
+			void Use ();
 		};
 	}
 }

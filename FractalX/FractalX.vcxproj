@@ -162,6 +162,7 @@
     <ClInclude Include="include\core\managers\SceneManager.h" />
     <ClInclude Include="include\core\managers\SystemManager.h" />
     <ClInclude Include="include\core\resources\ImageResource.h" />
+    <ClInclude Include="include\core\resources\MaterialResource.h" />
     <ClInclude Include="include\core\resources\ShaderResource.h" />
     <ClInclude Include="include\core\resources\MeshDataResource.h" />
     <ClInclude Include="include\core\resources\Resource.h" />
@@ -175,6 +176,7 @@
     <ClInclude Include="include\core\Engine.h" />
     <ClInclude Include="include\scene\components\CameraComponent.h" />
     <ClInclude Include="include\scene\components\Component.h" />
+    <ClInclude Include="include\scene\components\LightComponent.h" />
     <ClInclude Include="include\scene\components\MeshComponent.h" />
     <ClInclude Include="include\scene\EngineScene.h" />
     <ClInclude Include="include\scene\objects\FObject.h" />
@@ -192,6 +194,7 @@
     <ClCompile Include="src\core\managers\ResourceManager.cpp" />
     <ClCompile Include="src\core\managers\SceneManager.cpp" />
     <ClCompile Include="src\core\resources\ImageResource.cpp" />
+    <ClCompile Include="src\core\resources\MaterialResource.cpp" />
     <ClCompile Include="src\core\resources\MeshDataResource.cpp" />
     <ClCompile Include="src\core\resources\Resource.cpp" />
     <ClCompile Include="src\core\resources\ShaderResource.cpp" />
@@ -220,6 +223,7 @@
     </ClCompile>
     <ClCompile Include="src\scene\components\CameraComponent.cpp" />
     <ClCompile Include="src\scene\components\Component.cpp" />
+    <ClCompile Include="src\scene\components\LightComponent.cpp" />
     <ClCompile Include="src\scene\components\MeshComponent.cpp" />
     <ClCompile Include="src\scene\objects\FObject.cpp" />
     <ClCompile Include="src\scene\objects\GameObject.cpp" />

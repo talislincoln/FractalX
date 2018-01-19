@@ -124,6 +124,17 @@ namespace fractal
 			return m_activeCamera;
 		}
 
+		void SceneManager::AddLight (fscene::LightComponent * light)
+		{
+			if (light)
+				m_lights.push_back (light);
+		}
+
+		fscene::LightComponent * SceneManager::GetLight () const
+		{
+			return m_lights[0];
+		}
+
 		DirectX::XMMATRIX SceneManager::GetPerspectiveMatrix () const
 		{
 			Window* w = SystemManager::Instance ()->GetWindowSystem ();

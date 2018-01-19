@@ -13,6 +13,7 @@ namespace fractal
 	{
 		class Scene;
 		class CameraComponent;
+		class LightComponent;
 	}
 
 	namespace fcore
@@ -22,6 +23,7 @@ namespace fractal
 		private:
 			std::vector<fscene::Scene*> m_scenes;
 			std::vector<fscene::CameraComponent*> m_cameras;
+			std::vector<fscene::LightComponent*> m_lights;
 
 			fscene::Scene* m_activeScene;
 			fscene::CameraComponent* m_activeCamera;
@@ -42,6 +44,9 @@ namespace fractal
 			void AddCamera (fscene::CameraComponent* camera);
 			void SetActiveCamera (fscene::CameraComponent* camera);
 			fscene::CameraComponent* GetActiveCamera () const;
+
+			void AddLight (fscene::LightComponent* light);
+			fscene::LightComponent* GetLight () const;
 
 			DirectX::XMMATRIX GetPerspectiveMatrix () const;
 		};

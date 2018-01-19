@@ -2,6 +2,8 @@
 #include <core\EngineCore.h>
 #include "core\resources\ShaderResource.h"
 
+#include <scene\components\LightComponent.h>
+
 namespace fractal
 {
 	namespace fcore
@@ -279,6 +281,27 @@ namespace fractal
 				logger->LogError (L"Error creating Frame buffer");
 			}
 			hr = device->CreateBuffer (&constantBufferDesc, nullptr, &m_constantBuffers[(int)ConstanBuffer::CB_Object]);
+			if (FAILED (hr))
+			{
+				logger->LogError (L"Error creating Object buffer");
+			}
+
+			// cleaning the constant buffer
+			D3D11_BUFFER_DESC aaa;
+			ZeroMemory (&aaa, sizeof (D3D11_BUFFER_DESC));
+
+			aaa.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			aaa.ByteWidth = sizeof (light);
+			aaa.CPUAccessFlags = 0;
+			aaa.Usage = D3D11_USAGE_DEFAULT;
+			aaa.MiscFlags = 0;
+			/*hr = device->CreateBuffer (&aaa, nullptr, &m_constantBuffers[(int)ConstanBuffer::CB_LightBuffer]);
+			if (FAILED (hr))
+			{
+				logger->LogError (L"Error creating Object buffer");
+			}*/
+
+			hr = device->CreateBuffer (&aaa, nullptr, &lightBuffer);
 			if (FAILED (hr))
 			{
 				logger->LogError (L"Error creating Object buffer");

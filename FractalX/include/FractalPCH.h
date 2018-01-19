@@ -97,21 +97,25 @@ namespace fractal
 		DirectX::XMFLOAT3 Position;
 		DirectX::XMFLOAT3 Color;
 		DirectX::XMFLOAT2 UV;
+		DirectX::XMFLOAT3 Normal;
 
 		VertexPosColorTexture () :
-			VertexPosColorTexture(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f)
+			VertexPosColorTexture(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)
 		{
 			// empty
 		};
 
-		VertexPosColorTexture (float x, float y, float z, float r, float g, float b, float u, float v) :
-			Position(DirectX::XMFLOAT3(x, y, z)), Color (DirectX::XMFLOAT3 (r, g, b)), UV (DirectX::XMFLOAT2 (u, v))
+		VertexPosColorTexture (float x, float y, float z, float r, float g, float b, float u, float v, float nx, float ny, float nz) :
+			Position(DirectX::XMFLOAT3(x, y, z)), 
+			Color (DirectX::XMFLOAT3 (r, g, b)), 
+			UV (DirectX::XMFLOAT2 (u, v)), 
+			Normal(DirectX::XMFLOAT3(nx, ny, nz))
 		{
 			// empty
 		}
 
-		VertexPosColorTexture (DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT2 uvs) :
-			Position (position), Color (color), UV(uvs) {}
+		VertexPosColorTexture (DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 color, DirectX::XMFLOAT2 uvs, DirectX::XMFLOAT3 normal) :
+			Position (position), Color (color), UV(uvs), Normal(normal) {}
 	};	
 	
 	/*std::wstring widen (const std::string& str)

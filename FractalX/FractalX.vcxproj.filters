@@ -114,6 +114,12 @@
     <ClInclude Include="include\core\managers\PropertiesManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\scene\components\LightComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\core\resources\MaterialResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\Engine.cpp">
@@ -198,6 +204,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\managers\PropertiesManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene\components\LightComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\resources\MaterialResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

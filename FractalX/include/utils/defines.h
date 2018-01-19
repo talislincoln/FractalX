@@ -41,6 +41,7 @@ namespace fractal
 		CB_Appliation,
 		CB_Frame,
 		CB_Object,
+		CB_LightBuffer,
 		NumConstantBuffers
 	};
 
@@ -60,7 +61,8 @@ namespace fractal
 	{
 		RESOURCE_MESH,
 		RESOURCE_IMAGE,
-		RESOURCE_SHADER
+		RESOURCE_SHADER,
+		RESOURCE_MATERIAL
 	};
 
 	inline void FDebug ()

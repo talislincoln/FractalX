@@ -1,11 +1,12 @@
-Texture2D txDiffuse : register(t0);
-SamplerState samLinear : register(s0);
+
+
+Texture2D txDiffuse;
+SamplerState samLinear;
 
 cbuffer LightBuffer
 {
-    float4 diffuseColor;
-    float3 lightDirection;
-    float padding;
+	float4 ambient;
+	float4 diffuse;
 };
 
 struct VertexShaderOutput
@@ -13,14 +14,12 @@ struct VertexShaderOutput
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
 	float2 texcoord : TEXTCOORD0;
+	float3 normal : NORMAL;
 };
 
 float4 SimplePixelShader (VertexShaderOutput IN) : SV_TARGET
 {
-	float4 textureColor;
-    float3 lightDir;
-    float lightIntensity;
-    float4 color;
+	float4 diffuse = txDiffuse.Sample (samLinear, IN.texcoord) * float4(1.0,0.0,0,1);
 
-	return txDiffuse.Sample (samLinear, IN.texcoord) * IN.color;
+	return  diffuse;
 }

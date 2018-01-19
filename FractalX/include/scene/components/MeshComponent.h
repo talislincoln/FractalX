@@ -12,6 +12,7 @@ namespace fractal
 		class MeshDataResource;
 		class ShaderResource;
 		class ImageResource;
+		class MaterialResource;
 	}
 
 	namespace fscene
@@ -22,10 +23,11 @@ namespace fractal
 			fcore::MeshDataResource*	m_meshData;
 			fcore::ShaderResource*		m_shaderData;
 			fcore::ImageResource*		m_imageData;
+			fcore::MaterialResource*	m_materialData;
 
 		public:
-			MeshComponent (fcore::MeshDataResource* meshData, fcore::ShaderResource* shaderData, fcore::ImageResource* imageData);
-			MeshComponent (const FString& meshResourceName, const FString& shaderResourceName, const FString& imageResourceName);
+			MeshComponent (fcore::MeshDataResource* meshData, fcore::ShaderResource* shaderData, fcore::ImageResource* imageData, fcore::MaterialResource* materialData);
+			MeshComponent (const FString& meshResourceName, const FString& shaderResourceName, const FString& imageResourceName, fcore::MaterialResource* materialData);
 			~MeshComponent ();
 
 			bool Init () override;

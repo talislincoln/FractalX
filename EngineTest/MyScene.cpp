@@ -5,6 +5,8 @@
 
 #include <scene\objects\GameObject.h>
 #include <scene\EngineScene.h>
+#include <scene\components\LightComponent.h>
+#include <core\resources\MaterialResource.h>
 #include <core\EngineCore.h>
 #include <utils\GeometryGenerator.h>
 
@@ -36,8 +38,8 @@ bool MyScene::Init ()
 	ResourceManager* resourceManager = ResourceManager::Instance ();
 
 	// create a new mesh data resource and add it to the manager
-	MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::LoadObjFromFile ("../resources/models/sphere.obj"));
-	//MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::LoadObjFromFile ("../resources/models/box.obj"));
+	//MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::LoadObjFromFile ("../resources/models/sphere.obj"));
+	MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::LoadObjFromFile ("../resources/models/torus.obj"));
 	//MeshDataResource* sphere = new fcore::MeshDataResource (FString (L"sphere"), GeometryGenerator::CreateSphere (3.0f, 20.0f, 20.0f));
 	MeshDataResource* r = new fcore::MeshDataResource (FString (L"box"), GeometryGenerator::CreateBox (3.0f, 3.0f, 3.0f));
 	// create a new shader resource and add it to the resource manager
@@ -50,36 +52,37 @@ bool MyScene::Init ()
 	CameraComponent* c = new CameraComponent (L"MainCamera");
 	c->SetShader (s);
 	m_player->AddComponent (c);
+	m_player->AddComponent (new fscene::LightComponent (L"MyLight", 1.0f, 0.0f, 0.0f, 1.0f));
 	AddGameObject (m_player);
-
+	fcore::MaterialResource* mr = new fcore::MaterialResource (L"material", s, 1.0f, 0.0f, 0.0f, 1.0f);
 	m_sphere = new GameObject (__T ("Sphere"));
-	MeshComponent* mc = new MeshComponent (L"sphere", L"SimpleShader", L"lights");
+	MeshComponent* mc = new MeshComponent (L"sphere", L"SimpleShader", L"lights", mr);
 	m_sphere->AddComponent (mc);
 	//m_sphere->SetScate (0.1f, 0.1f, 0.1f);
 	AddGameObject (m_sphere);
 
-	/*m_cube = new GameObject (__T ("Cube"), m_sphere);
-	m_cube->AddComponent (new MeshComponent (L"box", L"SimpleShader", L"lights"));
+	m_cube = new GameObject (__T ("Cube"), m_sphere);
+	m_cube->AddComponent (new MeshComponent (L"box", L"SimpleShader", L"lights", mr));
 	m_cube->SetPosition (5.0f, 0.0f, 0.0f);
 	
-	AddGameObject (m_cube);*/
+	AddGameObject (m_cube);
 
 	return Scene::Init ();
 }
 
 void MyScene::Update ()
 {
-	//DirectX::XMFLOAT3 rot = m_cube->GetRotation ();
+	DirectX::XMFLOAT3 rot = m_cube->GetRotation ();
 	
 	fractal::fcore::Clock *clock = fractal::fcore::SystemManager::Instance ()->GetClockSystem ();
 	
-	//m_cube->Rotate (rot.x, rot.y - 0.01f, rot.z);
+	m_cube->Rotate (rot.x, rot.y - 0.01f, rot.z);
 
-	DirectX::XMFLOAT3 rot = m_sphere->GetRotation ();
+	rot = m_sphere->GetRotation ();
 
 	m_sphere->SetPosition (sin (clock->TotalTime ())* 5.0f, 0.0f, 0.0f);
 	
-	m_sphere->Rotate (rot.x, rot.y + 0.01f, rot.z);
+	m_sphere->Rotate (rot.x, rot.y + 0.01f, rot.z + 0.01f);
 
 	Scene::Update ();
 }

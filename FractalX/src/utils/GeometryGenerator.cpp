@@ -57,19 +57,19 @@ namespace fractal
 					fin >> vertices[texcoordIndex].UV.y >> vertices[texcoordIndex].UV.x;
 
 					// Invert the V texture coordinates to left hand system.
-					//vertices[texcoordIndex].UV.x = 1.0f - vertices[texcoordIndex].UV.x;
+					vertices[texcoordIndex].UV.x = 1.0f - vertices[texcoordIndex].UV.x;
 					texcoordIndex++;
 				}
 
 				// Read in the normals.
-				/*if (input == 'n')
+				if (input == 'n')
 				{
-					fin >> normals[normalIndex].x >> normals[normalIndex].y >> normals[normalIndex].z;
+					fin >> vertices[normalIndex].Normal.x >> vertices[normalIndex].Normal.y >> vertices[normalIndex].Normal.z;
 
 					// Invert the Z normal to change to left hand system.
-					normals[normalIndex].z = normals[normalIndex].z * -1.0f;
+					vertices[normalIndex].Normal.z = vertices[normalIndex].Normal.z * -1.0f;
 					normalIndex++;
-				}*/
+				}
 			}
 
 			// Read in the faces.
@@ -79,7 +79,7 @@ namespace fractal
 				if (input == ' ')
 				{
 					// Read the face data in backwards to convert it to a left hand system from right hand system.
-					fin >> faces[faceIndex] >> input2 >> trash >> input2 >> trash >> faces[faceIndex + 1] >> input2 >> trash >> input2 >> trash >> faces[faceIndex + 2];
+					fin >> faces[faceIndex] >> input2 >> /*trash >>*/ input2 >> trash >> faces[faceIndex + 1] >> input2 >> /*trash >>*/ input2 >> trash >> faces[faceIndex + 2];
 
 					faces[faceIndex + 2] = faces[faceIndex + 2] - 1;
 					faces[faceIndex + 1] = faces[faceIndex + 1] - 1;
@@ -124,40 +124,40 @@ namespace fractal
 		float d2 = 0.5f * depth;
 
 		// Fill in the front face vertex data.
-		vertices[0] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
-		vertices[1] = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
-		vertices[2] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-		vertices[3] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+		vertices[0] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f);
+		vertices[1] = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f);
+		vertices[2] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f);
+		vertices[3] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f);
 
 		// Fill in the back face vertex data.
-		vertices[4] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f);
-		vertices[5] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f,  0.0f, 1.0f);
-		vertices[6] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 1.0f,  0.0f, 0.0f);
-		vertices[7] = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 1.0f,  1.0f, 0.0f);
+		vertices[4] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+		vertices[5] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+		vertices[6] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 1.0f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+		vertices[7] = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
 		// Fill in the top face vertex data.
-		vertices[8]  = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
-		vertices[9]	 = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f); 
-		vertices[10] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-		vertices[11] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+		vertices[8]  = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
+		vertices[9] = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		vertices[10] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		vertices[11] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f);
 
 		// Fill in the bottom face vertex data.
-		vertices[12] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-		vertices[13] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
-		vertices[14] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
-		vertices[15] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
+		vertices[12] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f);
+		vertices[13] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f);
+		vertices[14] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+		vertices[15] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f);
 
 		// Fill in the left face vertex data.
-		vertices[16] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
-		vertices[17] = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
-		vertices[18] = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-		vertices[19] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+		vertices[16] = VertexPosColorTexture (-w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f);
+		vertices[17] = VertexPosColorTexture (-w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+		vertices[18] = VertexPosColorTexture (-w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+		vertices[19] = VertexPosColorTexture (-w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f);
 
 		// Fill in the right face vertex data.
-		vertices[20] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
-		vertices[21] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
-		vertices[22] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f);
-		vertices[23] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+		vertices[20] = VertexPosColorTexture (+w2, -h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+		vertices[21] = VertexPosColorTexture (+w2, +h2, -d2, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+		vertices[22] = VertexPosColorTexture (+w2, +h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+		vertices[23] = VertexPosColorTexture (+w2, -h2, +d2, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
 
 		box.vertices.assign (&vertices[0], &vertices[24]);
 
@@ -198,8 +198,8 @@ namespace fractal
 
 		fcore::MeshData sphere;
 
-		VertexPosColorTexture topVertex		(0.0f, +radius, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
-		VertexPosColorTexture bottomVertex	(0.0f, -radius, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f);
+		VertexPosColorTexture topVertex		(0.0f, +radius, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		VertexPosColorTexture bottomVertex	(0.0f, -radius, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f);
 
 		sphere.vertices.push_back (topVertex);
 
@@ -236,8 +236,8 @@ namespace fractal
 				//XMVECTOR T = XMLoadFloat3(&v.TangentU);
 				//XMStoreFloat3(&v.TangentU, XMVector3Normalize(T));
 
-				//XMVECTOR p = XMLoadFloat3(&v.Position);
-				//XMStoreFloat3(&v.Normal, XMVector3Normalize(p));
+				XMVECTOR p = XMLoadFloat3(&v.Position);
+				XMStoreFloat3(&v.Normal, XMVector3Normalize(p));
 
 				v.UV.x = theta / XM_2PI;
 				v.UV.y = phi / XM_PI;
